@@ -1,0 +1,7 @@
+/* ==========================================================================
+   Login feature — page-specific styles
+
+   The login page currently reuses the shared auth panel styling from
+   static/css/common/auth.css. Add any login-only rules here so they
+   stay scoped to this feature instead of leaking into register/home.
+   ========================================================================== */

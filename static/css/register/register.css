@@ -1,0 +1,64 @@
+/* ==========================================================================
+   Register feature — page-specific styles
+
+   Password checklist (register page only). Reuses the shared auth
+   panel styling from static/css/common/auth.css for everything else.
+   ========================================================================== */
+.password-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0.6rem 0 0;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.83rem;
+  color: var(--color-ink-soft);
+}
+
+.check-dot {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.check-dot::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: transparent;
+  transform: scale(0);
+  transition: transform 0.15s ease;
+}
+
+.password-checklist li.is-met {
+  color: var(--color-ink);
+}
+
+.password-checklist li.is-met .check-dot {
+  border-color: var(--color-success);
+  background-color: var(--color-success);
+}
+
+.password-checklist li.is-met .check-dot::after {
+  background-color: #fff;
+  transform: scale(1);
+  animation: pop 0.2s ease-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.25); }
+  100% { transform: scale(1); }
+}

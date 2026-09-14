@@ -1,0 +1,13 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Home | SynthDex{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home/home.css' %}">
+{% endblock %}
+{% block content %}
+<div class="hero">
+    <div class="hero-eyebrow-rule"></div>
+    <h1>Welcome back, {{ user.username }}</h1>
+    <p>Your SynthDex catalogue is ready whenever you are.</p>
+</div>
+{% endblock %}

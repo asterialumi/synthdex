@@ -1,0 +1,149 @@
+/* ==========================================================================
+   SynthDex — design tokens
+   A music-catalogue identity: warm parchment + ink, one amber accent,
+   a serif display face for voice, a plain sans for UI/forms.
+   Change values here to re-theme the whole site.
+
+   This file is shared across every feature (login, register, home, ...).
+   Feature-specific rules belong in that feature's own CSS file.
+   ========================================================================== */
+:root {
+  --color-ink: #201d24;
+  --color-ink-soft: #4a4550;
+  --color-paper: #f6f2e8;
+  --color-paper-raised: #fffdf8;
+  --color-border: #e2dac5;
+
+  --color-accent: #b8792f;
+  --color-accent-hover: #9c651f;
+  --color-accent-soft: #f1e2c8;
+
+  --color-brand-bg: #221f2a;
+  --color-brand-line: #3a3542;
+
+  --color-danger: #b3402f;
+  --color-danger-soft: #f6e2dd;
+  --color-success: #4a7c59;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
+
+  --shadow-sm: 0 1px 2px rgba(32, 29, 36, 0.06);
+  --shadow-md: 0 12px 32px rgba(32, 29, 36, 0.14);
+
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+body {
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  line-height: 1.55;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--color-ink);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--color-accent-hover);
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+.site-header {
+  background-color: var(--color-paper);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.brand {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+.btn-primary-custom {
+  background-color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.7rem 1rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+}
+
+.btn-primary-custom:hover {
+  background-color: var(--color-accent-hover);
+  border-color: var(--color-accent-hover);
+  color: #fff;
+}
+
+.btn-primary-custom:active {
+  transform: translateY(1px);
+}
+
+.btn-danger-outline {
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  color: var(--color-ink-soft);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  font-size: 0.875rem;
+  padding: 0.4rem 0.85rem;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-danger-outline:hover {
+  background-color: var(--color-danger-soft);
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+/* ==========================================================================
+   Shared motion
+   ========================================================================== */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

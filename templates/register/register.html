@@ -1,0 +1,58 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Create account | SynthDex{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/common/auth.css' %}">
+<link rel="stylesheet" href="{% static 'css/register/register.css' %}">
+{% endblock %}
+{% block content %}
+<div class="auth-shell">
+    {% include 'common/_auth_brand.html' with heading='Start your catalogue.' subtext='Track every release, artist, and tag in one place.' %}
+
+    <div class="auth-form-panel">
+        <h2>Create your account</h2>
+        <p class="auth-subtitle">Takes less than a minute.</p>
+
+        <form method="post" novalidate id="register-form">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-toplevel-errors">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+
+                {% if field.name == 'password1' %}
+                <ul class="password-checklist" id="password-checklist">
+                    <li data-rule="length"><span class="check-dot"></span> At least 8 characters</li>
+                    <li data-rule="notnumeric"><span class="check-dot"></span> Not entirely numbers</li>
+                    <li data-rule="notcommon"><span class="check-dot"></span> Not an easily guessed password</li>
+                </ul>
+                {% elif field.name == 'password2' %}
+                <p class="field-hint" id="password-match-hint" style="display:none;"></p>
+                {% elif field.help_text %}
+                <p class="field-hint">{{ field.help_text|striptags }}</p>
+                {% endif %}
+
+                {% for error in field.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary-custom w-100 mt-1">Create account</button>
+        </form>
+
+        <p class="auth-footer-line">Already have an account? <a href="{% url 'login:login' %}">Log in</a></p>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/register/register.js' %}"></script>
+{% endblock %}
