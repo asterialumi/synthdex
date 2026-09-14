@@ -7,7 +7,34 @@
 {% block content %}
 <div class="hero">
     <div class="hero-eyebrow-rule"></div>
-    <h1>Welcome back, {{ user.username }}</h1>
+    <h1>Welcome back, {{ profile_display_name|default:user.username }}</h1>
     <p>Your SynthDex catalogue is ready whenever you are.</p>
+</div>
+
+<div class="search-panel">
+    <span class="search-panel-badge">Coming soon</span>
+    <form class="search-panel-form" onsubmit="return false;">
+        <input
+            type="text"
+            class="search-panel-input"
+            placeholder="Search a song, artist, or album…"
+            disabled
+            aria-disabled="true">
+        <button type="submit" class="btn btn-primary-custom" disabled>Search</button>
+    </form>
+    <p class="search-panel-hint">We're wiring up sources next — search, favorites, and history are on the way.</p>
+</div>
+
+<div class="quick-links">
+    <a href="{% url 'profile:profile' %}" class="quick-link-card">
+        <span class="quick-link-icon" aria-hidden="true">🪪</span>
+        <span class="quick-link-title">Profile</span>
+        <span class="quick-link-desc">Tell other listeners a bit about your taste.</span>
+    </a>
+    <a href="{% url 'user_settings:settings' %}" class="quick-link-card">
+        <span class="quick-link-icon" aria-hidden="true">⚙️</span>
+        <span class="quick-link-title">Settings</span>
+        <span class="quick-link-desc">Switch themes, update your username or password.</span>
+    </a>
 </div>
 {% endblock %}

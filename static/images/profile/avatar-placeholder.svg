@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" role="img" aria-label="Default listener avatar">
+  <circle cx="60" cy="60" r="58" fill="#221f2a" />
+  <circle cx="60" cy="60" r="46" fill="none" stroke="#3a3542" stroke-width="2" />
+  <circle cx="60" cy="60" r="36" fill="none" stroke="#3a3542" stroke-width="2" />
+  <circle cx="60" cy="60" r="26" fill="none" stroke="#3a3542" stroke-width="2" />
+  <circle cx="60" cy="60" r="16" fill="#b8792f" />
+  <circle cx="60" cy="60" r="4" fill="#f6f2e8" />
+</svg>

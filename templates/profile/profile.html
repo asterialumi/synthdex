@@ -1,0 +1,58 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Profile | SynthDex{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
+{% endblock %}
+{% block content %}
+<div class="profile-shell">
+    <div class="profile-card">
+        <div class="profile-header">
+            <img class="profile-avatar" src="{% static 'images/profile/avatar-placeholder.svg' %}" alt="">
+            <div>
+                <h1 class="profile-name">{{ profile.display }}</h1>
+                <p class="profile-username">@{{ user.username }} &middot; joined {{ profile.joined_at|date:"M Y" }}</p>
+            </div>
+        </div>
+
+        {% if profile.favorite_genre %}
+        <div class="profile-meta">
+            <span class="profile-tag">🎵 {{ profile.favorite_genre }}</span>
+        </div>
+        {% endif %}
+
+        {% if profile.bio %}
+        <p class="profile-bio">{{ profile.bio }}</p>
+        {% endif %}
+    </div>
+
+    <div class="profile-card">
+        <h2 class="profile-form-title">Edit profile</h2>
+        <p class="profile-form-subtitle">This is what other listeners will see.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-toplevel-errors">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="field-hint">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary-custom">Save profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

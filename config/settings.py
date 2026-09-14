@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     'apps.login',
     'apps.register',
     'apps.home',
+    'apps.profile',
+    'apps.user_settings',
 ]
 
 MIDDLEWARE = [
@@ -75,6 +78,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'apps.user_settings.context_processors.theme',
+                'apps.profile.context_processors.display_name',
             ],
         },
     },

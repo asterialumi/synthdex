@@ -1,0 +1,97 @@
+{% extends 'common/base.html' %}
+{% load static %}
+{% block title %}Settings | SynthDex{% endblock %}
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/user_settings/user_settings.css' %}">
+{% endblock %}
+{% block content %}
+<div class="settings-shell">
+    <div class="settings-intro">
+        <h1>Settings</h1>
+        <p>Manage how SynthDex looks and how you sign in.</p>
+    </div>
+
+    <div class="settings-card">
+        <h2>Appearance</h2>
+        <p class="settings-card-subtitle">Pick the palette that's easiest on your eyes.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="form_id" value="theme">
+            <div class="appearance-row">
+                <div>
+                    <div class="appearance-row-label">Dark mode</div>
+                    <div class="appearance-row-hint">Applies instantly and saves automatically.</div>
+                </div>
+                <label class="theme-switch">
+                    {{ theme_form.dark_mode }}
+                    <span class="theme-switch-track"></span>
+                </label>
+            </div>
+        </form>
+    </div>
+
+    <div class="settings-card">
+        <h2>Username</h2>
+        <p class="settings-card-subtitle">This is how you'll sign in from now on.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="form_id" value="username">
+
+            {% if username_form.non_field_errors %}
+            <div class="form-toplevel-errors">
+                {% for error in username_form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in username_form %}
+            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="field-hint">{{ field.help_text }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary-custom">Save username</button>
+        </form>
+    </div>
+
+    <div class="settings-card settings-card--password">
+        <h2>Password</h2>
+        <p class="settings-card-subtitle">Choose a strong password you don't use elsewhere.</p>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            <input type="hidden" name="form_id" value="password">
+
+            {% if password_form.non_field_errors %}
+            <div class="form-toplevel-errors">
+                {% for error in password_form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in password_form %}
+            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.help_text %}
+                <p class="field-hint">{{ field.help_text|safe }}</p>
+                {% endif %}
+                {% for error in field.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary-custom">Change password</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/user_settings/user_settings.js' %}"></script>
+{% endblock %}

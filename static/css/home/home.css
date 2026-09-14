@@ -28,3 +28,115 @@
   color: var(--color-ink-soft);
   font-size: 1.1rem;
 }
+
+/* ==========================================================================
+   Search panel (placeholder — real search lands in a future feature)
+   ========================================================================== */
+.search-panel {
+  position: relative;
+  max-width: 620px;
+  margin: 0 auto 2.5rem;
+  background-color: var(--color-paper-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+  animation: rise-in 0.5s ease-out both;
+  animation-delay: 0.05s;
+}
+
+.search-panel-badge {
+  position: absolute;
+  top: -0.6rem;
+  right: 1.5rem;
+  background-color: var(--color-accent);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+
+.search-panel-form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.search-panel-input {
+  flex: 1;
+  font-family: var(--font-sans);
+  font-size: 0.98rem;
+  color: var(--color-ink-soft);
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  cursor: not-allowed;
+}
+
+.search-panel-form .btn-primary-custom:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.search-panel-hint {
+  margin: 0.85rem 0 0;
+  font-size: 0.8rem;
+  color: var(--color-ink-soft);
+}
+
+/* ==========================================================================
+   Quick links
+   ========================================================================== */
+.quick-links {
+  max-width: 620px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .quick-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+.quick-link-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background-color: var(--color-paper-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  color: var(--color-ink);
+  animation: rise-in 0.5s ease-out both;
+  animation-delay: 0.1s;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.quick-link-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--color-accent);
+  text-decoration: none;
+  color: var(--color-ink);
+}
+
+.quick-link-icon {
+  font-size: 1.5rem;
+}
+
+.quick-link-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.quick-link-desc {
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+}
