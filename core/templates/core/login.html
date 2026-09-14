@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% block title %}Log in | SynthDex{% endblock %}
+{% block content %}
+<div class="auth-shell">
+    {% include 'core/_auth_brand.html' with heading='Welcome back.' subtext='Log in to pick up your catalogue right where you left off.' %}
+
+    <div class="auth-form-panel">
+        <h2>Log in</h2>
+        <p class="auth-subtitle">Enter your details to access your account.</p>
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+            <div class="form-toplevel-errors">
+                {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+
+            {% for field in form %}
+            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% for error in field.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-primary-custom w-100 mt-1">Log in</button>
+        </form>
+
+        <p class="auth-footer-line">New here? <a href="{% url 'register' %}">Create an account</a></p>
+    </div>
+</div>
+{% endblock %}
