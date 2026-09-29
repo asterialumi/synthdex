@@ -51,6 +51,11 @@ INSTALLED_APPS = [
     'apps.home',
     'apps.profile',
     'apps.user_settings',
+    'apps.catalogue',
+    'apps.sources',
+    'apps.search',
+    'apps.favorites',
+    'apps.history',
 ]
 
 MIDDLEWARE = [
