@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Track detail feature styles
+   ========================================================================== */
+
+.track-detail-container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+}
+
+.detail-breadcrumb {
+  margin-bottom: 1.5rem;
+}
+
+.detail-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-ink-soft);
+  transition: color 0.15s ease;
+}
+
+.detail-back-link:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.track-hero-card {
+  display: flex;
+  gap: 2rem;
+  background-color: var(--color-paper-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+  align-items: center;
+}
+
+.hero-artwork-wrapper {
+  width: 180px;
+  height: 180px;
+  flex-shrink: 0;
+}
+
+.hero-artwork {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.hero-artwork-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: 3.5rem;
+}
+
+.hero-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.track-type-badge {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: 0.5rem;
+}
+
+.hero-title {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  margin-bottom: 0.75rem;
+  color: var(--color-ink);
+  word-break: break-word;
+}
+
+.artist-credits-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 0.8rem;
+  margin-bottom: 1.5rem;
+}
+
+.artist-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1rem;
+  color: var(--color-ink);
+}
+
+.role-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink-soft);
+  text-transform: capitalize;
+}
+
+.role-badge--featured {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.hero-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.actions-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-soft);
+}
+
+.listen-links-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.btn-listen-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+}
+
+.btn-listen-source:hover {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Metadata Grid
+   ========================================================================== */
+
+.metadata-section {
+  margin-top: 1rem;
+}
+
+.section-title {
+  font-size: 1.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.metadata-card {
+  background-color: var(--color-paper-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.4rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.metadata-card--wide {
+  grid-column: 1 / -1;
+}
+
+.metadata-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+}
+
+.metadata-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.metadata-sub {
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: var(--color-ink-soft);
+  margin-left: 0.3rem;
+}
+
+.font-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.05em;
+}
+
+.genres-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.genre-tag {
+  display: inline-block;
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+}
+
+.text-muted {
+  font-size: 0.95rem;
+  font-weight: normal;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 768px) {
+  .metadata-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .track-hero-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .hero-artwork-wrapper {
+    margin: 0 auto;
+  }
+
+  .artist-credits-list {
+    justify-content: center;
+  }
+
+  .hero-actions {
+    align-items: center;
+  }
+
+  .listen-links-group {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .metadata-grid {
+    grid-template-columns: 1fr;
+  }
+}

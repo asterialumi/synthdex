@@ -56,16 +56,18 @@
         <div class="search-results-list">
             {% for track in tracks %}
             <article class="track-card">
-                <div class="track-artwork-wrap">
+                <a href="{% url 'catalogue:track_detail' track.id %}" class="track-artwork-wrap" title="View details for {{ track.title }}">
                     {% if track.artwork_url %}
                     <img src="{{ track.artwork_url }}" alt="{{ track.title }} artwork" class="track-artwork" loading="lazy">
                     {% else %}
                     <div class="track-artwork-placeholder" aria-hidden="true">🎵</div>
                     {% endif %}
-                </div>
+                </a>
 
                 <div class="track-info">
-                    <h2 class="track-title">{{ track.title }}</h2>
+                    <h2 class="track-title">
+                        <a href="{% url 'catalogue:track_detail' track.id %}" class="track-title-link">{{ track.title }}</a>
+                    </h2>
                     <p class="track-artist">{{ track|artist_credits_display }}</p>
                     {% if track.album %}
                     <p class="track-album">{{ track.album.title }}</p>

@@ -1,8 +1,10 @@
 """Unit tests for pure helper functions (no database or external network access)."""
+from decimal import Decimal
 from django.test import SimpleTestCase
 
 from apps.search.utils import normalize_query
 from apps.sources.cleaners import clean_youtube_title, format_duration, parse_iso_duration
+from apps.sources.deezer import match_deezer_candidate, validate_bpm
 
 
 class PureHelperTests(SimpleTestCase):
@@ -81,3 +83,62 @@ class PureHelperTests(SimpleTestCase):
         self.assertEqual(primary, "Calvin Harris")
         self.assertEqual(featured, ["Rihanna"])
         self.assertEqual(title, "This Is What You Came For")
+
+    def test_validate_bpm_valid(self):
+        self.assertEqual(validate_bpm(120), Decimal("120.00"))
+        self.assertEqual(validate_bpm("128.5"), Decimal("128.50"))
+        self.assertEqual(validate_bpm(Decimal("95.43")), Decimal("95.43"))
+
+    def test_validate_bpm_invalid_or_zero(self):
+        self.assertIsNone(validate_bpm(0))
+        self.assertIsNone(validate_bpm("0"))
+        self.assertIsNone(validate_bpm(-120))
+        self.assertIsNone(validate_bpm(None))
+        self.assertIsNone(validate_bpm(""))
+        self.assertIsNone(validate_bpm("not-a-number"))
+        self.assertIsNone(validate_bpm(10000))  # exceeds numeric(6,2)
+
+    def test_match_deezer_candidate_success(self):
+        candidate = {
+            "title": "Get Lucky (Radio Edit)",
+            "artist": {"name": "Daft Punk"},
+            "duration": 248,
+        }
+        self.assertTrue(
+            match_deezer_candidate(
+                candidate=candidate,
+                target_artist="Daft Punk",
+                target_title="Get Lucky",
+                target_duration_ms=248000,
+            )
+        )
+
+    def test_match_deezer_candidate_duration_mismatch(self):
+        candidate = {
+            "title": "Get Lucky",
+            "artist": {"name": "Daft Punk"},
+            "duration": 360,  # 360s vs 248s (> 5s difference)
+        }
+        self.assertFalse(
+            match_deezer_candidate(
+                candidate=candidate,
+                target_artist="Daft Punk",
+                target_title="Get Lucky",
+                target_duration_ms=248000,
+            )
+        )
+
+    def test_match_deezer_candidate_artist_mismatch(self):
+        candidate = {
+            "title": "Get Lucky",
+            "artist": {"name": "Pharrell Williams"},
+            "duration": 248,
+        }
+        self.assertFalse(
+            match_deezer_candidate(
+                candidate=candidate,
+                target_artist="Daft Punk",
+                target_title="Get Lucky",
+                target_duration_ms=248000,
+            )
+        )
