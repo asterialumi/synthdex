@@ -97,6 +97,12 @@
   background-color: var(--color-paper);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.profile-item-row:hover {
+  border-color: var(--color-accent);
+  transform: translateX(2px);
 }
 
 .profile-item-artwork {

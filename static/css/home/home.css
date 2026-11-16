@@ -62,17 +62,19 @@
 .search-panel-form {
   display: flex;
   gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
 .search-panel-select {
   font-family: var(--font-sans);
   font-size: 0.95rem;
   color: var(--color-ink);
-  background-color: var(--color-paper);
+  background-color: var(--color-paper-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 0.65rem 0.85rem;
   cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .search-panel-input {
@@ -80,16 +82,18 @@
   font-family: var(--font-sans);
   font-size: 0.98rem;
   color: var(--color-ink);
-  background-color: var(--color-paper);
+  background-color: var(--color-paper-raised);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: 0.65rem 0.85rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .search-panel-input:focus,
 .search-panel-select:focus {
-  outline: 2px solid var(--color-accent);
-  outline-offset: 1px;
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
 }
 
 .search-panel-hint {
@@ -106,6 +110,8 @@
   padding-top: 0.85rem;
   border-top: 1px dashed var(--color-border);
   flex-wrap: wrap;
+  animation: rise-in 0.4s ease-out both;
+  animation-delay: 0.1s;
 }
 
 .chips-label {
@@ -186,12 +192,15 @@
   border-radius: var(--radius-md);
   padding: 0.75rem 1rem;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+  animation: rise-in 0.4s ease-out both;
+  animation-delay: 0.12s;
 }
 
 .dashboard-fav-card:hover {
   transform: translateY(-2px);
   border-color: var(--color-accent);
+  box-shadow: var(--shadow-md);
 }
 
 .dashboard-fav-artwork-link {
