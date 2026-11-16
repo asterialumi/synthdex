@@ -1,0 +1,17 @@
+{% extends 'common/base.html' %}
+
+{% block title %}Page Not Found | SynthDex{% endblock %}
+
+{% block content %}
+<div style="max-width: 580px; margin: 5rem auto; text-align: center; padding: 2rem;">
+    <div style="font-size: 3.5rem; margin-bottom: 1rem;">🧭</div>
+    <h1 style="font-size: 2.2rem; margin-bottom: 0.75rem;">Page Not Found</h1>
+    <p style="color: var(--color-ink-soft); font-size: 1.05rem; margin-bottom: 2rem;">
+        The track, playlist, or page you were looking for doesn't exist or may have been moved.
+    </p>
+    <div style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+        <a href="{% url 'home:home' %}" class="btn btn-primary-custom">Go to Home</a>
+        <a href="{% url 'search:search' %}" class="btn btn-danger-outline" style="color: var(--color-ink); border-color: var(--color-border);">Search Music</a>
+    </div>
+</div>
+{% endblock %}

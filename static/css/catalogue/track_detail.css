@@ -286,6 +286,83 @@
   color: var(--color-ink-soft);
 }
 
+/* ==========================================================================
+   Manual BPM and Genre Editing
+   ========================================================================== */
+
+.manual-edit-details {
+  background-color: var(--color-paper-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.manual-edit-details[open] {
+  padding-bottom: 1.25rem;
+}
+
+.manual-edit-summary {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  user-select: none;
+}
+
+.manual-edit-summary:hover {
+  color: var(--color-accent);
+}
+
+.manual-edit-body {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+.manual-edit-hint {
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 1rem;
+}
+
+.manual-edit-fields {
+  display: grid;
+  grid-template-columns: 180px 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.manual-edit-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.8rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.manual-edit-input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+@media (max-width: 640px) {
+  .manual-edit-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .metadata-grid {
     grid-template-columns: repeat(2, 1fr);

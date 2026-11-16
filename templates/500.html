@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Server Error | SynthDex</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-paper: #f6f2e8;
+            --color-ink: #201d24;
+            --color-ink-soft: #4a4550;
+            --color-accent: #b8792f;
+            --color-accent-hover: #9c651f;
+            --radius-sm: 6px;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-paper: #1c1a20;
+                --color-ink: #f3ede0;
+                --color-ink-soft: #c9c1b3;
+                --color-accent: #d99a4e;
+            }
+        }
+        body {
+            background-color: var(--color-paper);
+            color: var(--color-ink);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2.2rem;
+            margin: 0 0 0.75rem;
+        }
+        p {
+            color: var(--color-ink-soft);
+            max-width: 440px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background-color: var(--color-accent);
+            color: #fff;
+            padding: 0.7rem 1.4rem;
+            border-radius: var(--radius-sm);
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div style="font-size: 3.5rem; margin-bottom: 1rem;">⚡</div>
+        <h1>Something went wrong</h1>
+        <p>An unexpected error occurred while processing your request. Please try again or return home.</p>
+        <a href="/" class="btn">Return to SynthDex</a>
+    </div>
+</body>
+</html>

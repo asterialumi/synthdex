@@ -45,11 +45,19 @@
                 No results found for "<strong>{{ query }}</strong>"
                 {% endif %}
             </span>
-            {% if is_stale and cache %}
-            <span class="cache-badge" title="Results served from previous query cache">
-                Cached {{ cache.fetched_at|date:"M d, Y" }}
-            </span>
-            {% endif %}
+            <div class="meta-bar-actions">
+                {% if is_stale and cache %}
+                <span class="cache-badge" title="Results served from previous query cache">
+                    Cached {{ cache.fetched_at|date:"M d, Y" }}
+                </span>
+                {% elif cache %}
+                <span class="cache-status-badge" title="Served from database cache">Cached</span>
+                {% endif %}
+                <a href="{% url 'search:search' %}?q={{ query|urlencode }}&type={{ search_type }}&refresh=1" class="btn btn-refresh-cache" title="Bypass cache and refresh results from YouTube">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                    <span>Refresh</span>
+                </a>
+            </div>
         </div>
 
         {% if tracks %}
@@ -98,8 +106,16 @@
         {% else %}
         <div class="search-empty-state">
             <div class="empty-icon" aria-hidden="true">🔍</div>
-            <h2>No tracks found</h2>
-            <p>We couldn't find any tracks matching "{{ query }}". Try searching for a different song title or artist name.</p>
+            <h2>No tracks found matching "{{ query }}"</h2>
+            <p>We couldn't find any results for this search query in category <strong>{{ search_type|title }}</strong>.</p>
+            <div class="empty-suggestions">
+                <span class="empty-suggestion-title">Suggestions:</span>
+                <ul class="empty-suggestion-list">
+                    <li>Check your search query for typos or misspellings.</li>
+                    <li>Try changing the category selector to <strong>All</strong>.</li>
+                    <li>Search for just the song title or just the main artist name.</li>
+                </ul>
+            </div>
         </div>
         {% endif %}
     </section>

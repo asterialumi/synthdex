@@ -130,10 +130,43 @@
                     <span class="genre-tag">{{ genre.name }}</span>
                     {% endfor %}
                     {% else %}
-                    <span class="text-muted">No genres assigned yet</span>
+                    <span class="text-muted">No genres assigned yet (you can add below)</span>
                     {% endif %}
                 </div>
             </div>
+        </div>
+
+        <div class="manual-edit-section mt-4">
+            <details class="manual-edit-details">
+                <summary class="manual-edit-summary">
+                    <span class="summary-icon" aria-hidden="true">✏️</span>
+                    <span>Edit BPM or Genres</span>
+                </summary>
+                <div class="manual-edit-body">
+                    <p class="manual-edit-hint">You can update the tempo or genre tags manually. Changes are saved to the catalogue.</p>
+                    <form action="{% url 'catalogue:edit_metadata' track.id %}" method="post" novalidate>
+                        {% csrf_token %}
+                        <div class="manual-edit-fields">
+                            <div class="field-group">
+                                <label for="{{ metadata_form.bpm.id_for_label }}">{{ metadata_form.bpm.label }}</label>
+                                {{ metadata_form.bpm }}
+                                {% if metadata_form.bpm.help_text %}
+                                <p class="field-hint">{{ metadata_form.bpm.help_text }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="field-group">
+                                <label for="{{ metadata_form.genres.id_for_label }}">{{ metadata_form.genres.label }}</label>
+                                {{ metadata_form.genres }}
+                                {% if metadata_form.genres.help_text %}
+                                <p class="field-hint">{{ metadata_form.genres.help_text }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom btn-sm">Save metadata</button>
+                    </form>
+                </div>
+            </details>
         </div>
     </section>
 </div>
