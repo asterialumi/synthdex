@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
+from apps.favorites.models import Favorite
+from apps.history.utils import get_recent_distinct_searches
 from .forms import ProfileForm
 from .models import Profile
 
@@ -19,7 +21,17 @@ def profile_view(request):
     else:
         form = ProfileForm(instance=profile)
 
+    user_favorites = (
+        Favorite.objects.filter(user=request.user)
+        .select_related('track', 'track__album')
+        .prefetch_related('track__credits__artist')
+        .order_by('-created_at')[:5]
+    )
+    recent_searches = get_recent_distinct_searches(request.user, limit=5)
+
     return render(request, 'profile/profile.html', {
         'form': form,
         'profile': profile,
+        'user_favorites': user_favorites,
+        'recent_searches': recent_searches,
     })

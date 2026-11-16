@@ -23,7 +23,7 @@ def settings_view(request):
             theme_form = ThemeForm(request.POST, instance=user_settings)
             if theme_form.is_valid():
                 theme_form.save()
-                messages.success(request, 'Appearance preference saved.')
+                messages.success(request, 'Preferences saved.')
                 return redirect('user_settings:settings')
 
         elif form_id == 'username':

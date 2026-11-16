@@ -12,8 +12,8 @@
     </div>
 
     <div class="settings-card">
-        <h2>Appearance</h2>
-        <p class="settings-card-subtitle">Pick the palette that's easiest on your eyes.</p>
+        <h2>Appearance & Preferences</h2>
+        <p class="settings-card-subtitle">Manage your theme and default search category.</p>
         <form method="post" novalidate>
             {% csrf_token %}
             <input type="hidden" name="form_id" value="theme">
@@ -27,6 +27,19 @@
                     <span class="theme-switch-track"></span>
                 </label>
             </div>
+
+            <div class="field-group mt-3 pt-3 border-top">
+                <label for="{{ theme_form.pref_search_type.id_for_label }}">{{ theme_form.pref_search_type.label }}</label>
+                {{ theme_form.pref_search_type }}
+                {% if theme_form.pref_search_type.help_text %}
+                <p class="field-hint">{{ theme_form.pref_search_type.help_text }}</p>
+                {% endif %}
+                {% for error in theme_form.pref_search_type.errors %}
+                <p class="field-error">{{ error }}</p>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="btn btn-primary-custom mt-2">Save preferences</button>
         </form>
     </div>
 

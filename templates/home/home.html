@@ -28,6 +28,21 @@
         <button type="submit" class="btn btn-primary-custom">Search</button>
     </form>
     <p class="search-panel-hint">Search for music across sources. Results are cached in the database.</p>
+    {% if recent_searches %}
+    <div class="search-recent-chips">
+        <span class="chips-label">Recent:</span>
+        <div class="chips-list">
+            {% for item in recent_searches %}
+            <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="search-chip" title="Search again for '{{ item.query }}'">
+                <span class="chip-query">{{ item.query }}</span>
+                {% if item.search_type != 'all' %}
+                <span class="chip-badge">{{ item.search_type }}</span>
+                {% endif %}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 {% if latest_favorites %}

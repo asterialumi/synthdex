@@ -1,5 +1,5 @@
 {% extends 'common/base.html' %}
-{% load static %}
+{% load static catalogue_tags %}
 {% block title %}Profile | SynthDex{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/profile/profile.css' %}">
@@ -23,6 +23,63 @@
 
         {% if profile.bio %}
         <p class="profile-bio">{{ profile.bio }}</p>
+        {% endif %}
+    </div>
+
+    <div class="profile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="profile-form-title">Your Favorites</h2>
+                <p class="profile-form-subtitle mb-0">Tracks you've saved to your collection.</p>
+            </div>
+            <a href="{% url 'favorites:list' %}" class="profile-section-link">View all →</a>
+        </div>
+        {% if user_favorites %}
+        <div class="profile-items-list">
+            {% for fav in user_favorites %}
+            <div class="profile-item-row">
+                <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-artwork">
+                    {% if fav.track.artwork_url %}
+                    <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" loading="lazy">
+                    {% else %}
+                    <div class="profile-item-placeholder">🎵</div>
+                    {% endif %}
+                </a>
+                <div class="profile-item-details">
+                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-title">{{ fav.track.title }}</a>
+                    <span class="profile-item-artist">{{ fav.track|artist_credits_display }}</span>
+                </div>
+                <span class="profile-item-meta">{{ fav.track.duration_ms|duration_display }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="profile-empty-text">No favorites saved yet. <a href="{% url 'search:search' %}">Search for music</a> to add your favorites.</p>
+        {% endif %}
+    </div>
+
+    <div class="profile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="profile-form-title">Recent Searches</h2>
+                <p class="profile-form-subtitle mb-0">Your recent catalogue queries.</p>
+            </div>
+            <a href="{% url 'history:list' %}" class="profile-section-link">View history →</a>
+        </div>
+        {% if recent_searches %}
+        <div class="profile-items-list">
+            {% for search in recent_searches %}
+            <div class="profile-item-row">
+                <a href="{% url 'search:search' %}?q={{ search.query|urlencode }}&type={{ search.search_type }}" class="profile-history-link">
+                    <span class="profile-history-query">🔍 {{ search.query }}</span>
+                    <span class="history-type-badge">{{ search.get_search_type_display }}</span>
+                </a>
+                <span class="profile-item-meta">{{ search.searched_at|date:"M d" }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="profile-empty-text">No searches recorded yet. <a href="{% url 'search:search' %}">Start exploring</a>.</p>
         {% endif %}
     </div>
 

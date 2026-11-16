@@ -142,3 +142,31 @@ class PureHelperTests(SimpleTestCase):
                 target_duration_ms=248000,
             )
         )
+
+    def test_search_history_deduplication_logic(self):
+        # Simulates raw history records to verify in-Python deduplication logic
+        class DummyHistory:
+            def __init__(self, query, search_type):
+                self.query = query
+                self.search_type = search_type
+
+        items = [
+            DummyHistory("Get Lucky", "all"),
+            DummyHistory("  get lucky  ", "all"),
+            DummyHistory("Bohemian Rhapsody", "song"),
+            DummyHistory("GET LUCKY", "all"),
+            DummyHistory("Queen", "artist"),
+        ]
+
+        seen = set()
+        deduped = []
+        for entry in items:
+            key = (entry.query.strip().lower(), entry.search_type)
+            if key not in seen:
+                seen.add(key)
+                deduped.append(entry)
+
+        self.assertEqual(len(deduped), 3)
+        self.assertEqual(deduped[0].query, "Get Lucky")
+        self.assertEqual(deduped[1].query, "Bohemian Rhapsody")
+        self.assertEqual(deduped[2].query, "Queen")

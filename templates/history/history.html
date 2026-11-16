@@ -1,0 +1,73 @@
+{% extends 'common/base.html' %}
+{% load static %}
+
+{% block title %}Search History | SynthDex{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/history/history.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="history-page-container">
+    <header class="history-header">
+        <div class="hero-eyebrow-rule"></div>
+        <h1>Search History</h1>
+        <p class="history-subtitle">
+            {% if history_entries %}
+            Your recorded queries across SynthDex.
+            {% else %}
+            Keep track of what you've searched.
+            {% endif %}
+        </p>
+    </header>
+
+    {% if history_entries %}
+    <div class="history-toolbar">
+        <span class="history-count">
+            {{ history_entries|length }} quer{{ history_entries|length|pluralize:"y,ies" }} recorded
+        </span>
+        <form action="{% url 'history:clear' %}" method="post" onsubmit="return confirm('Are you sure you want to clear your entire search history?');">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger-outline btn-sm">Clear history</button>
+        </form>
+    </div>
+
+    <div class="history-list">
+        {% for entry in history_entries %}
+        <article class="history-card">
+            <div class="history-info">
+                <div class="history-query-row">
+                    <a href="{% url 'search:search' %}?q={{ entry.query|urlencode }}&type={{ entry.search_type }}" class="history-query-link" title="Re-run search">
+                        <span class="history-icon" aria-hidden="true">🔍</span>
+                        <span class="history-query-text">{{ entry.query }}</span>
+                    </a>
+                    <span class="history-type-badge">{{ entry.get_search_type_display }}</span>
+                </div>
+                <div class="history-meta-row">
+                    <span class="history-timestamp">{{ entry.searched_at|date:"M d, Y · H:i" }}</span>
+                    {% if entry.search_cache %}
+                    <span class="history-cache-status">
+                        • {{ entry.search_cache.result_count }} result{{ entry.search_cache.result_count|pluralize }} cached
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="history-actions">
+                <a href="{% url 'search:search' %}?q={{ entry.query|urlencode }}&type={{ entry.search_type }}" class="btn btn-primary-custom btn-sm" title="Re-run search">
+                    Search again
+                </a>
+            </div>
+        </article>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="history-empty-state">
+        <div class="empty-icon" aria-hidden="true">📜</div>
+        <h2>No search history yet</h2>
+        <p>Searches you perform will be saved here so you can easily revisit them.</p>
+        <a href="{% url 'search:search' %}" class="btn btn-primary-custom mt-3">Start Searching</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

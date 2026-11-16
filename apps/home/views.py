@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from apps.favorites.models import Favorite
+from apps.history.utils import get_recent_distinct_searches
 from apps.search.models import SearchType
 from apps.user_settings.models import UserSettings
 
@@ -18,8 +19,10 @@ def home_view(request):
         )
         .order_by('-created_at')[:4]
     )
+    recent_searches = get_recent_distinct_searches(request.user, limit=6)
     return render(request, 'home/home.html', {
         'search_types': SearchType.choices,
         'pref_search_type': user_settings.pref_search_type,
         'latest_favorites': latest_favorites,
+        'recent_searches': recent_searches,
     })
