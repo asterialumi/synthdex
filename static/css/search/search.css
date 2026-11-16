@@ -175,6 +175,34 @@
   transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
+.favorite-form-inline {
+  margin: 0;
+  display: flex;
+  align-items: center;
+}
+
+.btn-heart {
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.55rem;
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-heart:hover {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  transform: scale(1.08);
+}
+
+.btn-heart.is-favorite {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+}
+
 .btn-listen:hover {
   background-color: var(--color-accent);
   border-color: var(--color-accent);

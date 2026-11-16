@@ -78,7 +78,43 @@
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--color-accent);
-  margin-bottom: 0.5rem;
+}
+
+.favorite-toggle-form {
+  margin: 0;
+}
+
+.btn-favorite {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background-color: var(--color-paper);
+  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-favorite:hover {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+  transform: translateY(-1px);
+}
+
+.btn-favorite.is-favorite {
+  background-color: var(--color-accent-soft);
+  border-color: var(--color-accent);
+  color: var(--color-ink);
+}
+
+.favorite-heart {
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .hero-title {

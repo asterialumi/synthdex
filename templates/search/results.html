@@ -76,6 +76,13 @@
 
                 <div class="track-meta">
                     <span class="track-duration">{{ track.duration_ms|duration_display }}</span>
+                    <form action="{% url 'favorites:toggle' track.id %}" method="post" class="favorite-form-inline">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" class="btn-heart{% if track.id in user_favorite_ids %} is-favorite{% endif %}" title="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}" aria-label="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}">
+                            {% if track.id in user_favorite_ids %}❤️{% else %}🤍{% endif %}
+                        </button>
+                    </form>
                     {% with listen_url=track|track_listen_url %}
                     {% if listen_url %}
                     <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen" title="Listen on YouTube">

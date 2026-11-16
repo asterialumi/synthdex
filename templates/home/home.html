@@ -1,5 +1,5 @@
 {% extends 'common/base.html' %}
-{% load static %}
+{% load static catalogue_tags %}
 {% block title %}Home | SynthDex{% endblock %}
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
@@ -30,7 +30,50 @@
     <p class="search-panel-hint">Search for music across sources. Results are cached in the database.</p>
 </div>
 
+{% if latest_favorites %}
+<section class="dashboard-favorites-section">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="dashboard-section-title">Latest Favorites</h2>
+        <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
+    </div>
+    <div class="dashboard-favorites-grid">
+        {% for fav in latest_favorites %}
+        <article class="dashboard-fav-card">
+            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="dashboard-fav-artwork-link" title="View details">
+                {% if fav.track.artwork_url %}
+                <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
+                {% elif fav.track.album and fav.track.album.artwork_url %}
+                <img src="{{ fav.track.album.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
+                {% else %}
+                <div class="dashboard-fav-placeholder" aria-hidden="true">🎵</div>
+                {% endif %}
+            </a>
+            <div class="dashboard-fav-info">
+                <h3 class="dashboard-fav-title">
+                    <a href="{% url 'catalogue:track_detail' fav.track.id %}">{{ fav.track.title }}</a>
+                </h3>
+                <p class="dashboard-fav-artist">{{ fav.track|artist_credits_display }}</p>
+            </div>
+            {% with listen_url=fav.track|track_listen_url %}
+            {% if listen_url %}
+            <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact" title="Listen on YouTube">
+                <span>Listen</span>
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            </a>
+            {% endif %}
+            {% endwith %}
+        </article>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
 <div class="quick-links">
+    <a href="{% url 'favorites:list' %}" class="quick-link-card">
+        <span class="quick-link-icon" aria-hidden="true">❤️</span>
+        <span class="quick-link-title">Favorites</span>
+        <span class="quick-link-desc">Browse your saved tracks and listening collection.</span>
+    </a>
     <a href="{% url 'profile:profile' %}" class="quick-link-card">
         <span class="quick-link-icon" aria-hidden="true">🪪</span>
         <span class="quick-link-title">Profile</span>

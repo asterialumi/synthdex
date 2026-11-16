@@ -4,6 +4,7 @@ import logging
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 
+from apps.favorites.models import Favorite
 from apps.sources.deezer import enrich_track_from_deezer
 from .models import Track
 
@@ -53,6 +54,9 @@ def track_detail_view(request, track_id: int):
     # Source links
     sources = list(track.track_sources.all())
 
+    # Check if user has saved this track as favorite
+    is_favorite = Favorite.objects.filter(user=request.user, track=track).exists() if request.user.is_authenticated else False
+
     return render(request, 'catalogue/track_detail.html', {
         'track': track,
         'primary_artists': primary_artists,
@@ -60,4 +64,5 @@ def track_detail_view(request, track_id: int):
         'other_credits': other_credits,
         'genres': genres,
         'sources': sources,
+        'is_favorite': is_favorite,
     })

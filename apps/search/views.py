@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
+from apps.favorites.models import Favorite
 from apps.user_settings.models import UserSettings
 from .models import SearchType
 from .services import execute_search
@@ -43,11 +44,16 @@ def search_view(request):
         elif not result.tracks:
             messages.error(request, result.error_message)
 
+    user_favorite_ids = set(
+        Favorite.objects.filter(user=request.user, track__in=result.tracks).values_list('track_id', flat=True)
+    ) if request.user.is_authenticated and result.tracks else set()
+
     return render(request, 'search/results.html', {
         'query': raw_query,
         'search_type': search_type,
         'search_types': SearchType.choices,
         'tracks': result.tracks,
+        'user_favorite_ids': user_favorite_ids,
         'has_searched': True,
         'cache': result.cache,
         'is_stale': result.is_stale,

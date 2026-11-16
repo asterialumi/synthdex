@@ -16,5 +16,6 @@ urlpatterns = [
     path('settings/', include('apps.user_settings.urls')),
     path('search/', include('apps.search.urls')),
     path('track/', include('apps.catalogue.urls')),
+    path('favorites/', include('apps.favorites.urls')),
     path('', include('apps.home.urls')),
 ]

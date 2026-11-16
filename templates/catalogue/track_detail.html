@@ -28,7 +28,17 @@
         </div>
 
         <div class="hero-content">
-            <span class="track-type-badge">Track Details</span>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="track-type-badge">Track Details</span>
+                <form action="{% url 'favorites:toggle' track.id %}" method="post" class="favorite-toggle-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                    <button type="submit" class="btn btn-favorite{% if is_favorite %} is-favorite{% endif %}" title="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}" aria-label="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}">
+                        <span class="favorite-heart" aria-hidden="true">{% if is_favorite %}❤️{% else %}🤍{% endif %}</span>
+                        <span class="favorite-label">{% if is_favorite %}Saved to Favorites{% else %}Add to Favorites{% endif %}</span>
+                    </button>
+                </form>
+            </div>
             <h1 class="hero-title">{{ track.title }}</h1>
 
             <div class="artist-credits-list">
