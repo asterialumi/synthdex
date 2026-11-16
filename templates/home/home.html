@@ -12,17 +12,22 @@
 </div>
 
 <div class="search-panel">
-    <span class="search-panel-badge">Coming soon</span>
-    <form class="search-panel-form" onsubmit="return false;">
+    <form class="search-panel-form" action="{% url 'search:search' %}" method="get">
+        <select name="type" class="search-panel-select" aria-label="Search category">
+            {% for value, label in search_types %}
+            <option value="{{ value }}"{% if value == pref_search_type %} selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
         <input
             type="text"
+            name="q"
             class="search-panel-input"
             placeholder="Search a song, artist, or album…"
-            disabled
-            aria-disabled="true">
-        <button type="submit" class="btn btn-primary-custom" disabled>Search</button>
+            required
+            aria-label="Search query">
+        <button type="submit" class="btn btn-primary-custom">Search</button>
     </form>
-    <p class="search-panel-hint">We're wiring up sources next — search, favorites, and history are on the way.</p>
+    <p class="search-panel-hint">Search for music across sources. Results are cached in the database.</p>
 </div>
 
 <div class="quick-links">

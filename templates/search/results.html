@@ -1,0 +1,99 @@
+{% extends 'common/base.html' %}
+{% load static catalogue_tags %}
+
+{% block title %}
+{% if query %}Search: {{ query }} | SynthDex{% else %}Search | SynthDex{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/search/search.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="search-page-container">
+    <header class="search-header">
+        <h1>Music Search</h1>
+        <p class="search-subtitle">Search tracks, artists, and albums. Results are cached automatically.</p>
+    </header>
+
+    <div class="search-bar-wrapper">
+        <form class="search-panel-form" action="{% url 'search:search' %}" method="get">
+            <select name="type" class="search-panel-select" aria-label="Search category">
+                {% for value, label in search_types %}
+                <option value="{{ value }}"{% if value == search_type %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input
+                type="text"
+                name="q"
+                value="{{ query }}"
+                class="search-panel-input"
+                placeholder="Search a song, artist, or album…"
+                required
+                aria-label="Search query">
+            <button type="submit" class="btn btn-primary-custom">Search</button>
+        </form>
+    </div>
+
+    {% if has_searched %}
+    <section class="search-results-section" aria-label="Search Results">
+        <div class="results-meta-bar">
+            <span class="results-count">
+                {% if tracks %}
+                Found {{ tracks|length }} result{{ tracks|length|pluralize }} for "<strong>{{ query }}</strong>"
+                {% else %}
+                No results found for "<strong>{{ query }}</strong>"
+                {% endif %}
+            </span>
+            {% if is_stale and cache %}
+            <span class="cache-badge" title="Results served from previous query cache">
+                Cached {{ cache.fetched_at|date:"M d, Y" }}
+            </span>
+            {% endif %}
+        </div>
+
+        {% if tracks %}
+        <div class="search-results-list">
+            {% for track in tracks %}
+            <article class="track-card">
+                <div class="track-artwork-wrap">
+                    {% if track.artwork_url %}
+                    <img src="{{ track.artwork_url }}" alt="{{ track.title }} artwork" class="track-artwork" loading="lazy">
+                    {% else %}
+                    <div class="track-artwork-placeholder" aria-hidden="true">🎵</div>
+                    {% endif %}
+                </div>
+
+                <div class="track-info">
+                    <h2 class="track-title">{{ track.title }}</h2>
+                    <p class="track-artist">{{ track|artist_credits_display }}</p>
+                    {% if track.album %}
+                    <p class="track-album">{{ track.album.title }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="track-meta">
+                    <span class="track-duration">{{ track.duration_ms|duration_display }}</span>
+                    {% with listen_url=track|track_listen_url %}
+                    {% if listen_url %}
+                    <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen" title="Listen on YouTube">
+                        <span>Listen</span>
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                    {% endif %}
+                    {% endwith %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="search-empty-state">
+            <div class="empty-icon" aria-hidden="true">🔍</div>
+            <h2>No tracks found</h2>
+            <p>We couldn't find any tracks matching "{{ query }}". Try searching for a different song title or artist name.</p>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+{% endblock %}

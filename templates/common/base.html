@@ -37,6 +37,7 @@
                 {% if user.is_authenticated %}
                 <div class="d-flex align-items-center site-nav">
                     <a href="{% url 'home:home' %}" class="site-nav-link{% if request.resolver_match.app_name == 'home' %} is-active{% endif %}">Home</a>
+                    <a href="{% url 'search:search' %}" class="site-nav-link{% if request.resolver_match.app_name == 'search' %} is-active{% endif %}">Search</a>
                     <a href="{% url 'profile:profile' %}" class="site-nav-link{% if request.resolver_match.app_name == 'profile' %} is-active{% endif %}">Profile</a>
                     <a href="{% url 'user_settings:settings' %}" class="site-nav-link{% if request.resolver_match.app_name == 'user_settings' %} is-active{% endif %}">Settings</a>
                     <a href="{% url 'login:logout' %}" class="btn btn-danger-outline">Logout</a>
