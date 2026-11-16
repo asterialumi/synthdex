@@ -23,6 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Load variables from a local .env file (never committed to git).
 load_dotenv(BASE_DIR / '.env')
 
+# External API configuration
+YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY', '')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
