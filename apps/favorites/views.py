@@ -1,13 +1,14 @@
 """Views for managing user favorite tracks."""
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from apps.catalogue.models import Track
 from .models import Favorite
+from .selectors import get_favorite_artists, get_favorites_with_details, sql_of
 
 
 @login_required(login_url='login:login')
@@ -41,17 +42,22 @@ def toggle_favorite_view(request, track_id: int):
 
 @login_required(login_url='login:login')
 def favorites_list_view(request):
-    """List all tracks saved by the authenticated user, ordered newest first."""
-    user_favorites = (
-        Favorite.objects.filter(user=request.user)
-        .select_related('track', 'track__album')
-        .prefetch_related(
-            'track__credits__artist',
-            'track__track_sources__source',
-        )
-        .order_by('-created_at')
-    )
+    """List all tracks and credited artists saved by the authenticated user."""
+    favorites = get_favorites_with_details(request.user)
+    favorite_artists = get_favorite_artists(request.user)
+    show_sql = bool(settings.DEBUG)
 
-    return render(request, 'favorites/favorites.html', {
-        'favorites': user_favorites,
-    })
+    context = {
+        'favorites': favorites,
+        'favorite_artists': favorite_artists,
+        'show_sql': show_sql,
+    }
+
+    if show_sql:
+        context['favorites_sql'] = sql_of(favorites)
+        context['artists_sql'] = sql_of(favorite_artists)
+
+    return render(request, 'favorites/favorites.html', context)
+
+
+favorites_list = favorites_list_view

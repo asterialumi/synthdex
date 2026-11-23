@@ -141,3 +141,138 @@
     border-top: 1px solid var(--border);
   }
 }
+
+
+/* ==========================================================================
+   Favorites Table, Badges & Debug SQL Section
+   ========================================================================== */
+
+.favorites-section-title {
+  font-size: 1.4rem;
+  margin-bottom: 0;
+}
+
+.favorites-count-badge {
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+}
+
+.favorites-table-wrap {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto;
+}
+
+.favorites-table {
+  margin-bottom: 0;
+  color: var(--ink);
+  background-color: transparent;
+}
+
+.favorites-table th {
+  background-color: var(--surface);
+  color: var(--ink-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border);
+  padding: 0.85rem 1rem;
+  white-space: nowrap;
+}
+
+.favorites-table td {
+  padding: 0.95rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.92rem;
+  vertical-align: middle;
+}
+
+.favorites-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.favorites-table tbody tr:hover td {
+  background-color: var(--surface-hover);
+}
+
+.favorite-track-link {
+  color: var(--ink);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.favorite-track-link:hover {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.favorite-artist-badge {
+  font-size: 0.82rem;
+  padding: 0.35rem 0.85rem;
+}
+
+.favorites-empty-state-compact {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: var(--surface-raised);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink-muted);
+}
+
+/* Debug SQL Details Block */
+.favorites-sql-details {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.favorites-sql-summary {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  cursor: pointer;
+  user-select: none;
+}
+
+.favorites-sql-summary:hover {
+  color: var(--accent);
+}
+
+.favorites-sql-body {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.favorites-sql-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.5rem;
+}
+
+.favorites-sql-pre {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--ink);
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+  margin-bottom: 0;
+}

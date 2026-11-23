@@ -1,5 +1,5 @@
 {% extends 'common/base.html' %}
-{% load static catalogue_tags %}
+{% load static favorites_extras %}
 
 {% block title %}Favorites | SynthDex{% endblock %}
 
@@ -21,66 +21,105 @@
         </p>
     </header>
 
-    {% if favorites %}
-    <div class="favorites-list">
-        {% for fav in favorites %}
-        <article class="favorite-card" id="fav-{{ fav.track.id }}">
-            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-artwork-wrap" title="View details for {{ fav.track.title }}">
-                {% if fav.track.artwork_url %}
-                <img src="{{ fav.track.artwork_url }}" alt="Cover art for {{ fav.track.title }}" class="cover cover--md favorite-artwork" loading="lazy">
-                {% elif fav.track.album and fav.track.album.artwork_url %}
-                <img src="{{ fav.track.album.artwork_url }}" alt="Cover art for {{ fav.track.title }}" class="cover cover--md favorite-artwork" loading="lazy">
-                {% else %}
-                <div class="cover cover--md cover-placeholder favorite-artwork-placeholder" aria-hidden="true">
-                    <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
-                </div>
-                {% endif %}
-            </a>
+    <!-- Section 1: My favorites (JOIN) -->
+    <section class="favorites-section mb-5" aria-labelledby="heading-my-favorites">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 id="heading-my-favorites" class="favorites-section-title">My favorites</h2>
+            {% if favorites %}
+            <span class="favorites-count-badge">{{ favorites|length }} track{{ favorites|length|pluralize }}</span>
+            {% endif %}
+        </div>
 
-            <div class="favorite-info">
-                <h2 class="favorite-title">
-                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-title-link">{{ fav.track.title }}</a>
-                </h2>
-                <p class="favorite-artist">{{ fav.track|artist_credits_display }}</p>
-                <div class="favorite-details-meta">
-                    {% if fav.track.album %}
-                    <span class="favorite-album">{{ fav.track.album.title }}</span>
-                    <span class="meta-dot" aria-hidden="true">&bull;</span>
-                    {% endif %}
-                    <span class="favorite-date">Saved {{ fav.created_at|date:"M d, Y" }}</span>
-                </div>
+        {% if favorites %}
+        <div class="table-responsive favorites-table-wrap">
+            <table class="table table-hover favorites-table align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col" class="th-title">Title</th>
+                        <th scope="col" class="th-artists">Artists</th>
+                        <th scope="col" class="th-album">Album</th>
+                        <th scope="col" class="th-bpm">BPM</th>
+                        <th scope="col" class="th-duration">Duration</th>
+                        <th scope="col" class="th-date">Date Added</th>
+                        <th scope="col" class="th-actions text-end"><span class="visually-hidden">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fav in favorites %}
+                    <tr id="fav-{{ fav.track.id }}">
+                        <td class="td-title">
+                            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-track-link fw-semibold">
+                                {{ fav.track.title }}
+                            </a>
+                        </td>
+                        <td class="td-artists">
+                            {{ fav.track|artist_names_joined }}
+                        </td>
+                        <td class="td-album">
+                            {{ fav.track.album.title|default:"—" }}
+                        </td>
+                        <td class="td-bpm tabular-nums">
+                            {{ fav.track.bpm|format_bpm_or_dash }}
+                        </td>
+                        <td class="td-duration tabular-nums">
+                            {{ fav.track.duration_ms|duration_mss }}
+                        </td>
+                        <td class="td-date">
+                            {{ fav.created_at|date:"M d, Y" }}
+                        </td>
+                        <td class="td-actions text-end">
+                            <form action="{% url 'favorites:toggle' fav.track.id %}" method="post" class="favorite-remove-form d-inline-block">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.get_full_path }}#fav-{{ fav.track.id }}">
+                                <button type="submit" class="icon-btn btn-heart is-favorite" aria-label="Remove {{ fav.track.title }} from favorites" title="Remove from favorites">
+                                    <svg class="icon" aria-hidden="true"><use href="#i-heart-fill"/></svg>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state favorites-empty-state">
+            <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+            <h3 class="empty-state-title">No favorites yet</h3>
+            <p class="empty-state-desc">When you search for tracks, click the heart icon on any result to save it to your personal collection.</p>
+            <a href="{% url 'search:search' %}" class="btn btn-primary">Find tracks to save</a>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Section 2: Artists in your favorites (SUBQUERY) -->
+    <section class="favorites-section mb-5" aria-labelledby="heading-favorite-artists">
+        <h2 id="heading-favorite-artists" class="favorites-section-title mb-3">Artists in your favorites</h2>
+        {% if favorite_artists %}
+        <div class="favorite-artists-list d-flex flex-wrap gap-2">
+            {% for artist in favorite_artists %}
+            <span class="pill pill--accent favorite-artist-badge">{{ artist.name }}</span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state favorites-empty-state-compact">
+            <p class="empty-state-desc mb-0">No credited artists found in your favorites.</p>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Section 3: Query Debug Information -->
+    {% if show_sql %}
+    <section class="favorites-section favorites-sql-section mt-5" aria-label="Debug SQL">
+        <details class="favorites-sql-details">
+            <summary class="favorites-sql-summary">SQL used (debug only)</summary>
+            <div class="favorites-sql-body">
+                <h3 class="favorites-sql-title">Favorites JOIN query</h3>
+                <pre class="favorites-sql-pre"><code>{{ favorites_sql }}</code></pre>
+                <h3 class="favorites-sql-title mt-3">Favorite artists SUBQUERY</h3>
+                <pre class="favorites-sql-pre"><code>{{ artists_sql }}</code></pre>
             </div>
-
-            <div class="favorite-actions">
-                <span class="favorite-duration tabular-nums">{{ fav.track.duration_ms|duration_display }}</span>
-
-                {% with listen_url=fav.track|track_listen_url %}
-                {% if listen_url %}
-                <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Listen on YouTube">
-                    <span>Listen</span>
-                    <svg class="icon" aria-hidden="true"><use href="#i-external-link"/></svg>
-                </a>
-                {% endif %}
-                {% endwith %}
-
-                <form action="{% url 'favorites:toggle' fav.track.id %}" method="post" class="favorite-remove-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}#fav-{{ fav.track.id }}">
-                    <button type="submit" class="icon-btn btn-heart is-favorite" aria-label="Remove from favorites" title="Remove from favorites">
-                        <svg class="icon" aria-hidden="true"><use href="#i-heart-fill"/></svg>
-                    </button>
-                </form>
-            </div>
-        </article>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state favorites-empty-state">
-        <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-music-note"/></svg>
-        <h2 class="empty-state-title">No favorites yet</h2>
-        <p class="empty-state-desc">When you search for tracks, click the heart icon on any result to save it to your personal collection.</p>
-        <a href="{% url 'search:search' %}" class="btn btn-primary">Find tracks to save</a>
-    </div>
+        </details>
+    </section>
     {% endif %}
 </div>
 {% endblock %}
