@@ -147,21 +147,8 @@
                     <form action="{% url 'catalogue:edit_metadata' track.id %}" method="post" novalidate>
                         {% csrf_token %}
                         <div class="manual-edit-fields">
-                            <div class="field-group">
-                                <label for="{{ metadata_form.bpm.id_for_label }}">{{ metadata_form.bpm.label }}</label>
-                                {{ metadata_form.bpm }}
-                                {% if metadata_form.bpm.help_text %}
-                                <p class="field-hint">{{ metadata_form.bpm.help_text }}</p>
-                                {% endif %}
-                            </div>
-
-                            <div class="field-group">
-                                <label for="{{ metadata_form.genres.id_for_label }}">{{ metadata_form.genres.label }}</label>
-                                {{ metadata_form.genres }}
-                                {% if metadata_form.genres.help_text %}
-                                <p class="field-hint">{{ metadata_form.genres.help_text }}</p>
-                                {% endif %}
-                            </div>
+                            {% include 'common/_field.html' with field=metadata_form.bpm %}
+                            {% include 'common/_field.html' with field=metadata_form.genres %}
                         </div>
                         <button type="submit" class="btn btn-primary-custom btn-sm">Save metadata</button>
                     </form>

@@ -1,0 +1,253 @@
+/* ==========================================================================
+   SynthDex Unified Form System (forms.css)
+   Consistent 44px controls, custom selects, labels, hints, errors, switches.
+   ========================================================================== */
+
+/* Field Container */
+.field-group {
+  margin-bottom: 1.35rem;
+  width: 100%;
+}
+
+/* Labels: Block, 600 weight, placed above controls */
+.field-group label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 0.4rem;
+  line-height: 1.2;
+}
+
+/* Text Inputs, Selects, and Textareas */
+.field-group input[type="text"],
+.field-group input[type="password"],
+.field-group input[type="email"],
+.field-group input[type="number"],
+.field-group input[type="search"],
+.field-group select,
+.field-group textarea,
+.form-control-themed,
+.search-panel-input,
+.search-panel-select,
+.manual-edit-input {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  color: var(--ink);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+  height: 44px;
+  min-height: 44px;
+  line-height: 1.3;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+/* Textarea: Minimum height and vertical resize only */
+.field-group textarea {
+  height: auto;
+  min-height: 96px;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+/* Placeholders: Muted and readable */
+::placeholder {
+  color: var(--ink-muted);
+  opacity: 0.65;
+}
+
+/* Focus Ring: Single consistent amber glow */
+.field-group input:focus,
+.field-group select:focus,
+.field-group textarea:focus,
+.form-control-themed:focus,
+.search-panel-input:focus,
+.search-panel-select:focus,
+.manual-edit-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+/* Error states */
+.field-group--error input,
+.field-group--error select,
+.field-group--error textarea {
+  border-color: var(--danger);
+}
+
+.field-group--error input:focus,
+.field-group--error select:focus,
+.field-group--error textarea:focus {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+/* Field Hints and Password Rules */
+.field-hint {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  margin: 0.4rem 0 0;
+  line-height: 1.4;
+}
+
+/* Compact, bullet-free password rules */
+.field-hint ul,
+.password-checklist {
+  list-style: none;
+  padding-left: 0;
+  margin: 0.4rem 0 0;
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.field-hint li,
+.password-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* Error messages with icon */
+.field-error {
+  font-size: 0.82rem;
+  color: var(--danger);
+  margin: 0.4rem 0 0;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  line-height: 1.3;
+}
+
+.field-error .icon {
+  width: 1em;
+  height: 1em;
+  flex-shrink: 0;
+}
+
+/* Top-level Form Alert */
+.form-toplevel-errors {
+  background-color: var(--danger-soft);
+  border: 1px solid var(--danger);
+  color: var(--danger);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  margin-bottom: 1.25rem;
+}
+
+/* ==========================================================================
+   Custom Select with SVG Chevron & Base-Select Progressive Enhancement
+   ========================================================================== */
+select,
+.field-group select,
+.search-panel-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23b8792f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 16px 16px;
+  padding-right: 2.25rem;
+  cursor: pointer;
+}
+
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] .field-group select,
+:root[data-theme="dark"] .search-panel-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23e09f53' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+}
+
+/* Progressive enhancement: style the open select popup in modern Chromium */
+@supports (appearance: base-select) {
+  select,
+  .field-group select,
+  .search-panel-select {
+    appearance: base-select;
+  }
+
+  ::picker(select) {
+    background-color: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    padding: var(--space-1);
+    color: var(--ink);
+  }
+
+  option {
+    padding: 0.5rem 0.85rem;
+    border-radius: var(--radius-xs);
+    color: var(--ink);
+    background-color: transparent;
+  }
+
+  option:hover,
+  option:focus,
+  option:checked {
+    background-color: var(--accent-soft);
+    color: var(--accent);
+  }
+}
+
+/* ==========================================================================
+   Switch Toggle Component (Settings & Preferences)
+   ========================================================================== */
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 28px;
+  flex: none;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.theme-switch-track {
+  position: absolute;
+  inset: 0;
+  background-color: var(--border);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.theme-switch-track::before {
+  content: "";
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  top: 3px;
+  border-radius: 50%;
+  background-color: #ffffff;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease;
+}
+
+.theme-switch input:checked + .theme-switch-track {
+  background-color: var(--accent);
+}
+
+.theme-switch input:checked + .theme-switch-track::before {
+  transform: translateX(20px);
+}
+
+.theme-switch input:focus-visible + .theme-switch-track {
+  box-shadow: var(--focus-ring);
+}

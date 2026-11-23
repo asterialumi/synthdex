@@ -96,16 +96,7 @@
             {% endif %}
 
             {% for field in form %}
-            <div class="field-group{% if field.errors %} field-group--error{% endif %}">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.help_text %}
-                <p class="field-hint">{{ field.help_text }}</p>
-                {% endif %}
-                {% for error in field.errors %}
-                <p class="field-error">{{ error }}</p>
-                {% endfor %}
-            </div>
+            {% include 'common/_field.html' with field=field %}
             {% endfor %}
 
             <button type="submit" class="btn btn-primary-custom">Save profile</button>
