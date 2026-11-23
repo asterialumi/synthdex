@@ -17,12 +17,132 @@
 
         {% if profile.favorite_genre %}
         <div class="profile-meta">
-            <span class="profile-tag">🎵 {{ profile.favorite_genre }}</span>
+            <span class="pill pill--accent">
+                <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                <span>{{ profile.favorite_genre }}</span>
+            </span>
         </div>
         {% endif %}
 
         {% if profile.bio %}
         <p class="profile-bio">{{ profile.bio }}</p>
+        {% endif %}
+
+        {% if not profile.favorite_genre and not profile.bio %}
+        <p class="profile-prompt-empty">
+            <a href="#edit-profile" class="profile-prompt-link">
+                <svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg>
+                <span>Add a bio and favorite genre &rarr;</span>
+            </a>
+        </p>
+        {% endif %}
+    </div>
+
+    <!-- Taste Summary Card -->
+    <div class="profile-card taste-summary-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h2 class="profile-form-title">Your Taste Summary</h2>
+                <p class="profile-form-subtitle mb-0">Insights calculated from your saved favorites.</p>
+            </div>
+            {% if taste_summary.total > 0 %}
+            <span class="pill pill--accent">{{ taste_summary.total }} favorite{{ taste_summary.total|pluralize }}</span>
+            {% endif %}
+        </div>
+
+        {% if taste_summary.total > 0 %}
+        <div class="taste-details-grid">
+            <!-- Genre Line -->
+            <div class="taste-stat-row">
+                <div class="taste-stat-header">
+                    <span class="taste-stat-label">Genre Profile</span>
+                    {% if taste_summary.genre_matched %}
+                    <span class="taste-match-badge" title="Your declared favorite matches your top favorited tracks">
+                        <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+                        <span>Your favorites back this up</span>
+                    </span>
+                    {% endif %}
+                </div>
+
+                <div class="taste-genre-comparison">
+                    <div class="taste-declared-line">
+                        <span class="taste-sublabel">You say:</span>
+                        {% if taste_summary.declared_genre %}
+                        <em class="taste-declared-val">{{ taste_summary.declared_genre }}</em>
+                        {% else %}
+                        <a href="#edit-profile" class="taste-link-muted">Set a favorite genre &rarr;</a>
+                        {% endif %}
+                    </div>
+
+                    <div class="taste-favorites-say-line">
+                        <span class="taste-sublabel">Your favorites say:</span>
+                        {% if taste_summary.top_genres %}
+                        <div class="taste-pills-list">
+                            {% for genre in taste_summary.top_genres %}
+                            <span class="pill" title="{{ genre.count }} track{{ genre.count|pluralize }} in this genre">{{ genre.name }} &middot; {{ genre.count }}</span>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <span class="taste-muted-text">No genre data yet. Open a favorite to add one.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- BPM Line -->
+            <div class="taste-stat-row">
+                <div class="taste-stat-header">
+                    <span class="taste-stat-label">Tempo / BPM</span>
+                </div>
+                {% if taste_summary.avg_bpm %}
+                <div class="taste-bpm-info">
+                    {% if taste_summary.bpm_single_value %}
+                    <p class="taste-bpm-stat"><strong>{{ taste_summary.min_bpm_display }}</strong> BPM</p>
+                    {% else %}
+                    <p class="taste-bpm-stat">
+                        Average <strong>{{ taste_summary.avg_bpm_display }}</strong> BPM &middot; range <strong>{{ taste_summary.min_bpm_display }}&ndash;{{ taste_summary.max_bpm_display }}</strong>
+                    </p>
+                    <div class="bpm-range-bar" role="progressbar" aria-label="BPM range" aria-valuemin="{{ taste_summary.min_bpm }}" aria-valuemax="{{ taste_summary.max_bpm }}" aria-valuenow="{{ taste_summary.avg_bpm }}">
+                        <div class="bpm-range-track">
+                            <span class="bpm-range-marker" style="left: {{ taste_summary.bpm_range_avg_pct }}%;" title="Average: {{ taste_summary.avg_bpm_display }} BPM"></span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                {% else %}
+                <p class="taste-muted-text">No BPM data yet.</p>
+                {% endif %}
+            </div>
+
+            <!-- Coverage Line -->
+            {% if taste_summary.has_partial_coverage %}
+            <p class="taste-coverage-line">
+                Based on {{ taste_summary.with_bpm }} of {{ taste_summary.total }} favorite{{ taste_summary.total|pluralize }} with BPM and {{ taste_summary.with_genre }} of {{ taste_summary.total }} with genres.
+            </p>
+            {% endif %}
+
+            <!-- Needs-details Nudge -->
+            {% if taste_summary.needs_details_count > 0 %}
+            <div class="taste-nudge-box">
+                <span class="taste-nudge-heading">
+                    {{ taste_summary.needs_details_count }} favorite{{ taste_summary.needs_details_count|pluralize }} missing BPM or genre:
+                </span>
+                <span class="taste-nudge-items">
+                    {% for fav in taste_summary.needs_details_preview %}
+                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="taste-nudge-link">{{ fav.track.title }}</a>{% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                    {% if taste_summary.needs_details_more_count > 0 %}
+                    <span class="taste-nudge-more">+{{ taste_summary.needs_details_more_count }} more</span>
+                    {% endif %}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        {% else %}
+        <div class="taste-empty-state">
+            <p class="taste-empty-msg">Favorite a few songs and your taste summary shows up here.</p>
+            <a href="{% url 'search:search' %}" class="btn btn-primary btn-sm">Find tracks to favorite</a>
+        </div>
         {% endif %}
     </div>
 
@@ -32,7 +152,7 @@
                 <h2 class="profile-form-title">Your Favorites</h2>
                 <p class="profile-form-subtitle mb-0">Tracks you've saved to your collection.</p>
             </div>
-            <a href="{% url 'favorites:list' %}" class="profile-section-link">View all →</a>
+            <a href="{% url 'favorites:list' %}" class="profile-section-link">View all &rarr;</a>
         </div>
         {% if user_favorites %}
         <div class="profile-items-list">
@@ -42,14 +162,16 @@
                     {% if fav.track.artwork_url %}
                     <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" loading="lazy">
                     {% else %}
-                    <div class="profile-item-placeholder">🎵</div>
+                    <div class="profile-item-placeholder">
+                        <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                    </div>
                     {% endif %}
                 </a>
                 <div class="profile-item-details">
                     <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-title">{{ fav.track.title }}</a>
                     <span class="profile-item-artist">{{ fav.track|artist_credits_display }}</span>
                 </div>
-                <span class="profile-item-meta">{{ fav.track.duration_ms|duration_display }}</span>
+                <span class="profile-item-meta tabular-nums">{{ fav.track.duration_ms|duration_display }}</span>
             </div>
             {% endfor %}
         </div>
@@ -64,15 +186,16 @@
                 <h2 class="profile-form-title">Recent Searches</h2>
                 <p class="profile-form-subtitle mb-0">Your recent catalogue queries.</p>
             </div>
-            <a href="{% url 'history:list' %}" class="profile-section-link">View history →</a>
+            <a href="{% url 'history:list' %}" class="profile-section-link">View history &rarr;</a>
         </div>
         {% if recent_searches %}
         <div class="profile-items-list">
             {% for search in recent_searches %}
             <div class="profile-item-row">
                 <a href="{% url 'search:search' %}?q={{ search.query|urlencode }}&type={{ search.search_type }}" class="profile-history-link">
-                    <span class="profile-history-query">🔍 {{ search.query }}</span>
-                    <span class="history-type-badge">{{ search.get_search_type_display }}</span>
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                    <span class="profile-history-query">{{ search.query }}</span>
+                    <span class="pill">{{ search.get_search_type_display }}</span>
                 </a>
                 <span class="profile-item-meta">{{ search.searched_at|date:"M d" }}</span>
             </div>
@@ -83,9 +206,9 @@
         {% endif %}
     </div>
 
-    <div class="profile-card">
+    <div class="profile-card" id="edit-profile">
         <h2 class="profile-form-title">Edit profile</h2>
-        <p class="profile-form-subtitle">This is what other listeners will see.</p>
+        <p class="profile-form-subtitle">Your taste notes. Only you can see these.</p>
         <form method="post" novalidate>
             {% csrf_token %}
 

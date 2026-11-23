@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
 from apps.favorites.models import Favorite
+from apps.favorites.taste import get_taste_summary
 from apps.history.utils import get_recent_distinct_searches
 from .forms import ProfileForm
 from .models import Profile
@@ -28,10 +29,12 @@ def profile_view(request):
         .order_by('-created_at')[:5]
     )
     recent_searches = get_recent_distinct_searches(request.user, limit=5)
+    taste_summary = get_taste_summary(request.user, declared_genre=profile.favorite_genre or '')
 
     return render(request, 'profile/profile.html', {
         'form': form,
         'profile': profile,
         'user_favorites': user_favorites,
         'recent_searches': recent_searches,
+        'taste_summary': taste_summary,
     })

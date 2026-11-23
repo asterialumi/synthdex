@@ -8,7 +8,11 @@
 <div class="hero">
     <div class="hero-eyebrow-rule"></div>
     <h1>Welcome back, {{ profile_display_name|default:user.username }}</h1>
+    {% if profile_bio %}
+    <p class="hero-bio" title="{{ profile_bio }}">{{ profile_bio }}</p>
+    {% else %}
     <p>Your SynthDex catalogue is ready whenever you are.</p>
+    {% endif %}
 </div>
 
 <div class="search-panel">
@@ -92,7 +96,7 @@
     <a href="{% url 'profile:profile' %}" class="quick-link-card">
         <span class="quick-link-icon" aria-hidden="true">🪪</span>
         <span class="quick-link-title">Profile</span>
-        <span class="quick-link-desc">Tell other listeners a bit about your taste.</span>
+        <span class="quick-link-desc">Keep personal notes about your musical taste.</span>
     </a>
     <a href="{% url 'user_settings:settings' %}" class="quick-link-card">
         <span class="quick-link-icon" aria-hidden="true">⚙️</span>
