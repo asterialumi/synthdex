@@ -8,153 +8,249 @@
 {% endblock %}
 
 {% block content %}
-<div class="track-detail-container">
+<div class="track-detail-page{% if rail_tracks %} track-detail-page--with-rail{% else %} track-detail-page--single{% endif %}">
     <nav class="detail-breadcrumb" aria-label="Breadcrumb">
+        {% if rail_query %}
+        <a href="{% url 'search:search' %}?q={{ rail_query|urlencode }}&type={{ rail_search_type }}" class="detail-back-link">
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg>
+            <span>Back to results</span>
+        </a>
+        {% else %}
         <a href="{% url 'search:search' %}" class="detail-back-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg>
             <span>Back to Search</span>
         </a>
+        {% endif %}
     </nav>
 
-    <header class="track-hero-card">
-        <div class="hero-artwork-wrapper">
-            {% if track.artwork_url %}
-            <img src="{{ track.artwork_url }}" alt="{{ track.title }} artwork" class="hero-artwork">
-            {% elif track.album and track.album.artwork_url %}
-            <img src="{{ track.album.artwork_url }}" alt="{{ track.title }} artwork" class="hero-artwork">
-            {% else %}
-            <div class="hero-artwork-placeholder" aria-hidden="true">🎵</div>
-            {% endif %}
-        </div>
+    {% if rail_tracks %}
+    <div class="grid-two-col track-detail-layout">
+        <div class="track-detail-main">
+    {% else %}
+    <div class="track-detail-layout track-detail-layout--single">
+        <div class="track-detail-main">
+    {% endif %}
 
-        <div class="hero-content">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="track-type-badge">Track Details</span>
-                <form action="{% url 'favorites:toggle' track.id %}" method="post" class="favorite-toggle-form">
-                    {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button type="submit" class="btn btn-favorite{% if is_favorite %} is-favorite{% endif %}" title="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}" aria-label="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}">
-                        <span class="favorite-heart" aria-hidden="true">{% if is_favorite %}❤️{% else %}🤍{% endif %}</span>
-                        <span class="favorite-label">{% if is_favorite %}Saved to Favorites{% else %}Add to Favorites{% endif %}</span>
-                    </button>
-                </form>
-            </div>
-            <h1 class="hero-title">{{ track.title }}</h1>
-
-            <div class="artist-credits-list">
-                {% for credit in primary_artists %}
-                <span class="artist-credit primary-artist">
-                    <strong>{{ credit.artist.name }}</strong>
-                    <span class="role-badge">Primary</span>
-                </span>
-                {% endfor %}
-
-                {% for credit in featured_artists %}
-                <span class="artist-credit featured-artist">
-                    <span>feat. {{ credit.artist.name }}</span>
-                    <span class="role-badge role-badge--featured">Featured</span>
-                </span>
-                {% endfor %}
-
-                {% for credit in other_credits %}
-                <span class="artist-credit other-artist">
-                    <span>{{ credit.artist.name }}</span>
-                    <span class="role-badge">{{ credit.get_role_display }}</span>
-                </span>
-                {% endfor %}
-            </div>
-
-            {% if sources %}
-            <div class="hero-actions">
-                <span class="actions-label">Listen on:</span>
-                <div class="listen-links-group">
-                    {% for source in sources %}
-                    <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-source" title="Open {{ source.source.name|capfirst }} (opens in a new tab)">
-                        {% if source.source.name == 'youtube' %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                        {% elif source.source.name == 'deezer' %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="12" cy="12" r="10"/></svg>
-                        {% else %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                        {% endif %}
-                        <span>{{ source.source.name|capfirst }}</span>
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-                    </a>
-                    {% endfor %}
-                </div>
-            </div>
-            {% endif %}
-        </div>
-    </header>
-
-    <section class="metadata-section" aria-label="Metadata and Audio Properties">
-        <h2 class="section-title">Track Information</h2>
-        <div class="metadata-grid">
-            <div class="metadata-card">
-                <span class="metadata-label">Duration</span>
-                <span class="metadata-value">{{ track.duration_ms|duration_display }}</span>
-            </div>
-
-            <div class="metadata-card">
-                <span class="metadata-label">Tempo / BPM</span>
-                <span class="metadata-value">{% if track.bpm %}{{ track.bpm }} BPM{% else %}--{% endif %}</span>
-            </div>
-
-            <div class="metadata-card">
-                <span class="metadata-label">Release Year</span>
-                <span class="metadata-value">{{ track.release_year|default:"--" }}</span>
-            </div>
-
-            <div class="metadata-card">
-                <span class="metadata-label">Album</span>
-                <span class="metadata-value">
-                    {% if track.album %}
-                    {{ track.album.title }}
-                    {% if track.album.release_date %}<span class="metadata-sub">({{ track.album.release_date|date:"Y" }})</span>{% endif %}
+            <article class="track-hero-card" aria-label="Track summary for {{ track.title }}">
+                <div class="hero-artwork-wrapper">
+                    {% if track.artwork_url %}
+                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--lg hero-artwork">
+                    {% elif track.album and track.album.artwork_url %}
+                    <img src="{{ track.album.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--lg hero-artwork">
                     {% else %}
-                    <span class="text-muted">Single / Independent</span>
-                    {% endif %}
-                </span>
-            </div>
-
-            <div class="metadata-card">
-                <span class="metadata-label">ISRC</span>
-                <span class="metadata-value font-mono">{{ track.isrc|default:"--" }}</span>
-            </div>
-
-            <div class="metadata-card metadata-card--wide">
-                <span class="metadata-label">Genres</span>
-                <div class="genres-wrapper">
-                    {% if genres %}
-                    {% for genre in genres %}
-                    <span class="genre-tag">{{ genre.name }}</span>
-                    {% endfor %}
-                    {% else %}
-                    <span class="text-muted">No genres assigned yet (you can add below)</span>
+                    <div class="cover cover--lg cover-placeholder" aria-hidden="true">
+                        <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                    </div>
                     {% endif %}
                 </div>
-            </div>
-        </div>
 
-        <div class="manual-edit-section mt-4">
-            <details class="manual-edit-details">
-                <summary class="manual-edit-summary">
-                    <span class="summary-icon" aria-hidden="true">✏️</span>
-                    <span>Edit BPM or Genres</span>
-                </summary>
-                <div class="manual-edit-body">
-                    <p class="manual-edit-hint">You can update the tempo or genre tags manually. Changes are saved to the catalogue.</p>
-                    <form action="{% url 'catalogue:edit_metadata' track.id %}" method="post" novalidate>
-                        {% csrf_token %}
-                        <div class="manual-edit-fields">
-                            {% include 'common/_field.html' with field=metadata_form.bpm %}
-                            {% include 'common/_field.html' with field=metadata_form.genres %}
+                <div class="hero-content">
+                    <div class="hero-top-row">
+                        <span class="track-type-badge">Track Details</span>
+                        <form action="{% url 'favorites:toggle' track.id %}" method="post" class="favorite-toggle-form">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit"
+                                    class="icon-btn btn-heart{% if is_favorite %} is-favorite{% endif %}"
+                                    title="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}"
+                                    aria-label="{% if is_favorite %}Remove from favorites{% else %}Save to favorites{% endif %}"
+                                    aria-pressed="{% if is_favorite %}true{% else %}false{% endif %}">
+                                {% if is_favorite %}
+                                <svg class="icon icon-heart-fill" aria-hidden="true"><use href="#i-heart-fill"/></svg>
+                                {% else %}
+                                <svg class="icon icon-heart" aria-hidden="true"><use href="#i-heart"/></svg>
+                                {% endif %}
+                            </button>
+                        </form>
+                    </div>
+
+                    <h1 class="hero-title">{{ track.title }}</h1>
+
+                    <div class="artist-credits-list">
+                        {% for credit in primary_artists %}
+                        <span class="artist-credit primary-artist">
+                            <strong class="artist-name">{{ credit.artist.name }}</strong>
+                            <span class="role-badge">Primary</span>
+                        </span>
+                        {% endfor %}
+
+                        {% for credit in featured_artists %}
+                        <span class="artist-credit featured-artist">
+                            <span class="artist-name">feat. {{ credit.artist.name }}</span>
+                            <span class="role-badge role-badge--featured">Featured</span>
+                        </span>
+                        {% endfor %}
+
+                        {% for credit in other_credits %}
+                        <span class="artist-credit other-artist">
+                            <span class="artist-name">{{ credit.artist.name }}</span>
+                            <span class="role-badge">{{ credit.get_role_display }}</span>
+                        </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="hero-stats-strip">
+                        <div class="hero-stat-item">
+                            <span class="hero-stat-label">Tempo</span>
+                            <span class="hero-stat-value tabular-nums">
+                                {% if track.bpm %}
+                                {{ track.bpm|format_bpm }} <span class="hero-stat-unit">BPM</span>
+                                {% else %}
+                                <span class="hero-stat-na">--</span>
+                                {% endif %}
+                            </span>
                         </div>
-                        <button type="submit" class="btn btn-primary-custom btn-sm">Save metadata</button>
-                    </form>
+                        {% if genres %}
+                        <div class="hero-stat-item hero-stat-item--genres">
+                            <span class="hero-stat-label">Genres</span>
+                            <div class="hero-genres-list">
+                                {% for genre in genres %}
+                                <span class="pill pill--accent">{{ genre.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {% if sources %}
+                    <div class="hero-actions">
+                        <span class="actions-label">Listen on:</span>
+                        <div class="listen-links-group">
+                            {% for source in sources %}
+                            <a href="{{ source.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-source" title="Open {{ source.source.name|source_display_name }} (opens in a new tab)">
+                                {% if source.source.name == 'youtube' %}
+                                <svg class="icon icon-source" aria-hidden="true"><use href="#i-youtube"/></svg>
+                                {% elif source.source.name == 'deezer' %}
+                                <svg class="icon icon-source" aria-hidden="true"><use href="#i-deezer"/></svg>
+                                {% else %}
+                                <svg class="icon icon-source" aria-hidden="true"><use href="#i-external-link"/></svg>
+                                {% endif %}
+                                <span>{{ source.source.name|source_display_name }}</span>
+                                <svg class="icon icon-ext-sm" aria-hidden="true"><use href="#i-external-link"/></svg>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-            </details>
+            </article>
+
+            <section class="metadata-section" aria-label="Track Information and Audio Properties">
+                <h2 class="section-title">Track Information</h2>
+                <div class="metadata-grid">
+                    <div class="metadata-card">
+                        <span class="metadata-label">Duration</span>
+                        <span class="metadata-value tabular-nums">{{ track.duration_ms|duration_display }}</span>
+                    </div>
+
+                    <div class="metadata-card">
+                        <span class="metadata-label">Tempo / BPM</span>
+                        <span class="metadata-value tabular-nums">
+                            {% if track.bpm %}{{ track.bpm|format_bpm }} BPM{% else %}--{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="metadata-card">
+                        <span class="metadata-label">Release Year</span>
+                        <span class="metadata-value tabular-nums">{{ track.release_year|default:"--" }}</span>
+                    </div>
+
+                    <div class="metadata-card">
+                        <span class="metadata-label">ISRC</span>
+                        <span class="metadata-value font-mono">{{ track.isrc|default:"--" }}</span>
+                    </div>
+
+                    <div class="metadata-card metadata-card--wide">
+                        <span class="metadata-label">Album</span>
+                        <span class="metadata-value">
+                            {% if track.album %}
+                            {{ track.album.title }}{% if track.album.release_date %} <span class="metadata-sub">({{ track.album.release_date|date:"Y" }})</span>{% endif %}
+                            {% else %}
+                            <span class="text-muted">Single / Independent</span>
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="metadata-card metadata-card--wide">
+                        <span class="metadata-label">Genres</span>
+                        <div class="genres-wrapper">
+                            {% if genres %}
+                            {% for genre in genres %}
+                            <span class="genre-tag">{{ genre.name }}</span>
+                            {% endfor %}
+                            {% else %}
+                            <span class="text-muted">No genres assigned yet (you can add below)</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="manual-edit-section">
+                    <details class="manual-edit-details">
+                        <summary class="manual-edit-summary">
+                            <svg class="icon" aria-hidden="true"><use href="#i-pencil"/></svg>
+                            <span>Edit BPM or Genres</span>
+                        </summary>
+                        <div class="manual-edit-body">
+                            <p class="manual-edit-hint">You can update the tempo or genre tags manually. Changes are saved to the catalogue.</p>
+                            <form action="{% url 'catalogue:edit_metadata' track.id %}" method="post" novalidate>
+                                {% csrf_token %}
+                                <div class="manual-edit-fields">
+                                    {% include 'common/_field.html' with field=metadata_form.bpm %}
+                                    {% include 'common/_field.html' with field=metadata_form.genres %}
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-sm">Save metadata</button>
+                            </form>
+                        </div>
+                    </details>
+                </div>
+
+                {% if rail_query %}
+                <div class="mobile-back-to-results">
+                    <a href="{% url 'search:search' %}?q={{ rail_query|urlencode }}&type={{ rail_search_type }}" class="btn btn-secondary w-100">
+                        <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg>
+                        <span>Back to results for &ldquo;{{ rail_query }}&rdquo;</span>
+                    </a>
+                </div>
+                {% endif %}
+            </section>
         </div>
-    </section>
+
+        {% if rail_tracks %}
+        <aside class="track-rail" aria-label="Search results rail">
+            <div class="rail-header">
+                <div class="rail-header-text">
+                    <span class="rail-eyebrow">Search Results</span>
+                    <h2 class="rail-title" title="{{ rail_query }}">Results for &ldquo;{{ rail_query }}&rdquo;</h2>
+                </div>
+                <span class="pill pill--accent tabular-nums">{{ rail_tracks|length }}</span>
+            </div>
+            <div class="rail-list" role="list">
+                {% for rt in rail_tracks %}
+                <a href="{% url 'catalogue:track_detail' rt.id %}?q={{ rail_query|urlencode }}&type={{ rail_search_type }}"
+                   class="rail-item{% if rt.id == track.id %} is-current{% endif %}"
+                   role="listitem"
+                   {% if rt.id == track.id %}aria-current="true"{% endif %}
+                   title="{{ rt.title }} by {{ rt|artist_credits_display }}">
+                    <div class="rail-cover-wrap">
+                        {% if rt.artwork_url %}
+                        <img src="{{ rt.artwork_url }}" alt="" class="cover cover--sm rail-cover" loading="lazy">
+                        {% else %}
+                        <div class="cover cover--sm cover-placeholder" aria-hidden="true">
+                            <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="rail-info">
+                        <span class="rail-track-title">{{ rt.title }}</span>
+                        <span class="rail-track-artist">{{ rt|artist_credits_display }}</span>
+                    </div>
+                    <span class="rail-duration tabular-nums">{{ rt.duration_ms|duration_display }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </aside>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

@@ -67,7 +67,7 @@
         <div class="search-results-list">
             {% for track in tracks %}
             <article class="track-card" id="track-{{ track.id }}">
-                <a href="{% url 'catalogue:track_detail' track.id %}" class="track-artwork-wrap" title="View details for {{ track.title }}">
+                <a href="{% url 'catalogue:track_detail' track.id %}?q={{ query|urlencode }}&type={{ search_type }}" class="track-artwork-wrap" title="View details for {{ track.title }}">
                     {% if track.artwork_url %}
                     <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--md track-artwork" loading="lazy">
                     {% else %}
@@ -79,7 +79,7 @@
 
                 <div class="track-info">
                     <h2 class="track-title">
-                        <a href="{% url 'catalogue:track_detail' track.id %}" class="track-title-link">{{ track.title }}</a>
+                        <a href="{% url 'catalogue:track_detail' track.id %}?q={{ query|urlencode }}&type={{ search_type }}" class="track-title-link">{{ track.title }}</a>
                     </h2>
                     <p class="track-artist">{{ track|artist_credits_display }}</p>
                     {% if track.album %}

@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
 from apps.favorites.models import Favorite
+from apps.search.models import SearchCache, SearchType
+from apps.search.utils import normalize_query
 from apps.sources.deezer import enrich_track_from_deezer
 from .forms import TrackMetadataForm
 from .models import Genre, Track, TrackGenre
@@ -67,6 +69,32 @@ def track_detail_view(request, track_id: int):
         'genres': genre_names_str,
     })
 
+    # Search results rail context (read-only from database cache, no external APIs, ignore expires_at)
+    rail_tracks = None
+    rail_query = None
+    rail_search_type = None
+
+    q = request.GET.get('q', '').strip()
+    search_type = request.GET.get('type', 'all').strip()
+
+    if q and len(q) <= 300 and search_type in SearchType.values:
+        norm_q = normalize_query(q)
+        cache = SearchCache.objects.filter(
+            query_normalized=norm_q,
+            search_type=search_type,
+        ).first()
+        if cache:
+            cache_results = (
+                cache.results.select_related('track', 'track__album')
+                .prefetch_related('track__credits__artist')
+                .order_by('result_order')
+            )
+            tracks_list = [cr.track for cr in cache_results]
+            if tracks_list:
+                rail_tracks = tracks_list
+                rail_query = q
+                rail_search_type = search_type
+
     return render(request, 'catalogue/track_detail.html', {
         'track': track,
         'primary_artists': primary_artists,
@@ -76,6 +104,9 @@ def track_detail_view(request, track_id: int):
         'sources': sources,
         'is_favorite': is_favorite,
         'metadata_form': metadata_form,
+        'rail_tracks': rail_tracks,
+        'rail_query': rail_query,
+        'rail_search_type': rail_search_type,
     })
 
 
