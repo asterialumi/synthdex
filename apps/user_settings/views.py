@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from .forms import ThemeForm, UsernameChangeForm
@@ -23,8 +24,12 @@ def settings_view(request):
             theme_form = ThemeForm(request.POST, instance=user_settings)
             if theme_form.is_valid():
                 theme_form.save()
+                if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                    return JsonResponse({'status': 'ok', 'dark_mode': user_settings.dark_mode})
                 messages.success(request, 'Preferences saved.')
                 return redirect('user_settings:settings')
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'status': 'error', 'errors': theme_form.errors}, status=400)
 
         elif form_id == 'username':
             username_form = UsernameChangeForm(request.POST, instance=request.user)

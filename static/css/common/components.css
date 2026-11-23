@@ -1,0 +1,278 @@
+/* ==========================================================================
+   SynthDex Shared Component System
+   Buttons, Icon buttons, Covers, Pills, Cards, Empty States, Toolbars.
+   ========================================================================== */
+
+/* Icons */
+.icon {
+  width: 1.15em;
+  height: 1.15em;
+  display: inline-block;
+  vertical-align: -0.2em;
+  fill: currentColor;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
+/* Icon Buttons (theme toggle, heart, menu, actions) */
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  line-height: 1;
+}
+
+.icon-btn:hover {
+  background-color: var(--surface-hover);
+  color: var(--accent);
+}
+
+.icon-btn:active {
+  transform: scale(0.92);
+}
+
+@media (max-width: 768px) {
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Standard Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 40px;
+  min-height: 40px;
+  padding: 0 1.1rem;
+  font-family: var(--font-sans);
+  font-size: 0.92rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .btn {
+    min-height: 44px;
+    padding: 0 1.25rem;
+  }
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+/* Primary Button */
+.btn-primary,
+.btn-primary-custom {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover,
+.btn-primary-custom:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--accent-ink);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background-color: var(--surface-raised);
+  border-color: var(--border);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* Ghost Button (used for header Logout, subtle actions) */
+.btn-ghost {
+  background-color: transparent;
+  border-color: transparent;
+  color: inherit;
+}
+
+.btn-ghost:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Danger Outline Button */
+.btn-danger-outline {
+  background-color: transparent;
+  border-color: var(--border);
+  color: var(--ink-muted);
+}
+
+.btn-danger-outline:hover {
+  background-color: var(--danger-soft);
+  border-color: var(--danger);
+  color: var(--danger);
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+/* Pills / Badges */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: var(--radius-full);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--ink-muted);
+  line-height: 1.2;
+}
+
+.pill--accent {
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Card Component */
+.card {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+}
+
+/* Cover Art (square center-crop with YouTube zoom support) */
+.cover {
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background-color: var(--surface);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.cover--sm {
+  width: 48px;
+  height: 48px;
+}
+
+.cover--md {
+  width: 64px;
+  height: 64px;
+}
+
+.cover--lg {
+  width: 180px;
+  height: 180px;
+  border-radius: var(--radius-md);
+}
+
+/* YouTube baked-in letterbox zoom helper for ytimg URLs */
+img.cover[src*="ytimg.com"] {
+  transform: scale(1.34);
+}
+
+.cover-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface);
+  color: var(--ink-muted);
+}
+
+/* Empty State Component */
+.empty-state {
+  text-align: center;
+  padding: var(--space-10) var(--space-5);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.empty-state-icon {
+  font-size: 2.2rem;
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+  display: inline-block;
+}
+
+.empty-state-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: var(--space-2);
+}
+
+.empty-state-desc {
+  color: var(--ink-muted);
+  max-width: 440px;
+  margin: 0 auto var(--space-4);
+  font-size: 0.95rem;
+}
+
+/* Toolbar Component */
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+/* Accessible focus ring */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: var(--radius-sm);
+}
+
+/* Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

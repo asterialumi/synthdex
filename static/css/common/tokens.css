@@ -1,0 +1,144 @@
+/* ==========================================================================
+   SynthDex Design Tokens
+   Warm cream / parchment, rich ink, deep aubergine, amber accent.
+   Supports [data-theme="light"] and [data-theme="dark"].
+   ========================================================================== */
+
+:root {
+  /* Surface and Background */
+  --bg: #f4efe4;
+  --surface: #f4efe4;
+  --surface-raised: #ffffff;
+  --surface-hover: rgba(184, 121, 47, 0.06);
+
+  /* Deep Aubergine (Used in light mode header, sky panel, hero) */
+  --deep: #221f2a;
+  --deep-surface: #2b2735;
+  --deep-ink: #f5efe3;
+  --deep-ink-muted: #c9c3d1;
+  --deep-border: rgba(255, 255, 255, 0.12);
+  --deep-accent: #e09f53;
+
+  /* Ink / Typography */
+  --ink: #1e1b22;
+  --ink-muted: #544d5c;
+  --ink-soft: #544d5c;
+
+  /* Borders */
+  --border: #dcd2bc;
+  --border-subtle: #e8e0cc;
+
+  /* Brand / Accent */
+  --accent: #b8792f;
+  --accent-hover: #9c651f;
+  --accent-soft: #f0e1c6;
+  --accent-ink: #ffffff;
+
+  /* Status */
+  --danger: #b3402f;
+  --danger-soft: #f6e2dd;
+  --success: #4a7c59;
+
+  /* Focus ring */
+  --focus-ring: 0 0 0 3px rgba(184, 121, 47, 0.3);
+
+  /* Scales: Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /* Scales: Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Scales: Shadows */
+  --shadow-sm: 0 1px 3px rgba(32, 29, 36, 0.06), 0 1px 2px rgba(32, 29, 36, 0.04);
+  --shadow-md: 0 8px 24px rgba(32, 29, 36, 0.08), 0 2px 6px rgba(32, 29, 36, 0.04);
+  --shadow-lg: 0 16px 36px rgba(32, 29, 36, 0.12), 0 4px 12px rgba(32, 29, 36, 0.06);
+
+  /* Scales: Z-Index */
+  --z-base: 1;
+  --z-card: 10;
+  --z-sticky: 50;
+  --z-header: 100;
+  --z-dropdown: 200;
+  --z-modal: 1000;
+  --z-toast: 2000;
+
+  /* Typography */
+  --font-display: "Fraunces", Georgia, "Times New Roman", serif;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  /* Legacy aliases for existing feature CSS */
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-muted);
+  --color-paper: var(--bg);
+  --color-paper-raised: var(--surface-raised);
+  --color-header-bg: var(--deep);
+  --color-border: var(--border);
+  --color-border-subtle: var(--border-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-surface-hover: var(--surface-hover);
+  --color-brand-bg: var(--deep);
+  --color-brand-line: #3a3542;
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+}
+
+/* ==========================================================================
+   Dark Theme
+   ========================================================================== */
+:root[data-theme="dark"] {
+  --bg: #16151a;
+  --surface: #16151a;
+  --surface-raised: #211f26;
+  --surface-hover: rgba(224, 159, 83, 0.08);
+
+  /* Deep Aubergine (Tone change in dark mode with 1px border separation) */
+  --deep: #121115;
+  --deep-surface: #1a1820;
+  --deep-ink: #f5efe3;
+  --deep-ink-muted: #c4baa7;
+  --deep-border: #332f3b;
+  --deep-accent: #e09f53;
+
+  --ink: #f5efe3;
+  --ink-muted: #c4baa7;
+  --ink-soft: #c4baa7;
+
+  --border: #332f3b;
+  --border-subtle: #292630;
+
+  --accent: #e09f53;
+  --accent-hover: #eda95e;
+  --accent-soft: #382c1a;
+  --accent-ink: #16151a;
+
+  --danger: #e2695a;
+  --danger-soft: #3a2420;
+  --success: #6fae82;
+
+  --focus-ring: 0 0 0 3px rgba(224, 159, 83, 0.35);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 18px 40px rgba(0, 0, 0, 0.6);
+
+  /* Legacy aliases for dark mode */
+  --color-header-bg: var(--deep);
+  --color-brand-bg: #14131a;
+  --color-brand-line: #322e3a;
+}

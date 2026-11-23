@@ -26,3 +26,13 @@ class ThemeForm(ModelForm):
         help_texts = {
             'pref_search_type': 'Default search category pre-selected across the app.',
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['pref_search_type'].required = False
+
+    def clean_pref_search_type(self):
+        val = self.cleaned_data.get('pref_search_type')
+        if not val and self.instance and self.instance.pk:
+            return self.instance.pref_search_type or UserSettings.SearchType.ALL
+        return val

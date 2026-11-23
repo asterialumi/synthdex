@@ -9,14 +9,15 @@
         } catch (e) {
             /* localStorage unavailable — the toggle still works for this page load. */
         }
+        var headerToggle = document.getElementById('header-theme-toggle');
+        if (headerToggle) {
+            headerToggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+        }
     }
 
     toggle.addEventListener('change', function () {
-        // Instant visual feedback, no reload needed to see the switch.
         applyTheme(toggle.checked ? 'dark' : 'light');
 
-        // Persist the choice to the database (survives across devices)
-        // by submitting the form it lives in.
         var form = toggle.closest('form');
         if (form) {
             form.requestSubmit ? form.requestSubmit() : form.submit();
