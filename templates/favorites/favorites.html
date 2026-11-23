@@ -24,14 +24,16 @@
     {% if favorites %}
     <div class="favorites-list">
         {% for fav in favorites %}
-        <article class="favorite-card">
+        <article class="favorite-card" id="fav-{{ fav.track.id }}">
             <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-artwork-wrap" title="View details for {{ fav.track.title }}">
                 {% if fav.track.artwork_url %}
-                <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }} artwork" class="favorite-artwork" loading="lazy">
+                <img src="{{ fav.track.artwork_url }}" alt="Cover art for {{ fav.track.title }}" class="cover cover--md favorite-artwork" loading="lazy">
                 {% elif fav.track.album and fav.track.album.artwork_url %}
-                <img src="{{ fav.track.album.artwork_url }}" alt="{{ fav.track.title }} artwork" class="favorite-artwork" loading="lazy">
+                <img src="{{ fav.track.album.artwork_url }}" alt="Cover art for {{ fav.track.title }}" class="cover cover--md favorite-artwork" loading="lazy">
                 {% else %}
-                <div class="favorite-artwork-placeholder" aria-hidden="true">🎵</div>
+                <div class="cover cover--md cover-placeholder favorite-artwork-placeholder" aria-hidden="true">
+                    <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                </div>
                 {% endif %}
             </a>
 
@@ -43,29 +45,29 @@
                 <div class="favorite-details-meta">
                     {% if fav.track.album %}
                     <span class="favorite-album">{{ fav.track.album.title }}</span>
-                    <span class="meta-dot" aria-hidden="true">•</span>
+                    <span class="meta-dot" aria-hidden="true">&bull;</span>
                     {% endif %}
                     <span class="favorite-date">Saved {{ fav.created_at|date:"M d, Y" }}</span>
                 </div>
             </div>
 
             <div class="favorite-actions">
-                <span class="favorite-duration">{{ fav.track.duration_ms|duration_display }}</span>
+                <span class="favorite-duration tabular-nums">{{ fav.track.duration_ms|duration_display }}</span>
 
                 {% with listen_url=fav.track|track_listen_url %}
                 {% if listen_url %}
-                <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact" title="Listen on YouTube">
+                <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Listen on YouTube">
                     <span>Listen</span>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    <svg class="icon" aria-hidden="true"><use href="#i-external-link"/></svg>
                 </a>
                 {% endif %}
                 {% endwith %}
 
                 <form action="{% url 'favorites:toggle' fav.track.id %}" method="post" class="favorite-remove-form">
                     {% csrf_token %}
-                    <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                    <button type="submit" class="btn btn-heart is-favorite" title="Remove from favorites" aria-label="Remove {{ fav.track.title }} from favorites">
-                        ❤️
+                    <input type="hidden" name="next" value="{{ request.get_full_path }}#fav-{{ fav.track.id }}">
+                    <button type="submit" class="icon-btn btn-heart is-favorite" aria-label="Remove from favorites" title="Remove from favorites">
+                        <svg class="icon" aria-hidden="true"><use href="#i-heart-fill"/></svg>
                     </button>
                 </form>
             </div>
@@ -73,11 +75,11 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="favorites-empty-state">
-        <div class="empty-icon" aria-hidden="true">🤍</div>
-        <h2>No favorites yet</h2>
-        <p>You haven't saved any tracks to your favorites list yet. Search for songs and click the heart icon to save them here!</p>
-        <a href="{% url 'search:search' %}" class="btn btn-primary-custom mt-3">Discover Music</a>
+    <div class="empty-state favorites-empty-state">
+        <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+        <h2 class="empty-state-title">No favorites yet</h2>
+        <p class="empty-state-desc">When you search for tracks, click the heart icon on any result to save it to your personal collection.</p>
+        <a href="{% url 'search:search' %}" class="btn btn-primary">Find tracks to save</a>
     </div>
     {% endif %}
 </div>

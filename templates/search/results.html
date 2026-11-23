@@ -17,7 +17,7 @@
     </header>
 
     <div class="search-bar-wrapper">
-        <form class="search-panel-form" action="{% url 'search:search' %}" method="get">
+        <form class="search-panel-form" action="{% url 'search:search' %}" method="get" id="search-form">
             <select name="type" class="search-panel-select" aria-label="Search category">
                 {% for value, label in search_types %}
                 <option value="{{ value }}"{% if value == search_type %} selected{% endif %}>{{ label }}</option>
@@ -31,13 +31,16 @@
                 placeholder="Search a song, artist, or album…"
                 required
                 aria-label="Search query">
-            <button type="submit" class="btn btn-primary-custom">Search</button>
+            <button type="submit" class="btn btn-primary" id="search-submit-btn">
+                <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                <span>Search</span>
+            </button>
         </form>
     </div>
 
     {% if has_searched %}
     <section class="search-results-section" aria-label="Search Results">
-        <div class="results-meta-bar">
+        <div class="results-meta-bar toolbar">
             <span class="results-count">
                 {% if tracks %}
                 Found {{ tracks|length }} result{{ tracks|length|pluralize }} for "<strong>{{ query }}</strong>"
@@ -47,14 +50,14 @@
             </span>
             <div class="meta-bar-actions">
                 {% if is_stale and cache %}
-                <span class="cache-badge" title="Results served from previous query cache">
+                <span class="pill pill--accent" title="Results served from previous query cache">
                     Cached {{ cache.fetched_at|date:"M d, Y" }}
                 </span>
                 {% elif cache %}
-                <span class="cache-status-badge" title="Served from database cache">Cached</span>
+                <span class="pill" title="Served from database cache">Cached</span>
                 {% endif %}
-                <a href="{% url 'search:search' %}?q={{ query|urlencode }}&type={{ search_type }}&refresh=1" class="btn btn-refresh-cache" title="Bypass cache and refresh results from YouTube">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                <a href="{% url 'search:search' %}?q={{ query|urlencode }}&type={{ search_type }}&refresh=1" class="btn btn-secondary btn-sm" title="Bypass cache and refresh results from YouTube">
+                    <svg class="icon" aria-hidden="true"><use href="#i-refresh"/></svg>
                     <span>Refresh</span>
                 </a>
             </div>
@@ -63,12 +66,14 @@
         {% if tracks %}
         <div class="search-results-list">
             {% for track in tracks %}
-            <article class="track-card">
+            <article class="track-card" id="track-{{ track.id }}">
                 <a href="{% url 'catalogue:track_detail' track.id %}" class="track-artwork-wrap" title="View details for {{ track.title }}">
                     {% if track.artwork_url %}
-                    <img src="{{ track.artwork_url }}" alt="{{ track.title }} artwork" class="track-artwork" loading="lazy">
+                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--md track-artwork" loading="lazy">
                     {% else %}
-                    <div class="track-artwork-placeholder" aria-hidden="true">🎵</div>
+                    <div class="cover cover--md cover-placeholder" aria-hidden="true">
+                        <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
+                    </div>
                     {% endif %}
                 </a>
 
@@ -83,19 +88,23 @@
                 </div>
 
                 <div class="track-meta">
-                    <span class="track-duration">{{ track.duration_ms|duration_display }}</span>
+                    <span class="track-duration tabular-nums">{{ track.duration_ms|duration_display }}</span>
                     <form action="{% url 'favorites:toggle' track.id %}" method="post" class="favorite-form-inline">
                         {% csrf_token %}
-                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                        <button type="submit" class="btn-heart{% if track.id in user_favorite_ids %} is-favorite{% endif %}" title="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}" aria-label="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}">
-                            {% if track.id in user_favorite_ids %}❤️{% else %}🤍{% endif %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}#track-{{ track.id }}">
+                        <button type="submit" class="icon-btn btn-heart{% if track.id in user_favorite_ids %} is-favorite{% endif %}" title="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}" aria-label="{% if track.id in user_favorite_ids %}Remove from favorites{% else %}Save to favorites{% endif %}">
+                            {% if track.id in user_favorite_ids %}
+                            <svg class="icon icon-heart-fill" aria-hidden="true"><use href="#i-heart-fill"/></svg>
+                            {% else %}
+                            <svg class="icon icon-heart" aria-hidden="true"><use href="#i-heart"/></svg>
+                            {% endif %}
                         </button>
                     </form>
                     {% with listen_url=track|track_listen_url %}
                     {% if listen_url %}
-                    <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen" title="Listen on YouTube">
+                    <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-sm" title="Listen on YouTube">
                         <span>Listen</span>
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        <svg class="icon" aria-hidden="true"><use href="#i-external-link"/></svg>
                     </a>
                     {% endif %}
                     {% endwith %}
@@ -104,10 +113,10 @@
             {% endfor %}
         </div>
         {% else %}
-        <div class="search-empty-state">
-            <div class="empty-icon" aria-hidden="true">🔍</div>
-            <h2>No tracks found matching "{{ query }}"</h2>
-            <p>We couldn't find any results for this search query in category <strong>{{ search_type|title }}</strong>.</p>
+        <div class="empty-state search-empty-state">
+            <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <h2 class="empty-state-title">No tracks found matching "{{ query }}"</h2>
+            <p class="empty-state-desc">We couldn't find any results for this search query in category <strong>{{ search_type|title }}</strong>.</p>
             <div class="empty-suggestions">
                 <span class="empty-suggestion-title">Suggestions:</span>
                 <ul class="empty-suggestion-list">
@@ -121,4 +130,8 @@
     </section>
     {% endif %}
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/search/search.js' %}"></script>
 {% endblock %}

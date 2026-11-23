@@ -1,11 +1,12 @@
 /* ==========================================================================
-   History feature styles
+   History Feature Styles
    ========================================================================== */
 
 .history-page-container {
-  max-width: 780px;
+  width: 100%;
+  max-width: 860px;
   margin: 0 auto;
-  padding: 3rem 1rem 5rem;
+  padding: 2.5rem 0 4rem;
 }
 
 .history-header {
@@ -20,7 +21,7 @@
 }
 
 .history-subtitle {
-  color: var(--color-ink-soft);
+  color: var(--ink-muted);
   font-size: 1.05rem;
   margin: 0;
 }
@@ -31,18 +32,13 @@
   align-items: center;
   margin-bottom: 1.25rem;
   padding: 0.5rem 0;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--border);
 }
 
 .history-count {
   font-size: 0.9rem;
-  color: var(--color-ink-soft);
+  color: var(--ink-muted);
   font-weight: 500;
-}
-
-.btn-sm {
-  padding: 0.4rem 0.85rem;
-  font-size: 0.85rem;
 }
 
 .history-list {
@@ -55,8 +51,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 1rem 1.25rem;
   box-shadow: var(--shadow-sm);
@@ -66,7 +62,7 @@
 
 .history-card:hover {
   transform: translateY(-2px);
-  border-color: var(--color-accent);
+  border-color: var(--accent);
   box-shadow: var(--shadow-md);
 }
 
@@ -87,7 +83,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  color: var(--color-ink);
+  color: var(--ink);
   font-weight: 600;
   font-size: 1.05rem;
   text-decoration: none;
@@ -95,59 +91,62 @@
 }
 
 .history-query-link:hover {
-  color: var(--color-accent);
+  color: var(--accent);
   text-decoration: none;
 }
 
 .history-icon {
   font-size: 0.9rem;
+  color: var(--accent);
 }
 
-.history-type-badge {
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  background-color: var(--color-paper);
-  border: 1px solid var(--color-border);
-  color: var(--color-ink-soft);
+.history-repeat-count {
+  font-weight: 700;
 }
 
 .history-meta-row {
   font-size: 0.82rem;
-  color: var(--color-ink-soft);
+  color: var(--ink-muted);
 }
 
 .history-actions {
   flex-shrink: 0;
 }
 
-.history-empty-state {
-  text-align: center;
-  padding: 4rem 1.5rem;
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
+/* Confirmation Dialog */
+.confirm-dialog {
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
-  margin-top: 1rem;
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  padding: 1.75rem 2rem;
+  max-width: 440px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  margin: auto;
 }
 
-.empty-icon {
-  font-size: 2.4rem;
-  margin-bottom: 0.75rem;
+.confirm-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
 }
 
-.history-empty-state h2 {
-  font-size: 1.4rem;
+.confirm-dialog-title {
+  font-size: 1.35rem;
+  margin-top: 0;
   margin-bottom: 0.5rem;
 }
 
-.history-empty-state p {
-  color: var(--color-ink-soft);
-  max-width: 440px;
-  margin: 0 auto;
-  font-size: 0.95rem;
+.confirm-dialog-desc {
+  font-size: 0.92rem;
+  color: var(--ink-muted);
+  margin-bottom: 1.5rem;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
 }
 
 @media (max-width: 640px) {
@@ -160,11 +159,10 @@
     width: 100%;
     margin-top: 0.5rem;
     padding-top: 0.5rem;
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--border);
   }
 
   .history-actions .btn {
     width: 100%;
-    text-align: center;
   }
 }
