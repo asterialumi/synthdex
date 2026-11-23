@@ -58,9 +58,12 @@
   border-radius: var(--radius-md);
   overflow: hidden;
   border: 1px solid var(--deep-border);
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   position: relative;
   background-color: var(--deep-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .hero-artwork {
@@ -68,6 +71,29 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  border: none;
+}
+
+.hero-artwork[src*="ytimg.com"],
+.hero-artwork[src*="youtube.com"] {
+  transform: scale(1.35);
+  transform-origin: center center;
+}
+
+.hero-artwork-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--deep-surface);
+  color: var(--deep-ink-muted);
+}
+
+.hero-artwork-placeholder .icon-placeholder {
+  width: 56px;
+  height: 56px;
+  opacity: 0.6;
 }
 
 .hero-content {
@@ -515,12 +541,17 @@
 }
 
 .rail-cover-wrap {
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
-  border-radius: var(--radius-xs);
+  border-radius: var(--radius-sm);
   overflow: hidden;
+  border: 1px solid var(--border);
   background-color: var(--surface);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .rail-cover {
@@ -528,6 +559,29 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  border: none;
+}
+
+.rail-cover[src*="ytimg.com"],
+.rail-cover[src*="youtube.com"] {
+  transform: scale(1.35);
+  transform-origin: center center;
+}
+
+.rail-cover-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface);
+  color: var(--ink-muted);
+}
+
+.rail-cover-placeholder .icon-placeholder {
+  width: 20px;
+  height: 20px;
+  opacity: 0.6;
 }
 
 .rail-info {

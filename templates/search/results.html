@@ -69,9 +69,9 @@
             <article class="track-card" id="track-{{ track.id }}">
                 <a href="{% url 'catalogue:track_detail' track.id %}?q={{ query|urlencode }}&type={{ search_type }}" class="track-artwork-wrap" title="View details for {{ track.title }}">
                     {% if track.artwork_url %}
-                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--md track-artwork" loading="lazy">
+                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="track-artwork" loading="lazy">
                     {% else %}
-                    <div class="cover cover--md cover-placeholder" aria-hidden="true">
+                    <div class="track-artwork-placeholder" aria-hidden="true">
                         <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
                     </div>
                     {% endif %}
