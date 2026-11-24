@@ -34,12 +34,12 @@
             <article class="track-hero-card" aria-label="Track summary for {{ track.title }}">
                 <div class="hero-artwork-wrapper">
                     {% if track.artwork_url %}
-                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="hero-artwork">
+                    <img src="{{ track.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--lg hero-artwork">
                     {% elif track.album and track.album.artwork_url %}
-                    <img src="{{ track.album.artwork_url }}" alt="Cover art for {{ track.title }}" class="hero-artwork">
+                    <img src="{{ track.album.artwork_url }}" alt="Cover art for {{ track.title }}" class="cover cover--lg hero-artwork">
                     {% else %}
-                    <div class="hero-artwork-placeholder" aria-hidden="true">
-                        <svg class="icon icon-placeholder" aria-hidden="true"><use href="#i-music-note"/></svg>
+                    <div class="cover cover--lg cover-placeholder" aria-hidden="true">
+                        <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
                     </div>
                     {% endif %}
                 </div>
@@ -234,10 +234,10 @@
                    title="{{ rt.title }} by {{ rt|artist_credits_display }}">
                     <div class="rail-cover-wrap">
                         {% if rt.artwork_url %}
-                        <img src="{{ rt.artwork_url }}" alt="" class="rail-cover" loading="lazy">
+                        <img src="{{ rt.artwork_url }}" alt="" class="cover cover--sm rail-cover" loading="lazy">
                         {% else %}
-                        <div class="rail-cover-placeholder" aria-hidden="true">
-                            <svg class="icon icon-placeholder" aria-hidden="true"><use href="#i-music-note"/></svg>
+                        <div class="cover cover--sm cover-placeholder" aria-hidden="true">
+                            <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
                         </div>
                         {% endif %}
                     </div>

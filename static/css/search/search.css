@@ -1,22 +1,16 @@
 /* ==========================================================================
    Search Feature Styles
-   Unified max-width (860px) so header, search card, toolbar & results align
-   and remain perfectly centered horizontally.
+   Unified max-width (860px) so header, search card, toolbar & results align.
    ========================================================================== */
 
 .search-page-container {
   width: 100%;
   max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
   padding: 2.5rem 0 4rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .search-header {
-  width: 100%;
   text-align: center;
   margin-bottom: 2rem;
 }
@@ -34,7 +28,6 @@
 }
 
 .search-bar-wrapper {
-  width: 100%;
   background-color: var(--surface-raised);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
@@ -76,12 +69,7 @@
   }
 }
 
-.search-results-section {
-  width: 100%;
-}
-
 .results-meta-bar {
-  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -99,15 +87,12 @@
 }
 
 .search-results-list {
-  width: 100%;
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
   gap: 0.85rem;
 }
 
 /* Track Card: Consistent Row Height and Alignment */
 .track-card {
-  width: 100%;
   display: flex;
   align-items: center;
   gap: 1.2rem;
@@ -130,43 +115,6 @@
   width: 64px;
   height: 64px;
   flex-shrink: 0;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background-color: var(--surface);
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.track-artwork {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.track-artwork[src*="ytimg.com"],
-.track-artwork[src*="youtube.com"] {
-  transform: scale(1.35);
-  transform-origin: center center;
-}
-
-.track-artwork-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--surface);
-  color: var(--ink-muted);
-}
-
-.track-artwork-placeholder .icon {
-  width: 24px;
-  height: 24px;
-  opacity: 0.6;
 }
 
 .track-info {
