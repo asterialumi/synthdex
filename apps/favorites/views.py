@@ -45,7 +45,7 @@ def favorites_list_view(request):
     """List all tracks and credited artists saved by the authenticated user."""
     favorites = get_favorites_with_details(request.user)
     favorite_artists = get_favorite_artists(request.user)
-    show_sql = bool(settings.DEBUG)
+    show_sql = bool(getattr(settings, 'SHOW_SQL_PANEL', False))
 
     context = {
         'favorites': favorites,

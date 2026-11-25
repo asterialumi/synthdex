@@ -26,6 +26,9 @@ load_dotenv(BASE_DIR / '.env')
 # External API configuration
 YOUTUBE_API_KEY = os.environ.get('YOUTUBE_API_KEY', '')
 
+# Feature flags & debug options
+SHOW_SQL_PANEL = os.environ.get('SHOW_SQL_PANEL', '').strip().lower() in ('1', 'true', 'yes')
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/

@@ -128,7 +128,7 @@ class FavoritesQueryAndSelectorTests(TestCase):
         self.assertEqual(len(empty_artists), 0)
 
     def test_view_authentication_and_debug_sql(self):
-        """7. View: anonymous redirects to login; logged-in gets 200; show_sql reflects DEBUG."""
+        """7. View: anonymous redirects to login; logged-in gets 200; show_sql reflects SHOW_SQL_PANEL."""
         url = reverse('favorites:list')
 
         anon_resp = self.client.get(url)
@@ -136,13 +136,13 @@ class FavoritesQueryAndSelectorTests(TestCase):
         self.assertIn('/login/', anon_resp.url)
 
         self.client.force_login(self.user_a)
-        with override_settings(DEBUG=False):
+        with override_settings(SHOW_SQL_PANEL=False):
             resp_no_debug = self.client.get(url)
             self.assertEqual(resp_no_debug.status_code, 200)
             self.assertFalse(resp_no_debug.context['show_sql'])
             self.assertNotContains(resp_no_debug, 'SQL used (debug only)')
 
-        with override_settings(DEBUG=True):
+        with override_settings(SHOW_SQL_PANEL=True):
             resp_debug = self.client.get(url)
             self.assertEqual(resp_debug.status_code, 200)
             self.assertTrue(resp_debug.context['show_sql'])
