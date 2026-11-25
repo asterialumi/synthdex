@@ -51,7 +51,7 @@
 }
 
 .auth-brand-sub {
-  color: #c9c3d1;
+  color: var(--deep-ink-muted);
   font-size: 0.98rem;
   max-width: 30ch;
 }

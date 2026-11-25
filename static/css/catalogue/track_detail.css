@@ -110,7 +110,7 @@
 .hero-top-row .btn-heart.is-favorite {
   background-color: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
+  color: var(--accent-ink);
 }
 
 .hero-title {
@@ -264,7 +264,7 @@
 .btn-source:hover {
   background-color: var(--accent);
   border-color: var(--accent);
-  color: #ffffff;
+  color: var(--accent-ink);
   text-decoration: none;
   transform: translateY(-1px);
 }

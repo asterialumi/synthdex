@@ -52,7 +52,7 @@
 }
 
 .password-checklist li.is-met .check-dot::after {
-  background-color: #fff;
+  background-color: var(--surface-raised);
   transform: scale(1);
   animation: pop 0.2s ease-out;
 }

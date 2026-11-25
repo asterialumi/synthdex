@@ -411,11 +411,16 @@
 }
 
 /* Planet Hover & Focus States */
-.orbit-planet:hover .orbit-planet-cover-wrap,
-.orbit-planet:focus-visible .orbit-planet-cover-wrap {
+.orbit-planet:hover .orbit-planet-cover-wrap {
   transform: scale(1.18);
   border-color: var(--deep-accent);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 18px rgba(224, 159, 83, 0.4);
+}
+
+.orbit-planet:focus-visible .orbit-planet-cover-wrap {
+  transform: scale(1.18);
+  border-color: var(--deep-accent);
+  box-shadow: 0 0 0 3px var(--deep-accent), 0 4px 16px rgba(0, 0, 0, 0.6);
 }
 
 .orbit-planet:focus-visible {

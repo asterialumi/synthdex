@@ -235,7 +235,7 @@ select,
   left: 3px;
   top: 3px;
   border-radius: 50%;
-  background-color: #ffffff;
+  background-color: var(--surface-raised);
   box-shadow: var(--shadow-sm);
   transition: transform 0.2s ease;
 }

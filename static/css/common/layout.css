@@ -10,7 +10,7 @@
   left: 1rem;
   z-index: var(--z-modal);
   background-color: var(--accent);
-  color: #ffffff;
+  color: var(--accent-ink);
   padding: 0.6rem 1.2rem;
   border-radius: var(--radius-sm);
   font-weight: 600;
