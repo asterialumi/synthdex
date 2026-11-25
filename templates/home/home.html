@@ -1,107 +1,213 @@
 {% extends 'common/base.html' %}
 {% load static catalogue_tags %}
+
 {% block title %}Home | SynthDex{% endblock %}
+
 {% block extra_css %}
 <link rel="stylesheet" href="{% static 'css/home/home.css' %}">
 {% endblock %}
-{% block content %}
-<div class="hero">
-    <div class="hero-eyebrow-rule"></div>
-    <h1>Welcome back, {{ profile_display_name|default:user.username }}</h1>
-    {% if profile_bio %}
-    <p class="hero-bio" title="{{ profile_bio }}">{{ profile_bio }}</p>
-    {% else %}
-    <p>Your SynthDex catalogue is ready whenever you are.</p>
-    {% endif %}
-</div>
 
-<div class="search-panel">
-    <form class="search-panel-form" action="{% url 'search:search' %}" method="get">
-        <select name="type" class="search-panel-select" aria-label="Search category">
-            {% for value, label in search_types %}
-            <option value="{{ value }}"{% if value == pref_search_type %} selected{% endif %}>{{ label }}</option>
-            {% endfor %}
-        </select>
-        <input
-            type="text"
-            name="q"
-            class="search-panel-input"
-            placeholder="Search a song, artist, or album…"
-            required
-            aria-label="Search query">
-        <button type="submit" class="btn btn-primary-custom">Search</button>
-    </form>
-    <p class="search-panel-hint">Search for music across sources. Results are cached in the database.</p>
-    {% if recent_searches %}
-    <div class="search-recent-chips">
-        <span class="chips-label">Recent:</span>
-        <div class="chips-list">
-            {% for item in recent_searches %}
-            <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="search-chip" title="Search again for '{{ item.query }}'">
-                <span class="chip-query">{{ item.query }}</span>
-                {% if item.search_type != 'all' %}
-                <span class="chip-badge">{{ item.search_type }}</span>
+{% block content %}
+<div class="home-page-container">
+    <div class="hero">
+        <div class="hero-eyebrow-rule"></div>
+        <h1>Welcome back, {{ profile_display_name|default:user.username }}</h1>
+        {% if profile_bio %}
+        <p class="hero-bio" title="{{ profile_bio }}">{{ profile_bio }}</p>
+        {% else %}
+        <p>Your SynthDex catalogue is ready whenever you are.</p>
+        {% endif %}
+    </div>
+
+    <div class="search-panel">
+        <form class="search-panel-form" action="{% url 'search:search' %}" method="get">
+            <select name="type" class="search-panel-select" aria-label="Search category">
+                {% for value, label in search_types %}
+                <option value="{{ value }}"{% if value == pref_search_type %} selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <input
+                type="text"
+                name="q"
+                class="search-panel-input"
+                placeholder="Search a song, artist, or album…"
+                required
+                aria-label="Search query">
+            <button type="submit" class="btn btn-primary-custom">Search</button>
+        </form>
+        <p class="search-panel-hint">Search for music across sources. Results are cached in the database.</p>
+        {% if recent_searches %}
+        <div class="search-recent-chips">
+            <span class="chips-label">Recent:</span>
+            <div class="chips-list">
+                {% for item in recent_searches %}
+                <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="search-chip" title="Search again for '{{ item.query }}'">
+                    <span class="chip-query">{{ item.query }}</span>
+                    {% if item.search_type != 'all' %}
+                    <span class="chip-badge">{{ item.search_type }}</span>
+                    {% endif %}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Two-column dashboard grid -->
+    <div class="home-dashboard-grid">
+        <!-- Left: Deep Aubergine "Sky" Panel with Orbit -->
+        <section class="orbit-sky-panel" aria-label="Favorites Orbit">
+            <div class="orbit-sky-header">
+                <span class="orbit-sky-eyebrow">Your Sound System</span>
+                <h2 class="orbit-sky-title">Cosmic Catalogue</h2>
+            </div>
+
+            <div class="orbit-container">
+                <!-- Center Sun: Vinyl avatar -->
+                <div class="orbit-sun" aria-hidden="true">
+                    <div class="orbit-sun-vinyl">
+                        <div class="orbit-sun-grooves"></div>
+                        <div class="orbit-sun-core">
+                            <svg class="icon orbit-sun-icon"><use href="#i-music-note"/></svg>
+                        </div>
+                    </div>
+                    <span class="orbit-sun-label">SynthDex</span>
+                </div>
+
+                {% if total_favorites > 0 %}
+                <!-- Orbit Rings -->
+                {% for ring in orbit_rings %}
+                <div class="orbit-ring orbit-ring-{{ ring.ring_num }}{% if not ring.has_planets %} is-empty{% endif %}"
+                     style="--ring-duration: {{ ring.duration }}s;">
+                    {% for planet in ring.planets %}
+                    <div class="orbit-planet-slot orbit-slot-{{ planet.slot_index }}">
+                        <a href="{% url 'catalogue:track_detail' planet.fav.track.id %}"
+                           class="orbit-planet"
+                           aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}"
+                           title="{{ planet.fav.track.title }} &bull; {{ planet.fav.track|artist_credits_display }}">
+                            <div class="orbit-planet-cover-wrap">
+                                {% if planet.fav.track.artwork_url %}
+                                <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
+                                {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
+                                <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
+                                {% else %}
+                                <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
+                                    <svg class="icon"><use href="#i-music-note"/></svg>
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="orbit-tooltip" role="tooltip">
+                                <span class="orbit-tooltip-title">{{ planet.fav.track.title }}</span>
+                                <span class="orbit-tooltip-artist">{{ planet.fav.track|artist_credits_display }}</span>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                {% else %}
+                <!-- 0 Favorites fallback: Ghost dashed planets and call to action -->
+                <div class="orbit-ring orbit-ring-1 is-ghost" style="--ring-duration: 45s;">
+                    <div class="orbit-planet-slot orbit-slot-0"><div class="orbit-ghost-planet"></div></div>
+                    <div class="orbit-planet-slot orbit-slot-2"><div class="orbit-ghost-planet"></div></div>
+                </div>
+                <div class="orbit-ring orbit-ring-2 is-ghost" style="--ring-duration: 70s;">
+                    <div class="orbit-planet-slot orbit-slot-1"><div class="orbit-ghost-planet"></div></div>
+                    <div class="orbit-planet-slot orbit-slot-3"><div class="orbit-ghost-planet"></div></div>
+                </div>
+                <div class="orbit-ring orbit-ring-3 is-ghost" style="--ring-duration: 95s;">
+                    <div class="orbit-planet-slot orbit-slot-0"><div class="orbit-ghost-planet"></div></div>
+                </div>
+                <div class="orbit-empty-overlay">
+                    <p class="orbit-empty-text">Your orbit is waiting for music.</p>
+                    <a href="{% url 'search:search' %}" class="btn btn-primary btn-sm">Find tracks to save</a>
+                </div>
                 {% endif %}
-            </a>
-            {% endfor %}
+            </div>
+
+            {% if total_favorites > 0 %}
+            <div class="orbit-legend">
+                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-inner"></span>Inner: Newest</span>
+                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-outer"></span>Speed: BPM</span>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- Right: Latest Favorites & Recent Searches -->
+        <div class="home-right-rail">
+            {% if latest_favorites %}
+            <section class="dashboard-favorites-section mb-4" aria-labelledby="heading-latest-favorites">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 id="heading-latest-favorites" class="dashboard-section-title">Latest Favorites</h2>
+                    <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
+                </div>
+                <div class="dashboard-favorites-list">
+                    {% for fav in latest_favorites %}
+                    <article class="dashboard-fav-card">
+                        <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="dashboard-fav-artwork-link" title="View details for {{ fav.track.title }}">
+                            {% if fav.track.artwork_url %}
+                            <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
+                            {% elif fav.track.album and fav.track.album.artwork_url %}
+                            <img src="{{ fav.track.album.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
+                            {% else %}
+                            <div class="dashboard-fav-placeholder" aria-hidden="true">
+                                <svg class="icon"><use href="#i-music-note"/></svg>
+                            </div>
+                            {% endif %}
+                        </a>
+                        <div class="dashboard-fav-info">
+                            <h3 class="dashboard-fav-title">
+                                <a href="{% url 'catalogue:track_detail' fav.track.id %}">{{ fav.track.title }}</a>
+                            </h3>
+                            <p class="dashboard-fav-artist">{{ fav.track|artist_credits_display }}</p>
+                        </div>
+                        {% with listen_url=fav.track|track_listen_url %}
+                        {% if listen_url %}
+                        <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact" title="Listen on YouTube">
+                            <span>Listen</span>
+                            <svg class="icon" aria-hidden="true"><use href="#i-external-link"/></svg>
+                        </a>
+                        {% endif %}
+                        {% endwith %}
+                    </article>
+                    {% endfor %}
+                </div>
+            </section>
+            {% else %}
+            <section class="dashboard-favorites-section mb-4" aria-labelledby="heading-latest-favorites">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 id="heading-latest-favorites" class="dashboard-section-title">Latest Favorites</h2>
+                    <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
+                </div>
+                <div class="dashboard-empty-card">
+                    <p class="mb-2">No tracks saved yet.</p>
+                    <a href="{% url 'search:search' %}" class="btn btn-secondary btn-sm">Search to add</a>
+                </div>
+            </section>
+            {% endif %}
+
+            {% if recent_searches %}
+            <section class="dashboard-recent-section" aria-labelledby="heading-recent-searches">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 id="heading-recent-searches" class="dashboard-section-title">Recent Searches</h2>
+                    <a href="{% url 'history:list' %}" class="dashboard-view-all">History →</a>
+                </div>
+                <div class="dashboard-recent-list">
+                    {% for item in recent_searches %}
+                    <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="dashboard-recent-item" title="Search again for '{{ item.query }}'">
+                        <span class="recent-item-icon" aria-hidden="true">
+                            <svg class="icon"><use href="#i-search"/></svg>
+                        </span>
+                        <span class="recent-item-query">{{ item.query }}</span>
+                        {% if item.search_type != 'all' %}
+                        <span class="pill pill--accent recent-item-badge">{{ item.search_type }}</span>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
         </div>
     </div>
-    {% endif %}
-</div>
-
-{% if latest_favorites %}
-<section class="dashboard-favorites-section">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2 class="dashboard-section-title">Latest Favorites</h2>
-        <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
-    </div>
-    <div class="dashboard-favorites-grid">
-        {% for fav in latest_favorites %}
-        <article class="dashboard-fav-card">
-            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="dashboard-fav-artwork-link" title="View details">
-                {% if fav.track.artwork_url %}
-                <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
-                {% elif fav.track.album and fav.track.album.artwork_url %}
-                <img src="{{ fav.track.album.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
-                {% else %}
-                <div class="dashboard-fav-placeholder" aria-hidden="true">🎵</div>
-                {% endif %}
-            </a>
-            <div class="dashboard-fav-info">
-                <h3 class="dashboard-fav-title">
-                    <a href="{% url 'catalogue:track_detail' fav.track.id %}">{{ fav.track.title }}</a>
-                </h3>
-                <p class="dashboard-fav-artist">{{ fav.track|artist_credits_display }}</p>
-            </div>
-            {% with listen_url=fav.track|track_listen_url %}
-            {% if listen_url %}
-            <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact" title="Listen on YouTube">
-                <span>Listen</span>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-            </a>
-            {% endif %}
-            {% endwith %}
-        </article>
-        {% endfor %}
-    </div>
-</section>
-{% endif %}
-
-<div class="quick-links">
-    <a href="{% url 'favorites:list' %}" class="quick-link-card">
-        <span class="quick-link-icon" aria-hidden="true">❤️</span>
-        <span class="quick-link-title">Favorites</span>
-        <span class="quick-link-desc">Browse your saved tracks and listening collection.</span>
-    </a>
-    <a href="{% url 'profile:profile' %}" class="quick-link-card">
-        <span class="quick-link-icon" aria-hidden="true">🪪</span>
-        <span class="quick-link-title">Profile</span>
-        <span class="quick-link-desc">Keep personal notes about your musical taste.</span>
-    </a>
-    <a href="{% url 'user_settings:settings' %}" class="quick-link-card">
-        <span class="quick-link-icon" aria-hidden="true">⚙️</span>
-        <span class="quick-link-title">Settings</span>
-        <span class="quick-link-desc">Switch themes, update your username or password.</span>
-    </a>
 </div>
 {% endblock %}

@@ -1,62 +1,65 @@
 /* ==========================================================================
    Home feature — page-specific styles
+   Cosmic Orbit Dashboard & Two-Column Activity Rail
+   ========================================================================== */
+
+.home-page-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 0 4rem;
+}
+
+/* ==========================================================================
+   Hero Section
    ========================================================================== */
 .hero {
-  max-width: 620px;
+  max-width: 640px;
   margin: 0 auto;
   text-align: center;
-  padding: 4rem 1rem;
-  animation: rise-in 0.5s ease-out both;
+  padding: 3rem 1rem 2rem;
+  animation: rise-in 0.4s ease-out both;
 }
 
 .hero-eyebrow-rule {
   width: 40px;
   height: 3px;
-  background-color: var(--color-accent);
-  margin: 0 auto 1.5rem;
-  border-radius: 2px;
+  background-color: var(--accent);
+  margin: 0 auto 1.25rem;
+  border-radius: var(--radius-xs);
 }
 
 .hero h1 {
+  font-family: var(--font-display);
   font-weight: 600;
   letter-spacing: -0.01em;
-  font-size: 2.6rem;
-  margin-bottom: 0.75rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--ink);
 }
 
-.hero p {
-  color: var(--color-ink-soft);
-  font-size: 1.1rem;
+.hero p,
+.hero-bio {
+  color: var(--ink-muted);
+  font-size: 1.05rem;
+  margin: 0;
+  line-height: 1.5;
 }
 
 /* ==========================================================================
-   Search panel (placeholder — real search lands in a future feature)
+   Search Panel
    ========================================================================== */
 .search-panel {
   position: relative;
-  max-width: 620px;
-  margin: 0 auto 2.5rem;
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
+  max-width: 680px;
+  margin: 0 auto 3rem;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 1.75rem 2rem;
+  padding: 1.5rem 1.75rem;
   box-shadow: var(--shadow-sm);
-  animation: rise-in 0.5s ease-out both;
+  animation: rise-in 0.4s ease-out both;
   animation-delay: 0.05s;
-}
-
-.search-panel-badge {
-  position: absolute;
-  top: -0.6rem;
-  right: 1.5rem;
-  background-color: var(--color-accent);
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
 }
 
 .search-panel-form {
@@ -66,40 +69,19 @@
 }
 
 .search-panel-select {
-  font-family: var(--font-sans);
-  font-size: 0.95rem;
-  color: var(--color-ink);
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 0.85rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  width: 130px;
+  flex: none;
 }
 
 .search-panel-input {
   flex: 1;
-  font-family: var(--font-sans);
-  font-size: 0.98rem;
-  color: var(--color-ink);
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 0.65rem 0.85rem;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.search-panel-input:focus,
-.search-panel-select:focus {
-  outline: none;
-  border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px var(--color-accent-soft);
+  min-width: 220px;
 }
 
 .search-panel-hint {
-  margin: 0.85rem 0 0;
-  font-size: 0.8rem;
-  color: var(--color-ink-soft);
+  margin: 0.75rem 0 0;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
 }
 
 .search-recent-chips {
@@ -108,18 +90,18 @@
   gap: 0.6rem;
   margin-top: 1rem;
   padding-top: 0.85rem;
-  border-top: 1px dashed var(--color-border);
+  border-top: 1px dashed var(--border);
   flex-wrap: wrap;
   animation: rise-in 0.4s ease-out both;
   animation-delay: 0.1s;
 }
 
 .chips-label {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: var(--color-ink-soft);
+  color: var(--ink-muted);
 }
 
 .chips-list {
@@ -132,20 +114,21 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  background-color: var(--color-paper);
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  padding: 0.25rem 0.65rem;
-  font-size: 0.82rem;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.65rem;
+  font-size: 0.8rem;
   font-weight: 500;
-  color: var(--color-ink);
+  color: var(--ink);
   transition: all 0.15s ease;
+  text-decoration: none;
 }
 
 .search-chip:hover {
-  background-color: var(--color-accent-soft);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
+  background-color: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
   text-decoration: none;
   transform: translateY(-1px);
 }
@@ -158,75 +141,472 @@
 }
 
 /* ==========================================================================
-   Dashboard Favorites Section
+   Two-Column Dashboard Grid
    ========================================================================== */
-.dashboard-favorites-section {
-  max-width: 620px;
-  margin: 0 auto 2.5rem;
-  animation: rise-in 0.5s ease-out both;
+.home-dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: var(--space-6);
+  align-items: start;
+  margin-bottom: 3.5rem;
+}
+
+/* ==========================================================================
+   Orbit "Sky" Panel (Aubergine Theme Token)
+   ========================================================================== */
+.orbit-sky-panel {
+  background-color: var(--deep);
+  color: var(--deep-ink);
+  border: 1px solid var(--deep-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem 1.75rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 520px;
+  animation: rise-in 0.45s ease-out both;
   animation-delay: 0.08s;
+}
+
+.orbit-sky-header {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  z-index: 2;
+}
+
+.orbit-sky-eyebrow {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--deep-accent);
+  margin-bottom: 0.25rem;
+}
+
+.orbit-sky-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--deep-ink);
+}
+
+/* Orbit Container: Square Aspect-Ratio */
+.orbit-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Center Sun: Vinyl Record */
+.orbit-sun {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.orbit-sun-vinyl {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--deep-surface) 0%, var(--deep) 45%, var(--deep-surface) 80%, var(--deep) 100%);
+  border: 2px solid var(--deep-accent);
+  box-shadow: 0 0 20px rgba(224, 159, 83, 0.28), inset 0 0 8px rgba(0, 0, 0, 0.6);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: vinyl-pulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes vinyl-pulse {
+  from { box-shadow: 0 0 16px rgba(224, 159, 83, 0.2), inset 0 0 8px rgba(0, 0, 0, 0.6); }
+  to { box-shadow: 0 0 26px rgba(224, 159, 83, 0.4), inset 0 0 8px rgba(0, 0, 0, 0.6); }
+}
+
+.orbit-sun-grooves {
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  pointer-events: none;
+}
+
+.orbit-sun-core {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: var(--deep-accent);
+  color: var(--deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.orbit-sun-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.orbit-sun-label {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--deep-accent);
+  margin-top: 0.35rem;
+  opacity: 0.9;
+}
+
+/* ==========================================================================
+   Orbit Rings (3 Concentric Circles)
+   ========================================================================== */
+.orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 50%;
+  border: 1px dashed var(--deep-border);
+  transform: translate(-50%, -50%);
+  animation: orbit-spin var(--ring-duration, 60s) linear infinite;
+  pointer-events: none;
+}
+
+.orbit-ring-1 {
+  width: 36%;
+  height: 36%;
+}
+
+.orbit-ring-2 {
+  width: 64%;
+  height: 64%;
+}
+
+.orbit-ring-3 {
+  width: 92%;
+  height: 92%;
+}
+
+.orbit-ring.is-ghost {
+  border-style: dotted;
+  opacity: 0.65;
+}
+
+/* Spin and Counter-Spin Animations */
+@keyframes orbit-spin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes orbit-counter-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+/* Pause Animation on Hover and Focus-Within */
+.orbit-sky-panel:hover .orbit-ring,
+.orbit-sky-panel:hover .orbit-planet,
+.orbit-sky-panel:focus-within .orbit-ring,
+.orbit-sky-panel:focus-within .orbit-planet {
+  animation-play-state: paused;
+}
+
+/* ==========================================================================
+   Planet Slots on Ring Circumference
+   ========================================================================== */
+.orbit-planet-slot {
+  position: absolute;
+  pointer-events: auto;
+  z-index: 6;
+}
+
+/* 4 Orthogonal Positions (North, East, South, West) */
+.orbit-slot-0 {
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-slot-1 {
+  top: 50%;
+  left: 100%;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-slot-2 {
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.orbit-slot-3 {
+  top: 50%;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+/* ==========================================================================
+   Planet Cover Link & Counter-Rotation
+   ========================================================================== */
+.orbit-planet {
+  display: block;
+  position: relative;
+  text-decoration: none;
+  animation: orbit-counter-spin var(--ring-duration, 60s) linear infinite;
+  outline: none;
+}
+
+.orbit-planet-cover-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--deep-border);
+  background-color: var(--deep-surface);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 10px rgba(224, 159, 83, 0.12);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orbit-cover {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.orbit-cover-placeholder {
+  color: var(--deep-ink-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Planet Hover & Focus States */
+.orbit-planet:hover .orbit-planet-cover-wrap,
+.orbit-planet:focus-visible .orbit-planet-cover-wrap {
+  transform: scale(1.18);
+  border-color: var(--deep-accent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 18px rgba(224, 159, 83, 0.4);
+}
+
+.orbit-planet:focus-visible {
+  outline: none;
+}
+
+/* Ghost Planet for 0 Favorites */
+.orbit-ghost-planet {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px dashed var(--deep-border);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+/* Tooltip on Hover / Focus */
+.orbit-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background-color: var(--surface-raised);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.65rem;
+  box-shadow: var(--shadow-md);
+  font-size: 0.78rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  z-index: 25;
+  text-align: center;
+  max-width: 200px;
+}
+
+.orbit-tooltip-title {
+  display: block;
+  font-weight: 600;
+  color: var(--ink);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orbit-tooltip-artist {
+  display: block;
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.orbit-planet:hover .orbit-tooltip,
+.orbit-planet:focus-visible .orbit-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Orbit Empty Overlay */
+.orbit-empty-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 12;
+  background-color: rgba(26, 24, 32, 0.88);
+  border: 1px solid var(--deep-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 1.5rem;
+  backdrop-filter: blur(4px);
+}
+
+.orbit-empty-text {
+  font-size: 0.92rem;
+  color: var(--deep-ink-muted);
+  margin-bottom: 0.85rem;
+}
+
+/* Orbit Legend */
+.orbit-legend {
+  display: flex;
+  gap: var(--space-4);
+  font-size: 0.75rem;
+  color: var(--deep-ink-muted);
+  margin-top: 1rem;
+  z-index: 2;
+}
+
+.orbit-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.orbit-legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.orbit-dot-inner {
+  background-color: var(--deep-accent);
+}
+
+.orbit-dot-outer {
+  background-color: var(--deep-ink-muted);
+}
+
+/* ==========================================================================
+   Right Rail: Latest Favorites & Recent Searches
+   ========================================================================== */
+.home-right-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }
 
 .dashboard-section-title {
   font-size: 1.25rem;
+  font-weight: 600;
   margin: 0;
+  color: var(--ink);
 }
 
 .dashboard-view-all {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-accent);
+  color: var(--accent);
+  text-decoration: none;
 }
 
-.dashboard-favorites-grid {
-  display: grid;
+.dashboard-view-all:hover {
+  text-decoration: underline;
+  color: var(--accent-hover);
+}
+
+.dashboard-favorites-list {
+  display: flex;
+  flex-direction: column;
   gap: 0.75rem;
 }
 
 .dashboard-fav-card {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
+  gap: 0.85rem;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
   border-radius: var(--radius-md);
   padding: 0.75rem 1rem;
   box-shadow: var(--shadow-sm);
   transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   animation: rise-in 0.4s ease-out both;
-  animation-delay: 0.12s;
 }
 
 .dashboard-fav-card:hover {
   transform: translateY(-2px);
-  border-color: var(--color-accent);
+  border-color: var(--accent);
   box-shadow: var(--shadow-md);
 }
 
 .dashboard-fav-artwork-link {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
+  display: block;
 }
 
 .dashboard-fav-artwork {
-  width: 100%;
-  height: 100%;
+  width: 44px;
+  height: 44px;
   object-fit: cover;
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--border);
 }
 
 .dashboard-fav-placeholder {
-  width: 100%;
-  height: 100%;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--color-paper);
-  border: 1px solid var(--color-border);
+  background-color: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  font-size: 1.3rem;
+  color: var(--ink-muted);
 }
 
 .dashboard-fav-info {
@@ -244,17 +624,18 @@
 }
 
 .dashboard-fav-title a {
-  color: var(--color-ink);
+  color: var(--ink);
   text-decoration: none;
 }
 
 .dashboard-fav-title a:hover {
-  color: var(--color-accent);
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .dashboard-fav-artist {
   font-size: 0.82rem;
-  color: var(--color-ink-soft);
+  color: var(--ink-muted);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -266,73 +647,152 @@
   align-items: center;
   gap: 0.35rem;
   background-color: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-ink);
+  border: 1px solid var(--border);
+  color: var(--ink);
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.35rem 0.65rem;
   border-radius: var(--radius-sm);
   transition: all 0.15s ease;
   flex-shrink: 0;
+  text-decoration: none;
 }
 
 .btn-listen-compact:hover {
-  background-color: var(--color-accent);
-  border-color: var(--color-accent);
-  color: #fff;
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
   text-decoration: none;
+}
+
+.dashboard-empty-card {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: var(--surface-raised);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-md);
+  color: var(--ink-muted);
+}
+
+/* Recent Searches List */
+.dashboard-recent-section {
+  animation: rise-in 0.4s ease-out both;
+  animation-delay: 0.12s;
+}
+
+.dashboard-recent-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dashboard-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  color: var(--ink);
+  text-decoration: none;
+  font-size: 0.88rem;
+  transition: all 0.15s ease;
+}
+
+.dashboard-recent-item:hover {
+  border-color: var(--accent);
+  background-color: var(--surface-hover);
+  color: var(--accent);
+  text-decoration: none;
+  transform: translateX(2px);
+}
+
+.recent-item-icon {
+  color: var(--ink-muted);
+  display: flex;
+  align-items: center;
+}
+
+.recent-item-query {
+  flex: 1;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recent-item-badge {
+  font-size: 0.68rem;
 }
 
 /* ==========================================================================
-   Quick links
+   Responsive Adaptations
    ========================================================================== */
-.quick-links {
-  max-width: 620px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-}
-
-@media (max-width: 640px) {
-  .quick-links {
+@media (max-width: 991.98px) {
+  .home-dashboard-grid {
     grid-template-columns: 1fr;
+  }
+
+  .orbit-sky-panel {
+    min-height: 480px;
   }
 }
 
-.quick-link-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  background-color: var(--color-paper-raised);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 1.5rem;
-  color: var(--color-ink);
-  animation: rise-in 0.5s ease-out both;
-  animation-delay: 0.1s;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+@media (max-width: 576px) {
+  .hero {
+    padding: 2rem 0.5rem 1.5rem;
+  }
+
+  .hero h1 {
+    font-size: 2rem;
+  }
+
+  .search-panel {
+    padding: 1.25rem 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .search-panel-form {
+    flex-direction: column;
+  }
+
+  .search-panel-select {
+    width: 100%;
+  }
+
+  .orbit-sky-panel {
+    padding: 1.5rem 1rem;
+    min-height: 400px;
+  }
+
+  .orbit-container {
+    max-width: 340px;
+  }
+
+  /* On small screens, hide the outer ring to prevent crowding */
+  .orbit-ring-3 {
+    display: none;
+  }
+
+  .orbit-sun-vinyl {
+    width: 58px;
+    height: 58px;
+  }
+
+  .orbit-planet-cover-wrap {
+    width: 36px;
+    height: 36px;
+  }
 }
 
-.quick-link-card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-  border-color: var(--color-accent);
-  text-decoration: none;
-  color: var(--color-ink);
-}
-
-.quick-link-icon {
-  font-size: 1.5rem;
-}
-
-.quick-link-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-.quick-link-desc {
-  font-size: 0.85rem;
-  color: var(--color-ink-soft);
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .orbit-ring,
+  .orbit-planet,
+  .orbit-sun-vinyl {
+    animation: none !important;
+  }
 }
