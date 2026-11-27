@@ -175,21 +175,72 @@
 .orbit-sky-header {
   width: 100%;
   display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  position: relative;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
   margin-bottom: 0.75rem;
-  z-index: 2;
+  z-index: 20;
 }
 
 .orbit-sky-heading {
-  text-align: center;
+  text-align: left;
+}
+
+.orbit-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.orbit-zoom-group {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--deep-surface);
+  border: 1px solid var(--deep-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.orbit-ctrl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  min-width: 30px;
+  padding: 0 0.5rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--deep-ink-muted);
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--deep-border);
+  cursor: pointer;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+.orbit-ctrl-btn:last-child {
+  border-right: none;
+}
+
+.orbit-ctrl-btn:hover {
+  color: var(--deep-ink);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.orbit-ctrl-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.orbit-zoom-reset {
+  min-width: 46px;
+  font-variant-numeric: tabular-nums;
 }
 
 .orbit-toggle-btn {
-  position: absolute;
-  right: 0;
-  top: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -261,6 +312,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.orbit-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  transition: transform 0.15s ease-out;
+  will-change: transform;
 }
 
 /* Center Sun: Vinyl Record */
@@ -360,6 +420,16 @@
   height: 92%;
 }
 
+.orbit-ring-4 {
+  width: 120%;
+  height: 120%;
+}
+
+.orbit-ring-5 {
+  width: 148%;
+  height: 148%;
+}
+
 .orbit-ring.is-ghost {
   border-style: dotted;
   opacity: 0.65;
@@ -393,12 +463,20 @@
   }
 }
 
-/* Pause Animation via Pause/Play Toggle Button */
+/* Pause Animation via Pause/Play Toggle Button or Inactive (Hidden/Offscreen) */
 .orbit-sky-panel.is-paused .orbit-ring,
 .orbit-sky-panel.is-paused .orbit-planet,
 .orbit-sky-panel.is-paused .orbit-cover-spin,
-.orbit-sky-panel.is-paused .orbit-sun-vinyl {
+.orbit-sky-panel.is-paused .orbit-sun-vinyl,
+.orbit-sky-panel.is-inactive .orbit-cover-spin,
+.orbit-sky-panel.is-inactive .orbit-sun-vinyl {
   animation-play-state: paused;
+}
+
+/* When JS drives ring rotation & drag, disable CSS ring/planet keyframe animations */
+.orbit-sky-panel.is-js-orbit .orbit-ring,
+.orbit-sky-panel.is-js-orbit .orbit-planet {
+  animation: none;
 }
 
 /* ==========================================================================
@@ -406,33 +484,23 @@
    ========================================================================== */
 .orbit-planet-slot {
   position: absolute;
-  pointer-events: auto;
-  z-index: 6;
+  inset: 0;
+  pointer-events: none;
+  transform: rotate(var(--slot-angle, 0deg));
 }
 
-/* 4 Orthogonal Positions (North, East, South, West) */
-.orbit-slot-0 {
+.orbit-slot-0 { --slot-angle: 0deg; }
+.orbit-slot-1 { --slot-angle: 90deg; }
+.orbit-slot-2 { --slot-angle: 180deg; }
+.orbit-slot-3 { --slot-angle: 270deg; }
+
+.orbit-planet-anchor {
+  position: absolute;
   top: 0;
   left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.orbit-slot-1 {
-  top: 50%;
-  left: 100%;
-  transform: translate(-50%, -50%);
-}
-
-.orbit-slot-2 {
-  top: 100%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.orbit-slot-3 {
-  top: 50%;
-  left: 0;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--slot-angle, 0deg)));
+  pointer-events: auto;
+  z-index: 6;
 }
 
 /* ==========================================================================
@@ -444,6 +512,13 @@
   text-decoration: none;
   animation: orbit-counter-spin var(--ring-duration, 60s) linear infinite;
   outline: none;
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+}
+
+.orbit-planet.is-dragging {
+  cursor: grabbing;
 }
 
 .orbit-planet-cover-wrap {
@@ -474,6 +549,9 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+  pointer-events: none;
 }
 
 .orbit-cover-placeholder {
@@ -804,11 +882,6 @@
     max-width: 340px;
   }
 
-  /* On small screens, hide the outer ring to prevent crowding */
-  .orbit-ring-3 {
-    display: none;
-  }
-
   .orbit-sun-vinyl {
     width: 62px;
     height: 62px;
@@ -817,19 +890,6 @@
   .orbit-planet-cover-wrap {
     width: 44px;
     height: 44px;
-  }
-
-  .orbit-sky-header {
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .orbit-sky-heading {
-    text-align: left;
-  }
-
-  .orbit-toggle-btn {
-    position: static;
   }
 }
 
@@ -842,5 +902,14 @@
   .orbit-cover-spin,
   .orbit-sun-vinyl {
     animation: none !important;
+  }
+
+  .orbit-stage {
+    transition: none;
+  }
+
+  .orbit-planet {
+    touch-action: auto;
+    cursor: pointer;
   }
 }

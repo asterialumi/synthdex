@@ -10,6 +10,9 @@ from apps.search.models import SearchType
 from apps.user_settings.models import UserSettings
 
 
+MAX_ORBIT_PLANETS = 24
+
+
 def _compute_ring_duration(tracks, base_default: int) -> int:
     """Calculate orbit duration in seconds based on average BPM, clamped to [30, 120]."""
     bpms = [float(item.track.bpm) for item in tracks if item.track.bpm is not None]
@@ -40,31 +43,32 @@ def home_view(request):
     user_settings, _ = UserSettings.objects.get_or_create(user=request.user)
     profile, _ = Profile.objects.get_or_create(user=request.user)
 
-    # Reuse get_favorites_with_details up to 12 favorites (read-only)
+    # Reuse get_favorites_with_details up to MAX_ORBIT_PLANETS favorites (read-only)
     # Preload track_sources for the 4 latest favorites cards in 1 batch query
     favorites_qs = (
         get_favorites_with_details(request.user)
-        .prefetch_related('track__track_sources__source')[:12]
+        .prefetch_related('track__track_sources__source')[:MAX_ORBIT_PLANETS]
     )
     favorites = list(favorites_qs)
     latest_favorites = favorites[:4]
 
-    # Partition favorites into 3 concentric rings (up to 4 per ring, newest on inner ring)
-    # Ring 1: favorites[0:4], Ring 2: favorites[4:8], Ring 3: favorites[8:12]
+    # Partition favorites into up to 5 concentric rings (newest on inner ring)
     ring_slices = [
         (1, favorites[0:4], 45),
         (2, favorites[4:8], 70),
         (3, favorites[8:12], 95),
+        (4, favorites[12:18], 110),
+        (5, favorites[18:MAX_ORBIT_PLANETS], 120),
     ]
 
     orbit_rings = []
-    slot_angles = [0, 90, 180, 270]
 
     for ring_num, ring_tracks, base_speed in ring_slices:
         duration = _compute_ring_duration(ring_tracks, base_speed)
         planets = []
+        count = len(ring_tracks)
         for idx, fav in enumerate(ring_tracks):
-            angle = slot_angles[idx % len(slot_angles)]
+            angle = round(idx * (360 / count)) if count else 0
             planets.append({
                 'fav': fav,
                 'angle': angle,

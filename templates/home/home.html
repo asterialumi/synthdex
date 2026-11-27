@@ -62,80 +62,94 @@
                     <span class="orbit-sky-eyebrow">Your Sound System</span>
                     <h2 class="orbit-sky-title">Cosmic Catalogue</h2>
                 </div>
-                <button type="button"
-                        class="orbit-toggle-btn"
-                        id="orbit-toggle-btn"
-                        aria-pressed="false"
-                        aria-label="Pause orbit animation">
-                    <svg class="icon orbit-icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
-                    <svg class="icon orbit-icon-play" aria-hidden="true"><use href="#i-play"/></svg>
-                    <span class="orbit-toggle-label">Pause</span>
-                </button>
+                <div class="orbit-controls">
+                    <div class="orbit-zoom-group" role="group" aria-label="Orbit zoom controls">
+                        <button type="button" class="orbit-ctrl-btn" id="orbit-zoom-out" aria-label="Zoom out orbit">&minus;</button>
+                        <button type="button" class="orbit-ctrl-btn orbit-zoom-reset" id="orbit-zoom-reset" aria-label="Reset orbit zoom">100%</button>
+                        <button type="button" class="orbit-ctrl-btn" id="orbit-zoom-in" aria-label="Zoom in orbit">+</button>
+                    </div>
+                    <button type="button"
+                            class="orbit-toggle-btn"
+                            id="orbit-toggle-btn"
+                            aria-pressed="false"
+                            aria-label="Pause orbit animation">
+                        <svg class="icon orbit-icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+                        <svg class="icon orbit-icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+                        <span class="orbit-toggle-label">Pause</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="orbit-container">
-                <!-- Center Sun: Vinyl avatar -->
-                <div class="orbit-sun" aria-hidden="true">
-                    <div class="orbit-sun-vinyl">
-                        <div class="orbit-sun-grooves"></div>
-                        <div class="orbit-sun-core">
-                            <svg class="icon orbit-sun-icon"><use href="#i-music-note"/></svg>
+            <div class="orbit-container" id="orbit-container">
+                <div class="orbit-stage" id="orbit-stage">
+                    <!-- Center Sun: Vinyl avatar -->
+                    <div class="orbit-sun" aria-hidden="true">
+                        <div class="orbit-sun-vinyl">
+                            <div class="orbit-sun-grooves"></div>
+                            <div class="orbit-sun-core">
+                                <svg class="icon orbit-sun-icon"><use href="#i-music-note"/></svg>
+                            </div>
                         </div>
+                        <span class="orbit-sun-label">SynthDex</span>
                     </div>
-                    <span class="orbit-sun-label">SynthDex</span>
-                </div>
 
-                {% if total_favorites > 0 %}
-                <!-- Orbit Rings -->
-                {% for ring in orbit_rings %}
-                <div class="orbit-ring orbit-ring-{{ ring.ring_num }}{% if not ring.has_planets %} is-empty{% endif %}"
-                     style="--ring-duration: {{ ring.duration }}s;">
-                    {% for planet in ring.planets %}
-                    <div class="orbit-planet-slot orbit-slot-{{ planet.slot_index }}">
-                        <a href="{% url 'catalogue:track_detail' planet.fav.track.id %}"
-                           class="orbit-planet"
-                           aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}"
-                           title="{{ planet.fav.track.title }} &bull; {{ planet.fav.track|artist_credits_display }}">
-                            <div class="orbit-planet-cover-wrap">
-                                <div class="orbit-cover-spin" data-spin-duration="{{ planet.spin_duration }}">
-                                    {% if planet.fav.track.artwork_url %}
-                                    <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
-                                    {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
-                                    <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
-                                    {% else %}
-                                    <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
-                                        <svg class="icon"><use href="#i-music-note"/></svg>
+                    {% if total_favorites > 0 %}
+                    <!-- Orbit Rings -->
+                    {% for ring in orbit_rings %}
+                    {% if ring.has_planets %}
+                    <div class="orbit-ring orbit-ring-{{ ring.ring_num }}"
+                         data-ring-duration="{{ ring.duration }}"
+                         style="--ring-duration: {{ ring.duration }}s;">
+                        {% for planet in ring.planets %}
+                        <div class="orbit-planet-slot orbit-slot-{{ planet.slot_index }}" data-angle="{{ planet.angle }}">
+                            <div class="orbit-planet-anchor">
+                                <a href="{% url 'catalogue:track_detail' planet.fav.track.id %}"
+                                   class="orbit-planet"
+                                   aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}"
+                                   title="{{ planet.fav.track.title }} &bull; {{ planet.fav.track|artist_credits_display }}">
+                                    <div class="orbit-planet-cover-wrap">
+                                        <div class="orbit-cover-spin" data-spin-duration="{{ planet.spin_duration }}">
+                                            {% if planet.fav.track.artwork_url %}
+                                            <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy" decoding="async">
+                                            {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
+                                            <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy" decoding="async">
+                                            {% else %}
+                                            <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
+                                                <svg class="icon"><use href="#i-music-note"/></svg>
+                                            </div>
+                                            {% endif %}
+                                        </div>
                                     </div>
-                                    {% endif %}
-                                </div>
+                                    <div class="orbit-tooltip" role="tooltip">
+                                        <span class="orbit-tooltip-title">{{ planet.fav.track.title }}</span>
+                                        <span class="orbit-tooltip-artist">{{ planet.fav.track|artist_credits_display }}</span>
+                                    </div>
+                                </a>
                             </div>
-                            <div class="orbit-tooltip" role="tooltip">
-                                <span class="orbit-tooltip-title">{{ planet.fav.track.title }}</span>
-                                <span class="orbit-tooltip-artist">{{ planet.fav.track|artist_credits_display }}</span>
-                            </div>
-                        </a>
+                        </div>
+                        {% endfor %}
                     </div>
+                    {% endif %}
                     {% endfor %}
+                    {% else %}
+                    <!-- 0 Favorites fallback: Ghost dashed planets and call to action -->
+                    <div class="orbit-ring orbit-ring-1 is-ghost" style="--ring-duration: 45s;">
+                        <div class="orbit-planet-slot orbit-slot-0" data-angle="0"><div class="orbit-planet-anchor"><div class="orbit-ghost-planet"></div></div></div>
+                        <div class="orbit-planet-slot orbit-slot-2" data-angle="180"><div class="orbit-planet-anchor"><div class="orbit-ghost-planet"></div></div></div>
+                    </div>
+                    <div class="orbit-ring orbit-ring-2 is-ghost" style="--ring-duration: 70s;">
+                        <div class="orbit-planet-slot orbit-slot-1" data-angle="90"><div class="orbit-planet-anchor"><div class="orbit-ghost-planet"></div></div></div>
+                        <div class="orbit-planet-slot orbit-slot-3" data-angle="270"><div class="orbit-planet-anchor"><div class="orbit-ghost-planet"></div></div></div>
+                    </div>
+                    <div class="orbit-ring orbit-ring-3 is-ghost" style="--ring-duration: 95s;">
+                        <div class="orbit-planet-slot orbit-slot-0" data-angle="0"><div class="orbit-planet-anchor"><div class="orbit-ghost-planet"></div></div></div>
+                    </div>
+                    <div class="orbit-empty-overlay">
+                        <p class="orbit-empty-text">Your orbit is waiting for music.</p>
+                        <a href="{% url 'search:search' %}" class="btn btn-primary btn-sm">Find tracks to save</a>
+                    </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
-                {% else %}
-                <!-- 0 Favorites fallback: Ghost dashed planets and call to action -->
-                <div class="orbit-ring orbit-ring-1 is-ghost" style="--ring-duration: 45s;">
-                    <div class="orbit-planet-slot orbit-slot-0"><div class="orbit-ghost-planet"></div></div>
-                    <div class="orbit-planet-slot orbit-slot-2"><div class="orbit-ghost-planet"></div></div>
-                </div>
-                <div class="orbit-ring orbit-ring-2 is-ghost" style="--ring-duration: 70s;">
-                    <div class="orbit-planet-slot orbit-slot-1"><div class="orbit-ghost-planet"></div></div>
-                    <div class="orbit-planet-slot orbit-slot-3"><div class="orbit-ghost-planet"></div></div>
-                </div>
-                <div class="orbit-ring orbit-ring-3 is-ghost" style="--ring-duration: 95s;">
-                    <div class="orbit-planet-slot orbit-slot-0"><div class="orbit-ghost-planet"></div></div>
-                </div>
-                <div class="orbit-empty-overlay">
-                    <p class="orbit-empty-text">Your orbit is waiting for music.</p>
-                    <a href="{% url 'search:search' %}" class="btn btn-primary btn-sm">Find tracks to save</a>
-                </div>
-                {% endif %}
             </div>
 
             {% if total_favorites > 0 %}
