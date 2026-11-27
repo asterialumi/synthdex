@@ -43,12 +43,14 @@
     <header class="site-header">
         <div class="app-container">
             <nav class="nav-bar" aria-label="Main Navigation">
-                <a href="{% if user.is_authenticated %}{% url 'home:home' %}{% else %}{% url 'login:login' %}{% endif %}" class="brand">SynthDex</a>
+                <a href="{% if user.is_authenticated %}{% url 'home:home' %}{% else %}{% url 'login:login' %}{% endif %}" class="brand">
+                    <svg class="brand-logo" aria-hidden="true"><use href="#i-synthdex-logo"/></svg>
+                    <span>SynthDex</span>
+                </a>
 
                 {% if user.is_authenticated %}
                 <div class="site-nav" id="primary-nav">
                     <a href="{% url 'home:home' %}" class="site-nav-link{% if request.resolver_match.app_name == 'home' %} is-active{% endif %}"{% if request.resolver_match.app_name == 'home' %} aria-current="page"{% endif %}>Home</a>
-                    <a href="{% url 'search:search' %}" class="site-nav-link{% if request.resolver_match.app_name == 'search' %} is-active{% endif %}"{% if request.resolver_match.app_name == 'search' %} aria-current="page"{% endif %}>Search</a>
                     <a href="{% url 'favorites:list' %}" class="site-nav-link{% if request.resolver_match.app_name == 'favorites' %} is-active{% endif %}"{% if request.resolver_match.app_name == 'favorites' %} aria-current="page"{% endif %}>Favorites</a>
                     <a href="{% url 'history:list' %}" class="site-nav-link{% if request.resolver_match.app_name == 'history' %} is-active{% endif %}"{% if request.resolver_match.app_name == 'history' %} aria-current="page"{% endif %}>History</a>
                     <a href="{% url 'profile:profile' %}" class="site-nav-link{% if request.resolver_match.app_name == 'profile' %} is-active{% endif %}"{% if request.resolver_match.app_name == 'profile' %} aria-current="page"{% endif %}>Profile</a>
@@ -62,7 +64,7 @@
                     <a href="{% url 'login:logout' %}" class="btn btn-ghost btn-logout">Logout</a>
                 </div>
 
-                <div class="header-actions">
+                <div class="header-actions header-actions--mobile">
                     <button type="button" class="menu-toggle-btn icon-btn" id="mobile-menu-toggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="primary-nav">
                         <svg class="icon icon-menu" aria-hidden="true"><use href="#i-menu"/></svg>
                         <svg class="icon icon-close" aria-hidden="true"><use href="#i-x"/></svg>

@@ -276,3 +276,219 @@ img.cover[src*="ytimg.com"] {
     transition-duration: 0.001ms !important;
   }
 }
+
+/* ==========================================================================
+   Shared Taste Summary Card (Profile & Home)
+   ========================================================================== */
+.taste-summary-card {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem 2rem;
+  box-shadow: var(--shadow-sm);
+  animation: rise-in 0.4s ease-out both;
+}
+
+.taste-card-title {
+  font-size: 1.15rem;
+  margin-bottom: 0.25rem;
+}
+
+.taste-card-subtitle {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.taste-details-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.taste-stat-row {
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.taste-stat-row:last-of-type {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.taste-stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.taste-stat-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ink-muted);
+}
+
+.taste-match-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--success);
+  background-color: rgba(74, 124, 89, 0.12);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.taste-genre-comparison {
+  display: grid;
+  gap: 0.5rem;
+  font-size: 0.92rem;
+}
+
+.taste-declared-line,
+.taste-favorites-say-line {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+}
+
+.taste-sublabel {
+  font-weight: 600;
+  color: var(--ink);
+  min-width: 130px;
+  flex-shrink: 0;
+}
+
+.taste-declared-val {
+  font-weight: 600;
+  color: var(--accent);
+  font-style: normal;
+}
+
+.taste-link-muted {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+  text-decoration: underline;
+}
+
+.taste-link-muted:hover {
+  color: var(--accent);
+}
+
+.taste-pills-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.taste-pills-list .pill {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.taste-bpm-info {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.taste-bpm-stat {
+  margin: 0;
+  font-size: 0.98rem;
+  color: var(--ink);
+}
+
+/* CSS-Only BPM Range Bar */
+.bpm-range-bar {
+  width: 100%;
+  max-width: 320px;
+  height: 6px;
+  background-color: var(--border);
+  border-radius: 3px;
+  position: relative;
+  margin-top: 0.35rem;
+}
+
+.bpm-range-track {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.bpm-range-marker {
+  position: absolute;
+  top: -4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  border: 2px solid var(--surface-raised);
+  transform: translateX(-50%);
+  box-shadow: var(--shadow-sm);
+  cursor: help;
+}
+
+.taste-coverage-line {
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  margin: 0;
+  font-style: italic;
+}
+
+/* Needs-details nudge box */
+.taste-nudge-box {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: var(--ink);
+  line-height: 1.45;
+}
+
+.taste-nudge-heading {
+  font-weight: 600;
+  color: var(--accent);
+  margin-right: 0.35rem;
+}
+
+.taste-nudge-link {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.taste-nudge-link:hover {
+  color: var(--accent);
+}
+
+.taste-nudge-more {
+  color: var(--ink-muted);
+  font-weight: 600;
+  font-size: 0.8rem;
+  margin-left: 0.25rem;
+}
+
+.taste-empty-state {
+  text-align: center;
+  padding: 1.5rem 1rem;
+}
+
+.taste-empty-msg {
+  color: var(--ink-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+.taste-muted-text {
+  color: var(--ink-muted);
+  font-size: 0.85rem;
+}

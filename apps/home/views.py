@@ -3,7 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
 from apps.favorites.selectors import get_favorites_with_details
+from apps.favorites.taste import get_taste_summary
 from apps.history.utils import get_recent_distinct_searches
+from apps.profile.models import Profile
 from apps.search.models import SearchType
 from apps.user_settings.models import UserSettings
 
@@ -20,9 +22,23 @@ def _compute_ring_duration(tracks, base_default: int) -> int:
     return max(30, min(120, speed))
 
 
+def _compute_track_spin_duration(bpm) -> int:
+    """Calculate per-track self-spin duration in seconds from track BPM, clamped to [4, 24]."""
+    if bpm is None:
+        return 12
+    try:
+        bpm_val = float(bpm)
+    except (TypeError, ValueError):
+        return 12
+    if bpm_val <= 0:
+        return 12
+    return max(4, min(24, round(12 * (120.0 / bpm_val))))
+
+
 @login_required(login_url='login:login')
 def home_view(request):
     user_settings, _ = UserSettings.objects.get_or_create(user=request.user)
+    profile, _ = Profile.objects.get_or_create(user=request.user)
 
     # Reuse get_favorites_with_details up to 12 favorites (read-only)
     # Preload track_sources for the 4 latest favorites cards in 1 batch query
@@ -53,6 +69,7 @@ def home_view(request):
                 'fav': fav,
                 'angle': angle,
                 'slot_index': idx,
+                'spin_duration': _compute_track_spin_duration(fav.track.bpm),
             })
         orbit_rings.append({
             'ring_num': ring_num,
@@ -62,12 +79,14 @@ def home_view(request):
         })
 
     recent_searches = get_recent_distinct_searches(request.user, limit=6)
+    taste_summary = get_taste_summary(request.user, declared_genre=profile.favorite_genre or '')
 
     return render(request, 'home/home.html', {
         'search_types': SearchType.choices,
         'pref_search_type': user_settings.pref_search_type,
         'latest_favorites': latest_favorites,
         'recent_searches': recent_searches,
+        'taste_summary': taste_summary,
         'orbit_rings': orbit_rings,
         'total_favorites': len(favorites),
     })

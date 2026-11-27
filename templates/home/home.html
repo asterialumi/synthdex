@@ -56,10 +56,21 @@
     <!-- Two-column dashboard grid -->
     <div class="home-dashboard-grid">
         <!-- Left: Deep Aubergine "Sky" Panel with Orbit -->
-        <section class="orbit-sky-panel" aria-label="Favorites Orbit">
+        <section class="orbit-sky-panel" id="orbit-sky-panel" aria-label="Favorites Orbit">
             <div class="orbit-sky-header">
-                <span class="orbit-sky-eyebrow">Your Sound System</span>
-                <h2 class="orbit-sky-title">Cosmic Catalogue</h2>
+                <div class="orbit-sky-heading">
+                    <span class="orbit-sky-eyebrow">Your Sound System</span>
+                    <h2 class="orbit-sky-title">Cosmic Catalogue</h2>
+                </div>
+                <button type="button"
+                        class="orbit-toggle-btn"
+                        id="orbit-toggle-btn"
+                        aria-pressed="false"
+                        aria-label="Pause orbit animation">
+                    <svg class="icon orbit-icon-pause" aria-hidden="true"><use href="#i-pause"/></svg>
+                    <svg class="icon orbit-icon-play" aria-hidden="true"><use href="#i-play"/></svg>
+                    <span class="orbit-toggle-label">Pause</span>
+                </button>
             </div>
 
             <div class="orbit-container">
@@ -86,15 +97,17 @@
                            aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}"
                            title="{{ planet.fav.track.title }} &bull; {{ planet.fav.track|artist_credits_display }}">
                             <div class="orbit-planet-cover-wrap">
-                                {% if planet.fav.track.artwork_url %}
-                                <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
-                                {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
-                                <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
-                                {% else %}
-                                <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
-                                    <svg class="icon"><use href="#i-music-note"/></svg>
+                                <div class="orbit-cover-spin" data-spin-duration="{{ planet.spin_duration }}">
+                                    {% if planet.fav.track.artwork_url %}
+                                    <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
+                                    {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
+                                    <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy">
+                                    {% else %}
+                                    <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
+                                        <svg class="icon"><use href="#i-music-note"/></svg>
+                                    </div>
+                                    {% endif %}
                                 </div>
-                                {% endif %}
                             </div>
                             <div class="orbit-tooltip" role="tooltip">
                                 <span class="orbit-tooltip-title">{{ planet.fav.track.title }}</span>
@@ -127,16 +140,17 @@
 
             {% if total_favorites > 0 %}
             <div class="orbit-legend">
-                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-inner"></span>Inner: Newest</span>
-                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-outer"></span>Speed: BPM</span>
+                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-inner"></span>Inner ring: newest</span>
+                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-outer"></span>Orbit: ring avg BPM</span>
+                <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-spin"></span>Spin: track BPM</span>
             </div>
             {% endif %}
         </section>
 
-        <!-- Right: Latest Favorites & Recent Searches -->
+        <!-- Right: Latest Favorites & Taste Summary -->
         <div class="home-right-rail">
             {% if latest_favorites %}
-            <section class="dashboard-favorites-section mb-4" aria-labelledby="heading-latest-favorites">
+            <section class="dashboard-favorites-section" aria-labelledby="heading-latest-favorites">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 id="heading-latest-favorites" class="dashboard-section-title">Latest Favorites</h2>
                     <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
@@ -174,7 +188,7 @@
                 </div>
             </section>
             {% else %}
-            <section class="dashboard-favorites-section mb-4" aria-labelledby="heading-latest-favorites">
+            <section class="dashboard-favorites-section" aria-labelledby="heading-latest-favorites">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <h2 id="heading-latest-favorites" class="dashboard-section-title">Latest Favorites</h2>
                     <a href="{% url 'favorites:list' %}" class="dashboard-view-all">View all →</a>
@@ -186,28 +200,13 @@
             </section>
             {% endif %}
 
-            {% if recent_searches %}
-            <section class="dashboard-recent-section" aria-labelledby="heading-recent-searches">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 id="heading-recent-searches" class="dashboard-section-title">Recent Searches</h2>
-                    <a href="{% url 'history:list' %}" class="dashboard-view-all">History →</a>
-                </div>
-                <div class="dashboard-recent-list">
-                    {% for item in recent_searches %}
-                    <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="dashboard-recent-item" title="Search again for '{{ item.query }}'">
-                        <span class="recent-item-icon" aria-hidden="true">
-                            <svg class="icon"><use href="#i-search"/></svg>
-                        </span>
-                        <span class="recent-item-query">{{ item.query }}</span>
-                        {% if item.search_type != 'all' %}
-                        <span class="pill pill--accent recent-item-badge">{{ item.search_type }}</span>
-                        {% endif %}
-                    </a>
-                    {% endfor %}
-                </div>
-            </section>
-            {% endif %}
+            {% url 'profile:profile' as profile_url %}
+            {% include 'common/_taste_summary.html' with taste_summary=taste_summary edit_profile_url=profile_url|add:'#edit-profile' %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home/orbit.js' %}"></script>
 {% endblock %}

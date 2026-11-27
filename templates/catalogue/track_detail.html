@@ -13,12 +13,12 @@
         {% if rail_query %}
         <a href="{% url 'search:search' %}?q={{ rail_query|urlencode }}&type={{ rail_search_type }}" class="detail-back-link">
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg>
-            <span>Back to results</span>
+            <span>Back to Results</span>
         </a>
         {% else %}
-        <a href="{% url 'search:search' %}" class="detail-back-link">
+        <a href="{% url 'home:home' %}" class="detail-back-link">
             <svg class="icon" aria-hidden="true"><use href="#i-arrow-left"/></svg>
-            <span>Back to Search</span>
+            <span>Back to Home</span>
         </a>
         {% endif %}
     </nav>

@@ -147,7 +147,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: var(--space-6);
-  align-items: start;
+  align-items: stretch;
   margin-bottom: 3.5rem;
 }
 
@@ -159,23 +159,78 @@
   color: var(--deep-ink);
   border: 1px solid var(--deep-border);
   border-radius: var(--radius-lg);
-  padding: 2rem 1.5rem 1.75rem;
+  padding: 1.75rem 1.5rem 1.5rem;
   box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  min-height: 520px;
+  justify-content: space-between;
+  min-height: 540px;
   animation: rise-in 0.45s ease-out both;
   animation-delay: 0.08s;
 }
 
 .orbit-sky-header {
-  text-align: center;
-  margin-bottom: 1.25rem;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  position: relative;
+  margin-bottom: 0.75rem;
   z-index: 2;
+}
+
+.orbit-sky-heading {
+  text-align: center;
+}
+
+.orbit-toggle-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 32px;
+  padding: 0 0.65rem;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--deep-ink-muted);
+  background-color: var(--deep-surface);
+  border: 1px solid var(--deep-border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.orbit-toggle-btn:hover {
+  color: var(--deep-ink);
+  border-color: var(--deep-accent);
+}
+
+.orbit-toggle-btn .icon {
+  width: 0.9em;
+  height: 0.9em;
+}
+
+.orbit-toggle-btn .orbit-icon-play {
+  display: none;
+}
+
+.orbit-sky-panel.is-paused .orbit-toggle-btn .orbit-icon-pause {
+  display: none;
+}
+
+.orbit-sky-panel.is-paused .orbit-toggle-btn .orbit-icon-play {
+  display: inline-block;
+}
+
+.orbit-sky-panel.is-paused .orbit-toggle-btn {
+  color: var(--deep-accent);
+  border-color: var(--deep-accent);
 }
 
 .orbit-sky-eyebrow {
@@ -200,9 +255,9 @@
 .orbit-container {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 580px;
   aspect-ratio: 1;
-  margin: 0 auto;
+  margin: auto 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -223,8 +278,8 @@
 }
 
 .orbit-sun-vinyl {
-  width: 72px;
-  height: 72px;
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
   background: radial-gradient(circle at center, var(--deep-surface) 0%, var(--deep) 45%, var(--deep-surface) 80%, var(--deep) 100%);
   border: 2px solid var(--deep-accent);
@@ -329,11 +384,20 @@
   }
 }
 
-/* Pause Animation on Hover and Focus-Within */
-.orbit-sky-panel:hover .orbit-ring,
-.orbit-sky-panel:hover .orbit-planet,
-.orbit-sky-panel:focus-within .orbit-ring,
-.orbit-sky-panel:focus-within .orbit-planet {
+@keyframes orbit-track-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pause Animation via Pause/Play Toggle Button */
+.orbit-sky-panel.is-paused .orbit-ring,
+.orbit-sky-panel.is-paused .orbit-planet,
+.orbit-sky-panel.is-paused .orbit-cover-spin,
+.orbit-sky-panel.is-paused .orbit-sun-vinyl {
   animation-play-state: paused;
 }
 
@@ -383,8 +447,8 @@
 }
 
 .orbit-planet-cover-wrap {
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
   border-radius: 50%;
   overflow: hidden;
   border: 2px solid var(--deep-border);
@@ -394,6 +458,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.orbit-cover-spin {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: orbit-track-spin var(--spin-duration, 12s) linear infinite;
 }
 
 .orbit-cover {
@@ -506,11 +579,14 @@
 /* Orbit Legend */
 .orbit-legend {
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.45rem 1rem;
   font-size: 0.75rem;
   color: var(--deep-ink-muted);
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   z-index: 2;
+  text-align: center;
 }
 
 .orbit-legend-item {
@@ -524,6 +600,7 @@
   height: 7px;
   border-radius: 50%;
   display: inline-block;
+  flex-shrink: 0;
 }
 
 .orbit-dot-inner {
@@ -532,6 +609,10 @@
 
 .orbit-dot-outer {
   background-color: var(--deep-ink-muted);
+}
+
+.orbit-dot-spin {
+  background-color: var(--deep-ink);
 }
 
 /* ==========================================================================
@@ -679,58 +760,6 @@
   color: var(--ink-muted);
 }
 
-/* Recent Searches List */
-.dashboard-recent-section {
-  animation: rise-in 0.4s ease-out both;
-  animation-delay: 0.12s;
-}
-
-.dashboard-recent-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.dashboard-recent-item {
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  background-color: var(--surface-raised);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 0.6rem 0.85rem;
-  color: var(--ink);
-  text-decoration: none;
-  font-size: 0.88rem;
-  transition: all 0.15s ease;
-}
-
-.dashboard-recent-item:hover {
-  border-color: var(--accent);
-  background-color: var(--surface-hover);
-  color: var(--accent);
-  text-decoration: none;
-  transform: translateX(2px);
-}
-
-.recent-item-icon {
-  color: var(--ink-muted);
-  display: flex;
-  align-items: center;
-}
-
-.recent-item-query {
-  flex: 1;
-  font-weight: 500;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.recent-item-badge {
-  font-size: 0.68rem;
-}
-
 /* ==========================================================================
    Responsive Adaptations
    ========================================================================== */
@@ -781,13 +810,26 @@
   }
 
   .orbit-sun-vinyl {
-    width: 58px;
-    height: 58px;
+    width: 62px;
+    height: 62px;
   }
 
   .orbit-planet-cover-wrap {
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .orbit-sky-header {
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .orbit-sky-heading {
+    text-align: left;
+  }
+
+  .orbit-toggle-btn {
+    position: static;
   }
 }
 
@@ -797,6 +839,7 @@
 @media (prefers-reduced-motion: reduce) {
   .orbit-ring,
   .orbit-planet,
+  .orbit-cover-spin,
   .orbit-sun-vinyl {
     animation: none !important;
   }
