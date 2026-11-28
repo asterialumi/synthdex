@@ -76,7 +76,8 @@
     }
     top = Math.max(edgePad, Math.min(panelRect.height - tipHeight - edgePad, top));
 
-    sharedTooltip.style.transform = 'translate3d(' + Math.round(left) + 'px, ' + Math.round(top) + 'px, 0)';
+    sharedTooltip.style.left = Math.round(left) + 'px';
+    sharedTooltip.style.top = Math.round(top) + 'px';
   }
 
   function showTooltipForPlanet(planet) {
@@ -91,34 +92,59 @@
       tooltipArtistEl.textContent = planet.getAttribute('data-artist') || '';
     }
     sharedTooltip.setAttribute('aria-hidden', 'false');
-    positionTooltipForPlanet(planet);
     sharedTooltip.classList.add('is-visible');
+    positionTooltipForPlanet(planet);
   }
 
   var allPlanets = stage.querySelectorAll('.orbit-planet');
   for (var tpIdx = 0; tpIdx < allPlanets.length; tpIdx++) {
-    (function (planet) {
-      planet.addEventListener('dragstart', function (e) {
-        e.preventDefault();
-      });
-      planet.addEventListener('pointerenter', function () {
-        showTooltipForPlanet(planet);
-      });
-      planet.addEventListener('pointerleave', function () {
-        if (activeTooltipPlanet === planet) {
-          hideTooltip();
-        }
-      });
-      planet.addEventListener('focus', function () {
-        showTooltipForPlanet(planet);
-      });
-      planet.addEventListener('blur', function () {
-        if (activeTooltipPlanet === planet) {
-          hideTooltip();
-        }
-      });
-    })(allPlanets[tpIdx]);
+    allPlanets[tpIdx].addEventListener('dragstart', function (e) {
+      e.preventDefault();
+    });
   }
+
+  // Use pointerover/pointermove/focusin delegation so moving planets under a stationary cursor and keyboard focus both show & track the label
+  panel.addEventListener('pointerover', function (e) {
+    var planet = e.target && e.target.closest ? e.target.closest('.orbit-planet') : null;
+    if (planet) {
+      showTooltipForPlanet(planet);
+    }
+  });
+
+  panel.addEventListener('pointermove', function (e) {
+    if (isAnyRingDragging) {
+      return;
+    }
+    var planet = e.target && e.target.closest ? e.target.closest('.orbit-planet') : null;
+    if (planet) {
+      if (activeTooltipPlanet !== planet) {
+        showTooltipForPlanet(planet);
+      } else {
+        positionTooltipForPlanet(planet);
+      }
+    } else if (activeTooltipPlanet && !activeTooltipPlanet.matches(':focus-visible')) {
+      hideTooltip();
+    }
+  });
+
+  panel.addEventListener('pointerleave', function () {
+    if (activeTooltipPlanet && !activeTooltipPlanet.matches(':focus-visible')) {
+      hideTooltip();
+    }
+  });
+
+  stage.addEventListener('focusin', function (e) {
+    var planet = e.target && e.target.closest ? e.target.closest('.orbit-planet') : null;
+    if (planet) {
+      showTooltipForPlanet(planet);
+    }
+  });
+
+  stage.addEventListener('focusout', function (e) {
+    if (activeTooltipPlanet && (!e.relatedTarget || !stage.contains(e.relatedTarget) || !e.relatedTarget.closest('.orbit-planet'))) {
+      hideTooltip();
+    }
+  });
 
   // Zoom state (0.6x to 1.6x)
   var MIN_ZOOM = 0.6;
@@ -339,8 +365,6 @@
           var center = getSystemCenter();
           lastPointerAngle = getPointerAngle(e.clientX, e.clientY, center.x, center.y);
           ringObj.dragging = true;
-          isAnyRingDragging = true;
-          hideTooltip();
           try {
             planet.setPointerCapture(pointerId);
           } catch (err) {
@@ -356,6 +380,8 @@
           var dy = e.clientY - startY;
           if (!moved && (dx * dx + dy * dy) >= DRAG_THRESHOLD_SQ) {
             moved = true;
+            isAnyRingDragging = true;
+            hideTooltip();
             planet.classList.add('is-dragging');
           }
           if (moved) {
@@ -393,6 +419,7 @@
 
         planet.addEventListener('pointerup', endDrag);
         planet.addEventListener('pointercancel', endDrag);
+        planet.addEventListener('lostpointercapture', endDrag);
         planet.addEventListener('click', function (e) {
           if (suppressClickPlanet === planet) {
             e.preventDefault();

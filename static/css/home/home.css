@@ -610,9 +610,7 @@ img.orbit-cover {
   font-size: 0.78rem;
   white-space: nowrap;
   pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.15s ease, visibility 0.15s ease;
+  display: none;
   z-index: 40;
   text-align: center;
   max-width: 220px;
@@ -635,8 +633,7 @@ img.orbit-cover {
 }
 
 .orbit-tooltip.is-visible {
-  opacity: 1;
-  visibility: visible;
+  display: block;
 }
 
 /* Orbit Empty Overlay */
