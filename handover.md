@@ -2,22 +2,23 @@
 
 **Project:** SynthDex (personal music metadata catalogue)
 **Stack:** Django 6.1.x, Supabase PostgreSQL, Bootstrap 5.3 (CDN) + modular custom CSS, vanilla JS. Windows, VS Code, PowerShell, `.venv`.
-**Branch:** `main`. Local `main` was at `ff78944` (orbit pan) when this file was updated; the commit that adds this file comes after it. The user pushes; confirm what is on the remote with `git log --oneline --decorate -5`.
+**Branch:** `main`. Local `main` and `origin/main` were both at `0648034` (Round 3B) when this file was updated; the commit that adds this file comes after it. The user pushes; confirm what is on the remote with `git log --oneline --decorate -5`.
 
 ## 0. Read this first
 
 You are continuing work on SynthDex in a new session. You have no memory of earlier work, so everything you need is in this file. **No phase is queued.** Don't start any work until the user gives you a prompt, and when a prompt conflicts with this file, the prompt wins.
 
-**Status.** The phased UI overhaul and Polish Round 2 (2A, 2B, 2C labels/covers/drag/pan) are **done and committed locally**:
+**Status.** The phased UI overhaul and Polish Rounds 2-3 are **done, committed and pushed** (as of `0648034`):
 - Phases 1-4, the Phase 3 amendment and the JOIN/SUBQUERY work (section 2 has the hashes)
 - Phase 4.5 (`94e6e50`), Phase 5 (`b9dd345`), Phase 6 (`194e0da`)
 - Polish Batch 1 (`12751ed`), Polish Batch 2 (`d3f10a0`)
 - Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`), orbit label visibility fix (`d5471ec`), handover update (`bf5bc67`), and orbit pan (`ff78944`)
+- Polish Round 3: track-details tempo/genre strip alignment (`574ef51`), favorites sort pills (`e9c9b65`), ranked top artists (`0648034`)
 
-Per the last confirmed report, `manage.py check`, template compilation, the filter sanity checks and `makemigrations --check --dry-run` passed after `d5471ec`. Whether they were re-run after the pan commit `ff78944` is not confirmed, so run section 10 before the next commit. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
+The section 10 checks (`manage.py check`, template compilation, filter sanity checks, `makemigrations --check --dry-run`) were last reported passing during the 3B run (`0648034`); there was no formal report for 3.0 and 3A. Run section 10 before the next commit. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
 
 **Not built / still pending:**
-1. An animated "visualizer rings" background (subtle bar rings behind every page — deferred, last).
+1. An animated "visualizer rings" background (subtle bar rings behind every page; **the next and last item**). Intended behavior, from the user: two concentric rings of thin bars sit behind the page content on every page, in both themes. Both rings always rotate slowly, even when idle (inner clockwise, outer counter-clockwise). The bars do NOT react to audio: they go up and down only in response to mouse input (move, scroll, click) and are still when idle. Scrolling down keeps the default directions; scrolling up reverses both rings (the user's note was ambiguous; this is the agreed reading). Rotation speed follows the live scroll speed (faster than idle) if feasible. Exception: on a song's details page the bars animate even when idle. It must stay subtle (low contrast, `pointer-events: none`, `aria-hidden`), never reduce text contrast, respect `prefers-reduced-motion`, and not hurt performance.
 
 After each piece of work: verify, commit, report (section 12, **keep it short**), then **stop and wait**.
 
@@ -51,11 +52,18 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 | `d3f10a0` | Polish Batch 2 | Add orbit zoom, ring dragging and larger favorites cap |
 | `2003981` | docs | Update handover for completed polish batches |
 | `4e37b54` | Polish Round 2A | Login name removal, warm light palette, whole-row clickable rows |
-| `b2ba81e` | Polish Round 2B | Favorites pagination, search/filter/sort, artist limit, 900px+ columns |
-| `d77a557` | Polish Round 2C | Orbit shared top-layer label, cover crop-zoom fill, ring drag fix |
-| `d5471ec` | Polish Round 2C fix | Fix orbit label visibility (delegated hover/focus, `left`/`top`, `lostpointercapture`) |
+| `b2ba81e` | Polish Round 2B | Polish round 2B: favorites pagination, search, sort and artist limit |
+| `d77a557` | Polish Round 2C | Polish round 2C: orbit labels, cover fill and ring drag |
+| `d5471ec` | Polish Round 2C fix | Fix orbit label visibility |
 | `bf5bc67` | docs | Update handover for polish round 2 |
-| `ff78944` | Polish Round 2C pan | Pan the whole orbit (drag sky/sun, clamped, Reset resets both zoom+pan, mouse/pen only) |
+| `ff78944` | Polish Round 2C pan | Polish round 2C: pan the whole orbit |
+| `c8bb5ca` | docs | Update handover for orbit pan |
+| `7353056` | docs | Update handover for orbit pan and shorter reports |
+| `574ef51` | Polish Round 3.0 | Polish round 3.0: align tempo and genre strip |
+| `e9c9b65` | Polish Round 3A | Polish round 3A: favorites sort pills |
+| `0648034` | Polish Round 3B | Polish round 3B: ranked top artists |
+
+Subjects from `b2ba81e` onward are copied from `git log`; older rows (for example `4e37b54`) may be paraphrased, so check `git log` if the exact text matters. The commit that adds this handover ("Update handover for polish round 3") comes after `0648034`.
 
 **About `3fc7cce`:** it was requested while the user was looking at **stale cached CSS**, so it "fixed" problems that Phase 3 and Phase 4 had already fixed. It was reverted in `779fa09`. **Don't reapply it.** The search layout and cover-art handling are whatever existed at `6f83349`.
 
@@ -85,7 +93,7 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 ### Phase 4: track details and results rail
 - `apps/catalogue/views.py`: rail context from `?q=<query>&type=<type>` (300-char cap, `type` validated against `SearchType.values`). Read-only lookup of `SearchCache` and `SearchCacheResult`, ignoring `expires_at`, no API calls, no writes.
 - `apps/catalogue/templatetags/catalogue_tags.py`: `format_bpm`, `source_display_name` (`youtube` to `YouTube`, etc.), `duration_display`.
-- `track_detail.html` / `track_detail.css`: 65/35 grid with a sticky, independently scrolling rail (`.is-current` highlight), single-column fallback without params, aubergine hero with prominent BPM and genre, balanced info grid, brand icons on Listen buttons, collapsible edit panel. The back link is conditional since Polish Batch 1 (section 9).
+- `track_detail.html` / `track_detail.css`: 65/35 grid with a sticky, independently scrolling rail (`.is-current` highlight), single-column fallback without params, aubergine hero with prominent BPM and genre, balanced info grid, brand icons on Listen buttons, collapsible edit panel. The back link is conditional since Polish Batch 1 (section 9). The tempo/genre strip in the hero was re-aligned in Round 3 (`574ef51`, `track_detail.css` only).
 
 ---
 
@@ -95,9 +103,9 @@ This is a **graded deliverable**. Treat it as protected.
 
 - **Where:** `apps/favorites/selectors.py` (new), `apps/favorites/views.py`, `templates/favorites/favorites.html`, plus whatever tests were added with it. **Confirm the function and variable names below in the code before relying on them.** They come from the brief that requested the work.
 - **JOIN:** `get_favorites_with_details(user)`: `Favorite` filtered by user with `select_related('track', 'track__album')` (INNER JOIN on the track, LEFT OUTER JOIN on the album, because `Track.album` can be NULL), plus a prefetch of credits and artists, ordered newest first. Total: 3 queries for the selector on its own (the paginated favorites page runs more, see section 7).
-- **SUBQUERY:** `get_favorite_artists(user)`: the artists credited on any favorited track, written as **explicitly nested `Subquery(...)`** (inner: favorited track ids; middle: credited artist ids; outer: artists). One query. `IN` never repeats a row.
+- **SUBQUERY:** `get_favorite_artists(user)`: the artists credited on any favorited track, written as **explicitly nested `Subquery(...)`** (inner: favorited track ids; middle: credited artist ids; outer: artists). One query. `IN` never repeats a row. Since Round 3B the favorites **view** chains `annotate`/`order_by` onto this queryset to rank artists by favorite count (the selector itself is untouched, still one query, and the nested subquery is still in the WHERE clause; see section 7).
 - **`sql_of(queryset)`:** returns `str(queryset.query)` for display.
-- **Page now:** "Your Favorites" with a responsive list of `.track-row` items (Title, Artists, Album, BPM, Duration, Date added, heart), an "Artists in your favorites" row of pills (limited to 12), pagination and search/filter/sort (section 7), and a collapsed "SQL used (debug only)" block gated by `settings.SHOW_SQL_PANEL` (not `settings.DEBUG`; context vars `show_sql`, `favorites_sql`, `artists_sql`).
+- **Page now:** "Your Favorites" with a responsive list of `.track-row` items (Title, Artists, Album, BPM, Duration, Date added, heart), a "Top artists in your favorites" row of pills (ranked by favorites, limited to 12), pagination and search/filter/sort (section 7), and a collapsed "SQL used (debug only)" block gated by `settings.SHOW_SQL_PANEL` (not `settings.DEBUG`; context vars `show_sql`, `favorites_sql`, `artists_sql`).
 - **Reuse:** the home orbit also calls `get_favorites_with_details(user)` (sliced), read-only.
 - **Rules:**
   - Don't edit `selectors.py`, don't turn the nested `Subquery` into a join or `distinct()`, and don't remove `sql_of`.
@@ -112,7 +120,7 @@ Paths marked "(confirm)" were reported by Antigravity but not checked against th
 ```
 apps/
   catalogue/   templatetags/catalogue_tags.py (format_bpm, source_display_name, duration_display); views.py (rail context)
-  favorites/   selectors.py (JOIN + SUBQUERY, protected); taste.py (get_taste_summary, format_bpm); views.py (pagination, search/filter/sort, artist limit); test_taste.py (+ any tests from the DB activity)
+  favorites/   selectors.py (JOIN + SUBQUERY, protected); taste.py (get_taste_summary, format_bpm); views.py (pagination, search/filter/sort, ranked artists with limit); test_taste.py (+ any tests from the DB activity)
   history/     views.py (consecutive search grouping)
   home/        views.py (orbit data via get_favorites_with_details(user)[:MAX_ORBIT_PLANETS], taste summary) (confirm path and where MAX_ORBIT_PLANETS lives)
   profile/     context_processors.py (profile_bio, profile_favorite_genre); views.py (taste summary)
@@ -138,15 +146,16 @@ templates/{catalogue,favorites,history,home,login,profile,register,search,user_s
 
 ---
 
-## 7. Phase 4.5 & Polish Round 2B: Favorites page (done)
+## 7. Phase 4.5, Polish Rounds 2B and 3: Favorites page (done)
 
 Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.favorite-item` items using shared components (`.cover`, `.pill`, `.icon-btn`, `.row-clickable`) and theme tokens in `favorites.css`. Original artist casing is preserved and `selectors.py` is untouched. Polish Round 2B (`b2ba81e`) added in `apps/favorites/views.py` by chaining onto `get_favorites_with_details(user)`:
 - **Pagination:** `FAVORITES_PER_PAGE = 10`, `"Showing X-Y of N"` counter, elided page navigation (`aria-label`, `aria-current="page"`), invalid pages clamped.
 - **Search, filter & sort (GET, no API calls):** `q` (300-char cap, case-insensitive contains), `type` (whitelisted `all`/`song`/`artist`/`album` via `SearchType`; `All` and `Artist` use `Exists` so multi-artist tracks appear once), `sort` (whitelisted `newest`, `oldest`, `title_asc`, `title_desc`, `bpm_asc`, `bpm_desc` with missing BPM always last), `Clear` link when active, and a separate `"No favorites match"` empty state.
-- **Artists limit:** `MAX_FAVORITE_ARTISTS = 12` evaluated once into a `list()` and sliced in Python with a muted `"+N more"` suffix. The heading is **intentionally still "Artists in your favorites"**, not "Top Artists": the nested subquery returns every credited artist and does not rank them.
+  - **Sort pills (Round 3A, `e9c9b65`):** the sort dropdown was replaced by a second toolbar row: "Sort by" with three pill links (Date added, Title, BPM). Row 1 is the All/Song/Artist/Album select, the search input and a **Search** button (formerly "Apply"). Pills are plain GET links; the active one has `aria-current="true"` and a direction arrow. Clicking the active pill reverses its direction; clicking an inactive pill applies its default (Date added: newest first, Title: A-Z, BPM: low to high). The `sort` parameter and its six whitelisted values are **unchanged**; links keep `q` and `type` and drop `page`, and the search form carries the current `sort` in a hidden input. Built per the 3A spec and confirmed working by the user in the browser; fine details were not independently verified.
+- **Top artists (Round 3B, `0648034`):** ranked by how many of the user's favorited tracks each artist is credited on, then by name. The view chains `annotate`/`order_by` onto `get_favorite_artists(user)`: `COUNT(DISTINCT favorites_favorite.id)` filtered to the user, then `ORDER BY fav_count DESC, name ASC, id ASC`. `selectors.py` is untouched, the nested subquery is still in the WHERE clause, and it is still ONE artists query. The heading is "Top artists in your favorites"; pills show ` · N` only when N is greater than 1. `MAX_FAVORITE_ARTISTS = 12` is evaluated once into a `list()` and sliced in Python with a muted `"+N more"` suffix (so now the least-favorited artists are the ones hidden). The list is global for the user and unaffected by search, filter, sort or page.
 - **900px+ columns:** Fixed-width BPM/duration/date columns and ellipsis-truncated album (blank when missing; no `"— —"`). Below 900px unchanged.
-- **Query count:** 5 favorites-data queries (`COUNT(*)`, `LIMIT 10` favorites JOIN, 2 visible-page prefetches, 1 artists SUBQUERY) plus 3 base-template/context-processor queries (8 total on render, zero N+1).
-- **SQL debug panel:** `favorites_sql` and `artists_sql` are captured before filtering/pagination/slicing, so the collapsed `<details>` panel (gated behind `SHOW_SQL_PANEL`) still shows the **original** selector queries.
+- **Query count:** 5 favorites-data queries (`COUNT(*)`, `LIMIT 10` favorites JOIN, 2 visible-page prefetches, 1 artists SUBQUERY) plus 3 base-template/context-processor queries (8 total on render, zero N+1). Round 3B still runs exactly one artists query, so the count should be unchanged, but it was not re-measured.
+- **SQL debug panel:** `favorites_sql` is captured before filtering/pagination/slicing, so the collapsed `<details>` panel (gated behind `SHOW_SQL_PANEL`) still shows the **original** favorites selector query. Since Round 3B, `artists_sql` was specified to show the ranked query actually executed (it still contains the nested subquery unchanged); that panel output was not re-checked in the browser.
 
 **Rules still in force:**
 - Keep the view's context variable names (`favorites`, `favorite_artists`, `show_sql`, `favorites_sql`, `artists_sql`). Avoid N+1 queries and prefetch only the visible page.
@@ -175,7 +184,7 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
 
 ---
 
-## 9. Phase 6, Polish Batches 1-2 and Polish Round 2: accessibility, branding and layout (done except as noted)
+## 9. Phase 6, Polish Batches 1-2 and Polish Rounds 2-3: accessibility, branding and layout (done except as noted)
 
 **Phase 6 (`194e0da`):** contrast audit (4.5:1 for text, 3:1 for UI icons), keyboard-only walkthrough, responsive checks at 1440, 1024, 768 and 390px in both themes, and removal of dead and duplicate CSS.
 
@@ -190,6 +199,11 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
 - **Whole-row clickable:** added `.row-clickable` / `.row-clickable-link` / `.row-clickable-action` in `static/css/common/components.css` (one anchor per row, full-row hover & `:has(.row-clickable-link:focus-visible)` ring, action buttons elevated above). Applied to search results, favorites, home "Latest Favorites", profile "Your Favorites" & "Recent Searches", and history. (`track_detail.html` `.rail-item` was already a full-row anchor and left as-is.)
 - **Favorites & Orbit (including pan):** documented in sections 7 and 8.
 - **Not built / still pending:** the animated visualizer-rings background (deferred, last).
+
+**Polish Round 3 (`574ef51`, `e9c9b65`, `0648034`):**
+- **3.0:** tempo/genre strip alignment in the track-details hero (`static/css/catalogue/track_detail.css` only). It looked unfixed until a hard refresh (stale cache again), and the user confirmed it is fixed.
+- **3A:** favorites sort pills replaced the sort dropdown (`favorites.html`, `favorites.css`; section 7).
+- **3B:** ranked "Top artists in your favorites" (`views.py`, `favorites.html`, `favorites.css`; section 7).
 
 ---
 
