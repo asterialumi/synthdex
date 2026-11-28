@@ -33,7 +33,9 @@
         </div>
 
         <div class="card favorites-filter-card mb-4">
+            <!-- Row 1: Filter, Search, Submit -->
             <form method="get" action="{% url 'favorites:list' %}" class="favorites-filter-form">
+                <input type="hidden" name="sort" value="{{ sort_by }}">
                 <select name="type" class="search-panel-select favorites-type-select" aria-label="Filter category">
                     {% for value, label in search_types %}
                     <option value="{{ value }}"{% if value == filter_type %} selected{% endif %}>{{ label }}</option>
@@ -47,21 +49,86 @@
                     class="search-panel-input favorites-search-input"
                     placeholder="Search your favorites…"
                     aria-label="Search favorites">
-                <select name="sort" class="search-panel-select favorites-sort-select" aria-label="Sort favorites">
-                    {% for value, label in sort_choices %}
-                    <option value="{{ value }}"{% if value == sort_by %} selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
-                <div class="favorites-filter-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
-                        <span>Apply</span>
-                    </button>
-                    {% if has_active_filters %}
-                    <a href="{% url 'favorites:list' %}" class="btn btn-secondary">Clear</a>
-                    {% endif %}
-                </div>
+                <button type="submit" class="btn btn-primary favorites-search-btn">
+                    <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                    <span>Search</span>
+                </button>
             </form>
+            <!-- Row 2: Sort pills -->
+            <div class="favorites-sort-row">
+                <span class="favorites-sort-label" id="sort-pills-label">Sort by</span>
+                <nav class="favorites-sort-pills" aria-labelledby="sort-pills-label">
+                    {# Date added pill #}
+                    {% if sort_by == 'newest' %}
+                    <a href="{% querystring sort='oldest' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by date added, newest first. Activate to reverse to oldest first.">
+                        Date added <span class="fav-sort-arrow" aria-hidden="true">↓</span>
+                    </a>
+                    {% elif sort_by == 'oldest' %}
+                    <a href="{% querystring sort='newest' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by date added, oldest first. Activate to reverse to newest first.">
+                        Date added <span class="fav-sort-arrow" aria-hidden="true">↑</span>
+                    </a>
+                    {% else %}
+                    <a href="{% querystring sort='newest' page=None %}"
+                       class="pill fav-sort-pill"
+                       aria-label="Sort by date added, newest first.">
+                        Date added
+                    </a>
+                    {% endif %}
+                    {# Title pill #}
+                    {% if sort_by == 'title_asc' %}
+                    <a href="{% querystring sort='title_desc' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by title, A to Z. Activate to reverse to Z to A.">
+                        Title <span class="fav-sort-arrow" aria-hidden="true">↑</span>
+                    </a>
+                    {% elif sort_by == 'title_desc' %}
+                    <a href="{% querystring sort='title_asc' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by title, Z to A. Activate to reverse to A to Z.">
+                        Title <span class="fav-sort-arrow" aria-hidden="true">↓</span>
+                    </a>
+                    {% else %}
+                    <a href="{% querystring sort='title_asc' page=None %}"
+                       class="pill fav-sort-pill"
+                       aria-label="Sort by title, A to Z.">
+                        Title
+                    </a>
+                    {% endif %}
+                    {# BPM pill #}
+                    {% if sort_by == 'bpm_asc' %}
+                    <a href="{% querystring sort='bpm_desc' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by BPM, low to high. Activate to reverse to high to low.">
+                        BPM <span class="fav-sort-arrow" aria-hidden="true">↑</span>
+                    </a>
+                    {% elif sort_by == 'bpm_desc' %}
+                    <a href="{% querystring sort='bpm_asc' page=None %}"
+                       class="pill pill--accent fav-sort-pill fav-sort-pill--active"
+                       aria-current="true"
+                       aria-label="Sort by BPM, high to low. Activate to reverse to low to high.">
+                        BPM <span class="fav-sort-arrow" aria-hidden="true">↓</span>
+                    </a>
+                    {% else %}
+                    <a href="{% querystring sort='bpm_asc' page=None %}"
+                       class="pill fav-sort-pill"
+                       aria-label="Sort by BPM, low to high.">
+                        BPM
+                    </a>
+                    {% endif %}
+                </nav>
+                {% if has_active_filters %}
+                <a href="{% url 'favorites:list' %}" class="btn btn-secondary btn-sm favorites-clear-btn">Clear</a>
+                {% endif %}
+            </div>
         </div>
 
         {% if favorites %}
