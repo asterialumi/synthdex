@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Count, Exists, F, OuterRef, Q
 from django.db.models.functions import Lower
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -72,7 +72,13 @@ def toggle_favorite_view(request, track_id: int):
 def favorites_list_view(request):
     """List saved tracks (with search, filter, sort, pagination) and credited artists."""
     base_favorites = get_favorites_with_details(request.user)
-    base_artists = get_favorite_artists(request.user)
+    base_artists = get_favorite_artists(request.user).annotate(
+        fav_count=Count(
+            'credits__track__favorites',
+            filter=Q(credits__track__favorites__user=request.user),
+            distinct=True,
+        )
+    ).order_by('-fav_count', 'name', 'id')
     show_sql = bool(getattr(settings, 'SHOW_SQL_PANEL', False))
 
     favorites_sql = sql_of(base_favorites) if show_sql else ''

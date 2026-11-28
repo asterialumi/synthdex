@@ -333,6 +333,12 @@
   padding: 0.35rem 0.85rem;
 }
 
+.favorites-artist-count {
+  color: var(--accent);
+  font-weight: 700;
+  opacity: 0.75;
+}
+
 /* Empty State Styling */
 .favorites-empty-state {
   padding: var(--space-10) var(--space-5);

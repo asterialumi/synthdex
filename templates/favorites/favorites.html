@@ -227,11 +227,11 @@
 
     <!-- Section 2: Artists in your favorites (SUBQUERY) -->
     <section class="favorites-section mb-5" aria-labelledby="heading-favorite-artists">
-        <h2 id="heading-favorite-artists" class="favorites-section-title mb-3">Artists in your favorites</h2>
+        <h2 id="heading-favorite-artists" class="favorites-section-title mb-3">Top artists in your favorites</h2>
         {% if favorite_artists %}
         <div class="favorite-artists-list">
             {% for artist in favorite_artists %}
-            <span class="pill pill--accent favorite-artist-badge">{{ artist.name }}</span>
+            <span class="pill pill--accent favorite-artist-badge">{{ artist.name }}{% if artist.fav_count > 1 %} <span class="favorites-artist-count">&middot; {{ artist.fav_count }}</span>{% endif %}</span>
             {% endfor %}
             {% if extra_artists_count %}
             <span class="favorites-artists-more">+{{ extra_artists_count }} more</span>
