@@ -4,6 +4,7 @@
  * - Pause/Play toggle
  * - Zoom (+ / - / reset / Ctrl+Cmd+wheel, clamped 0.6x-1.6x)
  * - Ring dragging via Pointer Events with 6px click threshold
+ * - Pan (drag empty sky or sun, mouse/pen only, clamped so sun stays on-screen)
  * - Tab visibility & offscreen pausing for performance
  */
 (function () {
@@ -146,7 +147,59 @@
     }
   });
 
+  // =========================================================================
+  // Pan state (C4)
+  // =========================================================================
+  var panX = 0;
+  var panY = 0;
+
+  /**
+   * Apply pan translation to the orbit-container.
+   * We translate container (not stage) so zoom transform-origin stays centered.
+   * container sits inside panel; stage inside container.
+   */
+  function applyPan(nx, ny) {
+    panX = nx;
+    panY = ny;
+    container.style.setProperty('--pan-x', Math.round(panX) + 'px');
+    container.style.setProperty('--pan-y', Math.round(panY) + 'px');
+    if (activeTooltipPlanet) {
+      positionTooltipForPlanet(activeTooltipPlanet);
+    }
+  }
+
+  /**
+   * Clamp panX/panY so the stage center (the sun) is always at least
+   * `margin` pixels inside the panel edge in all four directions.
+   * This guarantees the sun is never fully off-screen.
+   */
+  function clampPan(nx, ny) {
+    var panelRect = panel.getBoundingClientRect();
+    var containerRect = container.getBoundingClientRect();
+
+    // Container natural center relative to panel (before this pan delta is applied)
+    // We work in panel-local coords. The container currently has panX,panY applied.
+    var containerNaturalCenterX = (containerRect.left - panelRect.left) + containerRect.width / 2 - panX;
+    var containerNaturalCenterY = (containerRect.top - panelRect.top) + containerRect.height / 2 - panY;
+
+    // With proposed pan nx,ny the sun center in panel coords would be:
+    var sunX = containerNaturalCenterX + nx;
+    var sunY = containerNaturalCenterY + ny;
+
+    // Clamp sun center to [margin .. panelW-margin] x [margin .. panelH-margin]
+    var margin = 56; // half-ish the sun vinyl width (82px) so a sliver is always visible
+    sunX = Math.max(margin, Math.min(panelRect.width - margin, sunX));
+    sunY = Math.max(margin, Math.min(panelRect.height - margin, sunY));
+
+    return {
+      x: sunX - containerNaturalCenterX,
+      y: sunY - containerNaturalCenterY
+    };
+  }
+
+  // =========================================================================
   // Zoom state (0.6x to 1.6x)
+  // =========================================================================
   var MIN_ZOOM = 0.6;
   var MAX_ZOOM = 1.6;
   var ZOOM_STEP = 0.15;
@@ -182,6 +235,8 @@
   if (zoomResetBtn) {
     zoomResetBtn.addEventListener('click', function () {
       applyZoom(1.0);
+      // Reset pan together with zoom
+      applyPan(0, 0);
     });
   }
 
@@ -196,6 +251,7 @@
   }, { passive: false });
 
   applyZoom(1.0);
+  applyPan(0, 0);
 
   // Orbit ring animation & dragging (disabled under prefers-reduced-motion)
   var isUserPaused = false;
@@ -429,5 +485,98 @@
         });
       })(planets[pIdx]);
     }
+  }
+
+  // =========================================================================
+  // Pan: drag empty sky or the sun (mouse/pen only, disabled under reduced-motion)
+  // =========================================================================
+  if (!reducedMotion) {
+    var isPanning = false;
+    var panPointerId = null;
+    var panStartClientX = 0;
+    var panStartClientY = 0;
+    var panStartX = 0;
+    var panStartY = 0;
+    var panMoved = false;
+    var PAN_THRESHOLD_SQ = 25; // 5px threshold to separate tap from drag
+
+    var sunEl = stage.querySelector('.orbit-sun');
+
+    /**
+     * Returns true when the pointer-down target is a valid pan handle:
+     * the panel background, the orbit-container, the orbit-stage, or the sun.
+     * Excludes planets, controls, the header, legend, tooltip, and the stage
+     * rings themselves so planet-drag still takes priority.
+     */
+    function isPanTarget(target) {
+      if (!target) { return false; }
+      // Explicitly excluded: interactive controls/buttons/links
+      if (target.closest('.orbit-controls') || target.closest('.orbit-sky-header') ||
+          target.closest('.orbit-legend') || target.closest('#orbit-shared-tooltip')) {
+        return false;
+      }
+      // Excluded: a planet link (ring drag handles those)
+      if (target.closest('.orbit-planet')) { return false; }
+      // Allowed: sun element subtree
+      if (sunEl && sunEl.contains(target)) { return true; }
+      // Allowed: container/stage/panel background
+      if (target === panel || target === container || target === stage ||
+          target.closest('.orbit-stage') === stage) {
+        return true;
+      }
+      return false;
+    }
+
+    panel.addEventListener('pointerdown', function (e) {
+      // Mouse/pen only — let touch fall through to native scroll
+      if (e.pointerType === 'touch') { return; }
+      if (!isPanTarget(e.target)) { return; }
+      // Only primary button
+      if (e.button !== 0) { return; }
+
+      isPanning = true;
+      panPointerId = e.pointerId;
+      panStartClientX = e.clientX;
+      panStartClientY = e.clientY;
+      panStartX = panX;
+      panStartY = panY;
+      panMoved = false;
+
+      try {
+        panel.setPointerCapture(e.pointerId);
+      } catch (err) { /* ignore */ }
+    });
+
+    panel.addEventListener('pointermove', function (e) {
+      if (!isPanning || e.pointerId !== panPointerId) { return; }
+
+      var dx = e.clientX - panStartClientX;
+      var dy = e.clientY - panStartClientY;
+
+      if (!panMoved && (dx * dx + dy * dy) >= PAN_THRESHOLD_SQ) {
+        panMoved = true;
+        panel.classList.add('is-panning');
+        hideTooltip();
+      }
+
+      if (panMoved) {
+        var clamped = clampPan(panStartX + dx, panStartY + dy);
+        applyPan(clamped.x, clamped.y);
+      }
+    });
+
+    function endPan(e) {
+      if (!isPanning || e.pointerId !== panPointerId) { return; }
+      isPanning = false;
+      panPointerId = null;
+      panel.classList.remove('is-panning');
+      try {
+        panel.releasePointerCapture(e.pointerId);
+      } catch (err) { /* ignore */ }
+    }
+
+    panel.addEventListener('pointerup', endPan);
+    panel.addEventListener('pointercancel', endPan);
+    panel.addEventListener('lostpointercapture', endPan);
   }
 })();

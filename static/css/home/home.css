@@ -313,6 +313,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  --pan-x: 0px;
+  --pan-y: 0px;
+  transform: translate(var(--pan-x), var(--pan-y));
+  will-change: transform;
 }
 
 .orbit-stage {
@@ -462,6 +466,16 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Pan: grab cursor on pannable sky background.
+   Buttons and planets define their own cursor so they are unaffected. */
+.orbit-sky-panel {
+  cursor: grab;
+}
+
+.orbit-sky-panel.is-panning {
+  cursor: grabbing;
 }
 
 /* Pause Animation via Pause/Play Toggle Button or Inactive (Hidden/Offscreen) */
@@ -914,5 +928,14 @@ img.orbit-cover {
   .orbit-planet {
     touch-action: auto;
     cursor: pointer;
+  }
+
+  /* Pan is disabled under reduced-motion; restore neutral cursor */
+  .orbit-sky-panel {
+    cursor: auto;
+  }
+
+  .orbit-container {
+    transform: none;
   }
 }
