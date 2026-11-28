@@ -263,23 +263,25 @@
   var ringEls = stage.querySelectorAll('.orbit-ring[data-ring-duration]');
   var rings = [];
 
-  for (var r = 0; r < ringEls.length; r++) {
-    var ringEl = ringEls[r];
-    var dur = parseFloat(ringEl.getAttribute('data-ring-duration')) || 60;
-    rings.push({
-      el: ringEl,
-      planets: ringEl.querySelectorAll('.orbit-planet'),
-      angle: 0,
-      degPerSec: 360 / dur,
-      dragging: false
-    });
-  }
-
   function renderRing(ring) {
     ring.el.style.transform = 'translate(-50%, -50%) rotate(' + ring.angle + 'deg)';
     for (var p = 0; p < ring.planets.length; p++) {
       ring.planets[p].style.transform = 'rotate(' + (-ring.angle) + 'deg)';
     }
+  }
+
+  for (var r = 0; r < ringEls.length; r++) {
+    var ringEl = ringEls[r];
+    var dur = parseFloat(ringEl.getAttribute('data-ring-duration')) || 60;
+    var ringObj = {
+      el: ringEl,
+      planets: ringEl.querySelectorAll('.orbit-planet'),
+      angle: Math.random() * 360,
+      degPerSec: 360 / dur,
+      dragging: false
+    };
+    rings.push(ringObj);
+    renderRing(ringObj);
   }
 
   function shouldAnimate() {
