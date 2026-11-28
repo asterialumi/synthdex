@@ -2,7 +2,7 @@
 
 **Project:** SynthDex (personal music metadata catalogue)
 **Stack:** Django 6.1.x, Supabase PostgreSQL, Bootstrap 5.3 (CDN) + modular custom CSS, vanilla JS. Windows, VS Code, PowerShell, `.venv`.
-**Branch:** `main`. Local `main` was at `d5471ec` when this file was updated. The user pushes; confirm what is on the remote with `git log --oneline --decorate -5`.
+**Branch:** `main`. Local `main` was at `ff78944` (orbit pan) when this file was updated; the commit that adds this file comes after it. The user pushes; confirm what is on the remote with `git log --oneline --decorate -5`.
 
 ## 0. Read this first
 
@@ -14,12 +14,12 @@ You are continuing work on SynthDex in a new session. You have no memory of earl
 - Polish Batch 1 (`12751ed`), Polish Batch 2 (`d3f10a0`)
 - Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`), orbit label visibility fix (`d5471ec`), handover update (`bf5bc67`), and orbit pan (`ff78944`)
 
-Per the last report, `manage.py check`, template compilation, the filter sanity checks and `makemigrations --check --dry-run` passed after `d5471ec`. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
+Per the last confirmed report, `manage.py check`, template compilation, the filter sanity checks and `makemigrations --check --dry-run` passed after `d5471ec`. Whether they were re-run after the pan commit `ff78944` is not confirmed, so run section 10 before the next commit. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
 
 **Not built / still pending:**
 1. An animated "visualizer rings" background (subtle bar rings behind every page — deferred, last).
 
-After each piece of work: verify, commit, report (section 12), then **stop and wait**.
+After each piece of work: verify, commit, report (section 12, **keep it short**), then **stop and wait**.
 
 ---
 
@@ -184,11 +184,11 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
 - **Auth and details:** fixed login/register left brand-panel contrast in dark mode using `--deep` and `--deep-ink`. The track-details back link reads `Back to Results` when opened with the search rail params and `Back to Home` (`home:home`) otherwise.
 - **Home:** taste summary replaced Recent searches; orbit changes are in section 8.
 
-**Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`, `d5471ec`):**
+**Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`, `d5471ec`, pan `ff78944`):**
 - **Warm light-mode palette:** replaced light-mode purple/aubergine deep tokens (`--deep`, `--deep-surface`, `--deep-ink-muted`, `--deep-border`, `--deep-overlay`, `--color-brand-line`, `--shadow-*`) with dark espresso brown in one clearly commented block in `static/css/common/tokens.css` (previous purple values kept in inline comments for one-block revert; dark mode unchanged; replaced hard-coded `rgba(26, 24, 32, 0.88)` in `home.css` with `var(--deep-overlay)`).
 - **Login/register:** removed the duplicate `SynthDex` wordmark from `templates/common/_auth_brand.html` (header already shows it); kept heading, subtext, and logo mark.
 - **Whole-row clickable:** added `.row-clickable` / `.row-clickable-link` / `.row-clickable-action` in `static/css/common/components.css` (one anchor per row, full-row hover & `:has(.row-clickable-link:focus-visible)` ring, action buttons elevated above). Applied to search results, favorites, home "Latest Favorites", profile "Your Favorites" & "Recent Searches", and history. (`track_detail.html` `.rail-item` was already a full-row anchor and left as-is.)
-- **Favorites & Orbit:** documented in sections 7 and 8.
+- **Favorites & Orbit (including pan):** documented in sections 7 and 8.
 - **Not built / still pending:** the animated visualizer-rings background (deferred, last).
 
 ---
@@ -231,9 +231,11 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
 
 ## 12. Report format (after each piece of work, then stop)
 
-1. Files created and changed.
-2. What changed visibly, in plain language.
-3. **Screens to screenshot:** URL, state and theme, because the user needs a screenshot of every modified screen for progress evidence.
-4. Checks run and their results, and anything not verified.
-5. Decisions you made where this file was ambiguous (pick the simplest option consistent with it).
-6. The commit hash, plus a reminder that the user pushes.
+**Keep the report short (about 10 lines).** No long explanations, no per-viewport or per-theme checklists.
+
+1. Files changed (names only).
+2. What changed, in one to three plain sentences.
+3. Pages to re-check: **one line**, page names only (for example "Favorites, Home"). The user already knows which themes, widths and states to capture, so do not list them.
+4. Checks run and their results, and anything not verified (one line each).
+5. Decisions you made where this file was ambiguous (only if there were any).
+6. The commit hash(es), plus a reminder that the user pushes.
