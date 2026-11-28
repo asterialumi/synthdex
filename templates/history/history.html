@@ -43,10 +43,10 @@
 
     <div class="history-list">
         {% for item in history_entries %}
-        <article class="history-card">
+        <article class="history-card row-clickable">
             <div class="history-info">
                 <div class="history-query-row">
-                    <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="history-query-link" title="Re-run search for '{{ item.query }}'">
+                    <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="history-query-link row-clickable-link" title="Re-run search for '{{ item.query }}'">
                         <svg class="icon history-icon" aria-hidden="true"><use href="#i-search"/></svg>
                         <span class="history-query-text">{{ item.query }}</span>
                     </a>
@@ -65,7 +65,7 @@
                 </div>
             </div>
 
-            <div class="history-actions">
+            <div class="history-actions row-clickable-action">
                 <a href="{% url 'search:search' %}?q={{ item.query|urlencode }}&type={{ item.search_type }}" class="btn btn-secondary btn-sm" title="Re-run search for '{{ item.query }}'">
                     Search again
                 </a>

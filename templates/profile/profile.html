@@ -52,8 +52,8 @@
         {% if user_favorites %}
         <div class="profile-items-list">
             {% for fav in user_favorites %}
-            <div class="profile-item-row">
-                <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-artwork">
+            <div class="profile-item-row row-clickable">
+                <div class="profile-item-artwork">
                     {% if fav.track.artwork_url %}
                     <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" loading="lazy">
                     {% else %}
@@ -61,9 +61,9 @@
                         <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
                     </div>
                     {% endif %}
-                </a>
+                </div>
                 <div class="profile-item-details">
-                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-title">{{ fav.track.title }}</a>
+                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="profile-item-title row-clickable-link">{{ fav.track.title }}</a>
                     <span class="profile-item-artist">{{ fav.track|artist_credits_display }}</span>
                 </div>
                 <span class="profile-item-meta tabular-nums">{{ fav.track.duration_ms|duration_display }}</span>
@@ -86,8 +86,8 @@
         {% if recent_searches %}
         <div class="profile-items-list">
             {% for search in recent_searches %}
-            <div class="profile-item-row">
-                <a href="{% url 'search:search' %}?q={{ search.query|urlencode }}&type={{ search.search_type }}" class="profile-history-link">
+            <div class="profile-item-row row-clickable">
+                <a href="{% url 'search:search' %}?q={{ search.query|urlencode }}&type={{ search.search_type }}" class="profile-history-link row-clickable-link">
                     <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
                     <span class="profile-history-query">{{ search.query }}</span>
                     <span class="pill">{{ search.get_search_type_display }}</span>

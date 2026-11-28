@@ -30,9 +30,9 @@
         {% if favorites %}
         <ul class="favorites-list" role="list">
             {% for fav in favorites %}
-            <li class="favorite-item" id="fav-{{ fav.track.id }}">
+            <li class="favorite-item row-clickable" id="fav-{{ fav.track.id }}">
                 <div class="favorite-main">
-                    <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-artwork-wrap" title="View details for {{ fav.track.title }}">
+                    <div class="favorite-artwork-wrap">
                         {% if fav.track.artwork_url %}
                         <img src="{{ fav.track.artwork_url }}" alt="Cover art for {{ fav.track.title }}" class="cover cover--sm favorite-artwork" loading="lazy">
                         {% elif fav.track.album and fav.track.album.artwork_url %}
@@ -42,11 +42,11 @@
                             <svg class="icon" aria-hidden="true"><use href="#i-music-note"/></svg>
                         </div>
                         {% endif %}
-                    </a>
+                    </div>
 
                     <div class="favorite-info">
                         <h3 class="favorite-title">
-                            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-title-link">{{ fav.track.title }}</a>
+                            <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="favorite-title-link row-clickable-link">{{ fav.track.title }}</a>
                         </h3>
                         <p class="favorite-artist">{{ fav.track|artist_names_joined }}</p>
                     </div>
@@ -65,7 +65,7 @@
                     <span class="favorite-date">Added {{ fav.created_at|date:"M d, Y" }}</span>
                 </div>
 
-                <div class="favorite-actions">
+                <div class="favorite-actions row-clickable-action">
                     <form action="{% url 'favorites:toggle' fav.track.id %}" method="post" class="favorite-remove-form">
                         {% csrf_token %}
                         <input type="hidden" name="next" value="{{ request.get_full_path }}#fav-{{ fav.track.id }}">

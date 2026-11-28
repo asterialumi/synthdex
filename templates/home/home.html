@@ -171,8 +171,8 @@
                 </div>
                 <div class="dashboard-favorites-list">
                     {% for fav in latest_favorites %}
-                    <article class="dashboard-fav-card">
-                        <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="dashboard-fav-artwork-link" title="View details for {{ fav.track.title }}">
+                    <article class="dashboard-fav-card row-clickable">
+                        <div class="dashboard-fav-artwork-link">
                             {% if fav.track.artwork_url %}
                             <img src="{{ fav.track.artwork_url }}" alt="{{ fav.track.title }}" class="dashboard-fav-artwork" loading="lazy">
                             {% elif fav.track.album and fav.track.album.artwork_url %}
@@ -182,16 +182,16 @@
                                 <svg class="icon"><use href="#i-music-note"/></svg>
                             </div>
                             {% endif %}
-                        </a>
+                        </div>
                         <div class="dashboard-fav-info">
                             <h3 class="dashboard-fav-title">
-                                <a href="{% url 'catalogue:track_detail' fav.track.id %}">{{ fav.track.title }}</a>
+                                <a href="{% url 'catalogue:track_detail' fav.track.id %}" class="row-clickable-link">{{ fav.track.title }}</a>
                             </h3>
                             <p class="dashboard-fav-artist">{{ fav.track|artist_credits_display }}</p>
                         </div>
                         {% with listen_url=fav.track|track_listen_url %}
                         {% if listen_url %}
-                        <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact" title="Listen on YouTube">
+                        <a href="{{ listen_url }}" target="_blank" rel="noopener noreferrer" class="btn btn-listen-compact row-clickable-action" title="Listen on YouTube">
                             <span>Listen</span>
                             <svg class="icon" aria-hidden="true"><use href="#i-external-link"/></svg>
                         </a>

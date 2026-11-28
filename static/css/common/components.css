@@ -492,3 +492,38 @@ img.cover[src*="ytimg.com"] {
   color: var(--ink-muted);
   font-size: 0.85rem;
 }
+
+/* ==========================================================================
+   Whole-Row Clickable Pattern (Stretched Link + Elevated Controls)
+   ========================================================================== */
+.row-clickable {
+  position: relative;
+  cursor: pointer;
+}
+
+.row-clickable-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+
+.row-clickable:hover .row-clickable-link {
+  color: var(--accent);
+}
+
+.row-clickable-link:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+.row-clickable:has(.row-clickable-link:focus-visible) {
+  border-color: var(--accent);
+  box-shadow: var(--focus-ring);
+}
+
+.row-clickable-action {
+  position: relative;
+  z-index: 2;
+}

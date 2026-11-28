@@ -641,7 +641,7 @@
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 12;
-  background-color: rgba(26, 24, 32, 0.88);
+  background-color: var(--deep-overlay);
   border: 1px solid var(--deep-border);
   border-radius: var(--radius-md);
   padding: 1.25rem 1.5rem;

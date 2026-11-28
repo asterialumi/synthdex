@@ -11,13 +11,20 @@
   --surface-raised: #ffffff;
   --surface-hover: rgba(184, 121, 47, 0.06);
 
-  /* Deep Aubergine (Used in light mode header, sky panel, hero) */
-  --deep: #221f2a;
-  --deep-surface: #2b2735;
-  --deep-ink: #f5efe3;
-  --deep-ink-muted: #c9c3d1;
-  --deep-border: rgba(255, 255, 255, 0.12);
-  --deep-accent: #e09f53;
+  /* ========================================================================
+     Light-Mode Deep Palette (Warm Espresso Brown — revert in this block)
+     ======================================================================== */
+  --deep: #26201b;                              /* was #221f2a */
+  --deep-surface: #302822;                      /* was #2b2735 */
+  --deep-ink: #f5efe3;                          /* unchanged */
+  --deep-ink-muted: #cec4b8;                    /* was #c9c3d1 */
+  --deep-border: rgba(255, 248, 238, 0.14);     /* was rgba(255, 255, 255, 0.12) */
+  --deep-accent: #e09f53;                       /* unchanged */
+  --deep-overlay: rgba(28, 23, 19, 0.88);       /* was hard-coded rgba(26, 24, 32, 0.88) in home.css */
+  --color-brand-line: #42372f;                  /* was #3a3542 */
+  --shadow-sm: 0 1px 3px rgba(36, 28, 22, 0.06), 0 1px 2px rgba(36, 28, 22, 0.04);     /* was rgba(32, 29, 36, ...) */
+  --shadow-md: 0 8px 24px rgba(36, 28, 22, 0.08), 0 2px 6px rgba(36, 28, 22, 0.04);    /* was rgba(32, 29, 36, ...) */
+  --shadow-lg: 0 16px 36px rgba(36, 28, 22, 0.12), 0 4px 12px rgba(36, 28, 22, 0.06);  /* was rgba(32, 29, 36, ...) */
 
   /* Ink / Typography */
   --ink: #1e1b22;
@@ -61,10 +68,7 @@
   --space-10: 40px;
   --space-12: 48px;
 
-  /* Scales: Shadows */
-  --shadow-sm: 0 1px 3px rgba(32, 29, 36, 0.06), 0 1px 2px rgba(32, 29, 36, 0.04);
-  --shadow-md: 0 8px 24px rgba(32, 29, 36, 0.08), 0 2px 6px rgba(32, 29, 36, 0.04);
-  --shadow-lg: 0 16px 36px rgba(32, 29, 36, 0.12), 0 4px 12px rgba(32, 29, 36, 0.06);
+  /* Scales: Shadows (see Light-Mode Deep Palette block above for light-mode values) */
 
   /* Scales: Z-Index */
   --z-base: 1;
@@ -92,7 +96,6 @@
   --color-accent-soft: var(--accent-soft);
   --color-surface-hover: var(--surface-hover);
   --color-brand-bg: var(--deep);
-  --color-brand-line: #3a3542;
   --color-danger: var(--danger);
   --color-danger-soft: var(--danger-soft);
   --color-success: var(--success);
@@ -114,6 +117,7 @@
   --deep-ink-muted: #c4baa7;
   --deep-border: #332f3b;
   --deep-accent: #e09f53;
+  --deep-overlay: rgba(26, 24, 32, 0.88);
 
   --ink: #f5efe3;
   --ink-muted: #c4baa7;
