@@ -105,24 +105,22 @@
                             <div class="orbit-planet-anchor">
                                 <a href="{% url 'catalogue:track_detail' planet.fav.track.id %}"
                                    class="orbit-planet"
-                                   aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}"
-                                   title="{{ planet.fav.track.title }} &bull; {{ planet.fav.track|artist_credits_display }}">
+                                   draggable="false"
+                                   data-title="{{ planet.fav.track.title }}"
+                                   data-artist="{{ planet.fav.track|artist_credits_display }}"
+                                   aria-label="{{ planet.fav.track.title }} by {{ planet.fav.track|artist_credits_display }}">
                                     <div class="orbit-planet-cover-wrap">
                                         <div class="orbit-cover-spin" data-spin-duration="{{ planet.spin_duration }}">
                                             {% if planet.fav.track.artwork_url %}
-                                            <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" loading="lazy" decoding="async">
+                                            <img src="{{ planet.fav.track.artwork_url }}" alt="" class="orbit-cover" draggable="false" loading="lazy" decoding="async">
                                             {% elif planet.fav.track.album and planet.fav.track.album.artwork_url %}
-                                            <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" loading="lazy" decoding="async">
+                                            <img src="{{ planet.fav.track.album.artwork_url }}" alt="" class="orbit-cover" draggable="false" loading="lazy" decoding="async">
                                             {% else %}
                                             <div class="orbit-cover orbit-cover-placeholder" aria-hidden="true">
                                                 <svg class="icon"><use href="#i-music-note"/></svg>
                                             </div>
                                             {% endif %}
                                         </div>
-                                    </div>
-                                    <div class="orbit-tooltip" role="tooltip">
-                                        <span class="orbit-tooltip-title">{{ planet.fav.track.title }}</span>
-                                        <span class="orbit-tooltip-artist">{{ planet.fav.track|artist_credits_display }}</span>
                                     </div>
                                 </a>
                             </div>
@@ -159,6 +157,11 @@
                 <span class="orbit-legend-item"><span class="orbit-legend-dot orbit-dot-spin"></span>Spin: track BPM</span>
             </div>
             {% endif %}
+
+            <div class="orbit-tooltip" id="orbit-shared-tooltip" role="tooltip" aria-hidden="true">
+                <span class="orbit-tooltip-title"></span>
+                <span class="orbit-tooltip-artist"></span>
+            </div>
         </section>
 
         <!-- Right: Latest Favorites & Taste Summary -->

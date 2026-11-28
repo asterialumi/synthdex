@@ -16,6 +16,9 @@
   var zoomInBtn = document.getElementById('orbit-zoom-in');
   var zoomOutBtn = document.getElementById('orbit-zoom-out');
   var zoomResetBtn = document.getElementById('orbit-zoom-reset');
+  var sharedTooltip = document.getElementById('orbit-shared-tooltip');
+  var tooltipTitleEl = sharedTooltip ? sharedTooltip.querySelector('.orbit-tooltip-title') : null;
+  var tooltipArtistEl = sharedTooltip ? sharedTooltip.querySelector('.orbit-tooltip-artist') : null;
 
   if (!panel || !container || !stage) {
     return;
@@ -40,6 +43,83 @@
     }
   }
 
+  // Shared top-layer planet label (C1)
+  var activeTooltipPlanet = null;
+  var isAnyRingDragging = false;
+
+  function hideTooltip() {
+    activeTooltipPlanet = null;
+    if (!sharedTooltip) {
+      return;
+    }
+    sharedTooltip.classList.remove('is-visible');
+    sharedTooltip.setAttribute('aria-hidden', 'true');
+  }
+
+  function positionTooltipForPlanet(planet) {
+    if (!sharedTooltip || !planet || isAnyRingDragging) {
+      return;
+    }
+    var panelRect = panel.getBoundingClientRect();
+    var planetRect = planet.getBoundingClientRect();
+    var tipWidth = sharedTooltip.offsetWidth || 160;
+    var tipHeight = sharedTooltip.offsetHeight || 42;
+    var edgePad = 8;
+
+    var centerX = (planetRect.left - panelRect.left) + (planetRect.width / 2);
+    var left = centerX - (tipWidth / 2);
+    left = Math.max(edgePad, Math.min(panelRect.width - tipWidth - edgePad, left));
+
+    var top = (planetRect.top - panelRect.top) - tipHeight - 10;
+    if (top < edgePad) {
+      top = (planetRect.bottom - panelRect.top) + 10;
+    }
+    top = Math.max(edgePad, Math.min(panelRect.height - tipHeight - edgePad, top));
+
+    sharedTooltip.style.transform = 'translate3d(' + Math.round(left) + 'px, ' + Math.round(top) + 'px, 0)';
+  }
+
+  function showTooltipForPlanet(planet) {
+    if (!sharedTooltip || !planet || isAnyRingDragging) {
+      return;
+    }
+    activeTooltipPlanet = planet;
+    if (tooltipTitleEl) {
+      tooltipTitleEl.textContent = planet.getAttribute('data-title') || '';
+    }
+    if (tooltipArtistEl) {
+      tooltipArtistEl.textContent = planet.getAttribute('data-artist') || '';
+    }
+    sharedTooltip.setAttribute('aria-hidden', 'false');
+    positionTooltipForPlanet(planet);
+    sharedTooltip.classList.add('is-visible');
+  }
+
+  var allPlanets = stage.querySelectorAll('.orbit-planet');
+  for (var tpIdx = 0; tpIdx < allPlanets.length; tpIdx++) {
+    (function (planet) {
+      planet.addEventListener('dragstart', function (e) {
+        e.preventDefault();
+      });
+      planet.addEventListener('pointerenter', function () {
+        showTooltipForPlanet(planet);
+      });
+      planet.addEventListener('pointerleave', function () {
+        if (activeTooltipPlanet === planet) {
+          hideTooltip();
+        }
+      });
+      planet.addEventListener('focus', function () {
+        showTooltipForPlanet(planet);
+      });
+      planet.addEventListener('blur', function () {
+        if (activeTooltipPlanet === planet) {
+          hideTooltip();
+        }
+      });
+    })(allPlanets[tpIdx]);
+  }
+
   // Zoom state (0.6x to 1.6x)
   var MIN_ZOOM = 0.6;
   var MAX_ZOOM = 1.6;
@@ -57,6 +137,9 @@
     }
     if (zoomOutBtn) {
       zoomOutBtn.disabled = zoom <= MIN_ZOOM;
+    }
+    if (activeTooltipPlanet) {
+      positionTooltipForPlanet(activeTooltipPlanet);
     }
   }
 
@@ -140,6 +223,9 @@
           renderRing(rings[k]);
         }
       }
+      if (activeTooltipPlanet && !isAnyRingDragging) {
+        positionTooltipForPlanet(activeTooltipPlanet);
+      }
     }
     lastTime = now;
     rafId = window.requestAnimationFrame(tick);
@@ -219,6 +305,14 @@
       return delta;
     }
 
+    function getSystemCenter() {
+      var rect = stage.getBoundingClientRect();
+      return {
+        x: rect.left + rect.width / 2,
+        y: rect.top + rect.height / 2
+      };
+    }
+
     var planets = stage.querySelectorAll('.orbit-planet');
     for (var pIdx = 0; pIdx < planets.length; pIdx++) {
       (function (planet) {
@@ -232,8 +326,6 @@
         var startX = 0;
         var startY = 0;
         var lastPointerAngle = 0;
-        var centerX = 0;
-        var centerY = 0;
         var moved = false;
 
         planet.addEventListener('pointerdown', function (e) {
@@ -244,11 +336,11 @@
           startX = e.clientX;
           startY = e.clientY;
           moved = false;
-          var rect = stage.getBoundingClientRect();
-          centerX = rect.left + rect.width / 2;
-          centerY = rect.top + rect.height / 2;
-          lastPointerAngle = getPointerAngle(e.clientX, e.clientY, centerX, centerY);
+          var center = getSystemCenter();
+          lastPointerAngle = getPointerAngle(e.clientX, e.clientY, center.x, center.y);
           ringObj.dragging = true;
+          isAnyRingDragging = true;
+          hideTooltip();
           try {
             planet.setPointerCapture(pointerId);
           } catch (err) {
@@ -267,7 +359,8 @@
             planet.classList.add('is-dragging');
           }
           if (moved) {
-            var currentAngle = getPointerAngle(e.clientX, e.clientY, centerX, centerY);
+            var center = getSystemCenter();
+            var currentAngle = getPointerAngle(e.clientX, e.clientY, center.x, center.y);
             var delta = normalizeDelta(currentAngle - lastPointerAngle);
             lastPointerAngle = currentAngle;
             ringObj.angle = (ringObj.angle + delta) % 360;
@@ -289,6 +382,7 @@
           }
           pointerId = null;
           ringObj.dragging = false;
+          isAnyRingDragging = false;
           planet.classList.remove('is-dragging');
           try {
             planet.releasePointerCapture(e.pointerId);
