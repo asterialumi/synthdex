@@ -13,8 +13,10 @@
         <div class="hero-eyebrow-rule"></div>
         <h1>Your Favorites</h1>
         <p class="favorites-subtitle">
-            {% if favorites %}
-            You have {{ favorites|length }} saved track{{ favorites|length|pluralize }} in your catalogue.
+            {% if query %}
+            {{ page_obj.paginator.count }} matching track{{ page_obj.paginator.count|pluralize }} for &ldquo;{{ query }}&rdquo;.
+            {% elif page_obj.paginator.count %}
+            You have {{ page_obj.paginator.count }} saved track{{ page_obj.paginator.count|pluralize }} in your catalogue.
             {% else %}
             Build your personal music collection.
             {% endif %}
@@ -25,6 +27,41 @@
     <section class="favorites-section mb-5" aria-labelledby="heading-my-favorites">
         <div class="favorites-section-header mb-3">
             <h2 id="heading-my-favorites" class="favorites-section-title">My favorites</h2>
+            {% if favorites %}
+            <span class="favorites-showing tabular-nums">Showing {{ page_obj.start_index }}-{{ page_obj.end_index }} of {{ page_obj.paginator.count }}</span>
+            {% endif %}
+        </div>
+
+        <div class="card favorites-filter-card mb-4">
+            <form method="get" action="{% url 'favorites:list' %}" class="favorites-filter-form">
+                <select name="type" class="search-panel-select favorites-type-select" aria-label="Filter category">
+                    {% for value, label in search_types %}
+                    <option value="{{ value }}"{% if value == filter_type %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ query }}"
+                    maxlength="300"
+                    class="search-panel-input favorites-search-input"
+                    placeholder="Search your favorites…"
+                    aria-label="Search favorites">
+                <select name="sort" class="search-panel-select favorites-sort-select" aria-label="Sort favorites">
+                    {% for value, label in sort_choices %}
+                    <option value="{{ value }}"{% if value == sort_by %} selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                <div class="favorites-filter-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+                        <span>Apply</span>
+                    </button>
+                    {% if has_active_filters %}
+                    <a href="{% url 'favorites:list' %}" class="btn btn-secondary">Clear</a>
+                    {% endif %}
+                </div>
+            </form>
         </div>
 
         {% if favorites %}
@@ -53,12 +90,12 @@
                 </div>
 
                 <div class="favorite-meta">
-                    <span class="favorite-album" title="{{ fav.track.album.title|default:'—' }}">{{ fav.track.album.title|default:"—" }}</span>
+                    <span class="favorite-album"{% if fav.track.album %} title="{{ fav.track.album.title }}"{% endif %}>{% if fav.track.album %}{{ fav.track.album.title }}{% endif %}</span>
                     {% with bpm_val=fav.track.bpm|format_bpm %}
                     {% if bpm_val %}
                     <span class="pill favorite-bpm-pill">{{ bpm_val }} BPM</span>
                     {% else %}
-                    <span class="favorite-bpm-empty">—</span>
+                    <span class="favorite-bpm-empty" aria-label="No BPM">—</span>
                     {% endif %}
                     {% endwith %}
                     <span class="favorite-duration tabular-nums">{{ fav.track.duration_ms|duration_display }}</span>
@@ -77,6 +114,40 @@
             </li>
             {% endfor %}
         </ul>
+        {% if page_obj.has_other_pages %}
+        <nav class="favorites-pagination" aria-label="Favorites pagination">
+            {% if page_obj.has_previous %}
+            <a href="?{{ filter_query_string }}{% if filter_query_string %}&amp;{% endif %}page={{ page_obj.previous_page_number }}" class="btn btn-secondary pagination-prev">Previous</a>
+            {% else %}
+            <span class="btn btn-secondary pagination-prev is-disabled" aria-disabled="true">Previous</span>
+            {% endif %}
+
+            <div class="pagination-pages">
+                {% for num in page_range %}
+                    {% if num == ellipsis %}
+                    <span class="pagination-ellipsis" aria-hidden="true">&hellip;</span>
+                    {% elif num == page_obj.number %}
+                    <span class="pagination-link is-current tabular-nums" aria-current="page">{{ num }}</span>
+                    {% else %}
+                    <a href="?{{ filter_query_string }}{% if filter_query_string %}&amp;{% endif %}page={{ num }}" class="pagination-link tabular-nums">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if page_obj.has_next %}
+            <a href="?{{ filter_query_string }}{% if filter_query_string %}&amp;{% endif %}page={{ page_obj.next_page_number }}" class="btn btn-secondary pagination-next">Next</a>
+            {% else %}
+            <span class="btn btn-secondary pagination-next is-disabled" aria-disabled="true">Next</span>
+            {% endif %}
+        </nav>
+        {% endif %}
+        {% elif query %}
+        <div class="empty-state favorites-empty-state">
+            <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-search"/></svg>
+            <h3 class="empty-state-title">No favorites match</h3>
+            <p class="empty-state-desc">No saved tracks matched &ldquo;{{ query }}&rdquo; in this filter.</p>
+            <a href="{% url 'favorites:list' %}" class="btn btn-primary">Clear filters</a>
+        </div>
         {% else %}
         <div class="empty-state favorites-empty-state">
             <svg class="icon empty-state-icon" aria-hidden="true"><use href="#i-music-note"/></svg>
@@ -95,6 +166,9 @@
             {% for artist in favorite_artists %}
             <span class="pill pill--accent favorite-artist-badge">{{ artist.name }}</span>
             {% endfor %}
+            {% if extra_artists_count %}
+            <span class="favorites-artists-more">+{{ extra_artists_count }} more</span>
+            {% endif %}
         </div>
         {% else %}
         <div class="empty-state favorites-empty-state-compact">
