@@ -46,6 +46,9 @@
     ? window.matchMedia('(prefers-color-scheme: dark)')
     : null;
 
+  var idleActive = canvas.getAttribute('data-idle-active') === 'true';
+  var baseActivity = idleActive ? TRACK_IDLE_ACTIVITY : 0;
+
   var width = 0;
   var height = 0;
   var dpr = 1;
@@ -54,14 +57,36 @@
   var innerAngle = 0;
   var outerAngle = 0;
   var scrollImpulse = 0;
+  var activity = baseActivity;
   var lastScrollY = window.scrollY || 0;
   var lastWheelTime = 0;
   var lastInputTime = 0;
+  var animElapsed = 0;
 
   var rafId = 0;
   var lastFrameTime = 0;
   var lastDrawTime = 0;
   var resizeTimer = 0;
+
+  function createBarSpecs(count, seedOffset) {
+    var specs = new Array(count);
+    for (var i = 0; i < count; i++) {
+      var s1 = Math.sin((i + 1 + seedOffset) * 12.9898) * 43758.5453;
+      var s2 = Math.sin((i + 1 + seedOffset) * 78.233) * 24634.6345;
+      var r1 = s1 - Math.floor(s1);
+      var r2 = s2 - Math.floor(s2);
+      specs[i] = {
+        phase: r1 * Math.PI * 2,
+        rate: 2.2 + r2 * 4.0,
+        phase2: r2 * Math.PI * 2,
+        rate2: 1.1 + r1 * 2.0
+      };
+    }
+    return specs;
+  }
+
+  var innerBars = createBarSpecs(INNER_BAR_COUNT, 0);
+  var outerBars = createBarSpecs(OUTER_BAR_COUNT, INNER_BAR_COUNT);
 
   function isMobile() {
     return window.innerWidth < MOBILE_BREAKPOINT;
@@ -95,16 +120,26 @@
     canvas.height = Math.round(height * dpr);
   }
 
-  function drawRing(cx, cy, radius, count, baseAngle) {
+  function drawRing(cx, cy, radius, bars, baseAngle, elapsed, effectiveActivity) {
+    var count = bars.length;
     var step = (Math.PI * 2) / count;
     for (var i = 0; i < count; i++) {
       var angle = baseAngle + i * step;
       var cos = Math.cos(angle);
       var sin = Math.sin(angle);
+      var barHeight = BAR_BASE_HEIGHT;
+      if (effectiveActivity > 0) {
+        var bar = bars[i];
+        var wave = 0.5 + 0.5 * (
+          0.65 * Math.sin(elapsed * bar.rate + bar.phase) +
+          0.35 * Math.sin(elapsed * bar.rate2 + bar.phase2)
+        );
+        barHeight += wave * BAR_MAX_AMPLITUDE * effectiveActivity;
+      }
       var x0 = cx + cos * radius;
       var y0 = cy + sin * radius;
-      var x1 = cx + cos * (radius + BAR_BASE_HEIGHT);
-      var y1 = cy + sin * (radius + BAR_BASE_HEIGHT);
+      var x1 = cx + cos * (radius + barHeight);
+      var y1 = cy + sin * (radius + barHeight);
       ctx.moveTo(x0, y0);
       ctx.lineTo(x1, y1);
     }
@@ -123,14 +158,20 @@
     var span = Math.max(width, height);
     var innerRadius = span * INNER_RADIUS_FACTOR;
     var outerRadius = span * OUTER_RADIUS_FACTOR;
+    var effectiveActivity = isReducedMotion() ? 0 : activity;
 
     ctx.strokeStyle = ringColor;
     ctx.lineWidth = BAR_WIDTH;
     ctx.lineCap = 'round';
     ctx.beginPath();
-    drawRing(cx, cy, innerRadius, INNER_BAR_COUNT, innerAngle);
-    drawRing(cx, cy, outerRadius, OUTER_BAR_COUNT, outerAngle);
+    drawRing(cx, cy, innerRadius, innerBars, innerAngle, animElapsed, effectiveActivity);
+    drawRing(cx, cy, outerRadius, outerBars, outerAngle, animElapsed, effectiveActivity);
     ctx.stroke();
+  }
+
+  function boostActivity(amount) {
+    activity = Math.min(1, activity + amount);
+    lastInputTime = performance.now();
   }
 
   function applyScrollDelta(delta) {
@@ -141,7 +182,7 @@
       -SCROLL_MAX_BOOST,
       Math.min(SCROLL_MAX_BOOST, scrollImpulse + delta * SCROLL_GAIN)
     );
-    lastInputTime = performance.now();
+    boostActivity(Math.min(0.45, Math.abs(delta) * 0.004));
   }
 
   function onWheel(e) {
@@ -183,6 +224,8 @@
     lastDrawTime = now;
 
     if (dt > 0) {
+      animElapsed += dt;
+
       var innerVel = INNER_IDLE_SPEED + scrollImpulse;
       var outerVel = OUTER_IDLE_SPEED - scrollImpulse;
       innerAngle = (innerAngle + innerVel * dt) % (Math.PI * 2);
@@ -191,6 +234,11 @@
       scrollImpulse *= Math.exp(-SCROLL_DECAY * dt);
       if (Math.abs(scrollImpulse) < 0.0001) {
         scrollImpulse = 0;
+      }
+
+      activity = baseActivity + (activity - baseActivity) * Math.exp(-ACTIVITY_DECAY * dt);
+      if (Math.abs(activity - baseActivity) < 0.002) {
+        activity = baseActivity;
       }
     }
 
@@ -246,8 +294,18 @@
     }
   }
 
+  function onPointerMove() {
+    boostActivity(0.18);
+  }
+
+  function onPointerDown() {
+    boostActivity(0.7);
+  }
+
   window.addEventListener('wheel', onWheel, { passive: true });
   window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('pointermove', onPointerMove, { passive: true });
+  window.addEventListener('pointerdown', onPointerDown, { passive: true });
   window.addEventListener('resize', onResize);
 
   document.addEventListener('visibilitychange', function () {
