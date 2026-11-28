@@ -8,17 +8,16 @@
 
 You are continuing work on SynthDex in a new session. You have no memory of earlier work, so everything you need is in this file. **No phase is queued.** Don't start any work until the user gives you a prompt, and when a prompt conflicts with this file, the prompt wins.
 
-**Status.** The phased UI overhaul and Polish Round 2 (2A, 2B, 2C labels/covers/drag) are **done and committed locally**:
+**Status.** The phased UI overhaul and Polish Round 2 (2A, 2B, 2C labels/covers/drag/pan) are **done and committed locally**:
 - Phases 1-4, the Phase 3 amendment and the JOIN/SUBQUERY work (section 2 has the hashes)
 - Phase 4.5 (`94e6e50`), Phase 5 (`b9dd345`), Phase 6 (`194e0da`)
 - Polish Batch 1 (`12751ed`), Polish Batch 2 (`d3f10a0`)
-- Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`), and orbit label visibility fix (`d5471ec`)
+- Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`), orbit label visibility fix (`d5471ec`), handover update (`bf5bc67`), and orbit pan (`ff78944`)
 
 Per the last report, `manage.py check`, template compilation, the filter sanity checks and `makemigrations --check --dry-run` passed after `d5471ec`. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
 
 **Not built / still pending:**
-1. Panning the whole orbit (Batch C4). Spec: dragging empty space in the sky panel, or the sun, pans the whole system so its origin can sit off-center (planets may clip); clamp so the sun never leaves the panel entirely; the Reset button resets both zoom and pan; mouse and pen only, so touch scrolling keeps working; ring-drag angles and the shared label must use the system's current on-screen center, so they stay correct after zoom and pan; keyboard behavior and reduced-motion rules stay intact.
-2. An animated "visualizer rings" background (subtle bar rings behind every page — deferred, last).
+1. An animated "visualizer rings" background (subtle bar rings behind every page — deferred, last).
 
 After each piece of work: verify, commit, report (section 12), then **stop and wait**.
 
@@ -55,6 +54,8 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 | `b2ba81e` | Polish Round 2B | Favorites pagination, search/filter/sort, artist limit, 900px+ columns |
 | `d77a557` | Polish Round 2C | Orbit shared top-layer label, cover crop-zoom fill, ring drag fix |
 | `d5471ec` | Polish Round 2C fix | Fix orbit label visibility (delegated hover/focus, `left`/`top`, `lostpointercapture`) |
+| `bf5bc67` | docs | Update handover for polish round 2 |
+| `ff78944` | Polish Round 2C pan | Pan the whole orbit (drag sky/sun, clamped, Reset resets both zoom+pan, mouse/pen only) |
 
 **About `3fc7cce`:** it was requested while the user was looking at **stale cached CSS**, so it "fixed" problems that Phase 3 and Phase 4 had already fixed. It was reverted in `779fa09`. **Don't reapply it.** The search layout and cover-art handling are whatever existed at `6f83349`.
 
@@ -167,7 +168,8 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
   - Zoom `0.6x-1.6x` with `+` / `-` / reset buttons and `Ctrl/Cmd+wheel` only (plain scroll is never hijacked).
   - Pointer-based ring dragging: native link/image dragging is disabled (`draggable="false"`, `-webkit-user-drag: none`, `dragstart` prevented); dragging one planet rotates its whole ring around `getSystemCenter()` (live `stage.getBoundingClientRect()`). A 6px threshold keeps normal clicks working; auto-rotation resumes from the new angle on release.
   - Each planet is a link to the track details page with `aria-label="{title} by {artist}"` (no native `title` attribute). One shared upright `#orbit-shared-tooltip` sits at the top layer of `#orbit-sky-panel` (`z-index: 40`), positioned via `left`/`top` on delegated `pointerover`/`pointermove`/`focusin` and updated during `tick()`, hidden on leave, blur, and drag (`d77a557`, `d5471ec`).
-  - **Not built / still pending:** panning the whole orbit (Batch C4).
+  - **Pan (Batch C4, `ff78944`):** dragging empty sky or the sun translates `#orbit-container` via `--pan-x`/`--pan-y` CSS custom properties (set by `container.style.setProperty`; no inline `style=` in HTML). Mouse and pen only — `pointerType === 'touch'` is filtered out so touch scrolls the page as normal. A 5px threshold separates tap from drag. The sun (stage center) is clamped to stay at least 56 px inside the panel edge in all directions. The Reset button (`#orbit-zoom-reset`) resets both zoom and pan to their defaults. Ring-drag angles use `getSystemCenter()` (live `stage.getBoundingClientRect()`), so they remain correct after any pan/zoom combination. The shared label uses live `getBoundingClientRect()` on the planet and panel, so it also stays correct. Pan is **disabled under `prefers-reduced-motion`** (consistent with the existing pattern of disabling all JS-driven motion under that query); the CSS also resets `transform` on `.orbit-container` and restores `cursor: auto` on `.orbit-sky-panel`. Grab/grabbing cursors are set in CSS on `.orbit-sky-panel`; buttons and planets retain their own cursor rules and are unaffected.
+- **Not built / still pending:** the animated visualizer-rings background (deferred, last).
 - **Fallbacks:** `prefers-reduced-motion` gives a static arrangement (dragging disabled). With 0 favorites, ghost dashed planets and a call to action. With 1 to 3, the inner ring fills first. Narrow-screen scaling was specified in Phase 5 and has not been re-verified against the 5-ring layout.
 - **Performance:** covers use `loading="lazy"` and `decoding="async"`; animation pauses when the tab is hidden or the panel is offscreen.
 
@@ -187,7 +189,7 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.fa
 - **Login/register:** removed the duplicate `SynthDex` wordmark from `templates/common/_auth_brand.html` (header already shows it); kept heading, subtext, and logo mark.
 - **Whole-row clickable:** added `.row-clickable` / `.row-clickable-link` / `.row-clickable-action` in `static/css/common/components.css` (one anchor per row, full-row hover & `:has(.row-clickable-link:focus-visible)` ring, action buttons elevated above). Applied to search results, favorites, home "Latest Favorites", profile "Your Favorites" & "Recent Searches", and history. (`track_detail.html` `.rail-item` was already a full-row anchor and left as-is.)
 - **Favorites & Orbit:** documented in sections 7 and 8.
-- **Not built / still pending:** panning the whole orbit (C4), and the animated visualizer-rings background (deferred, last).
+- **Not built / still pending:** the animated visualizer-rings background (deferred, last).
 
 ---
 
