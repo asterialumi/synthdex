@@ -40,7 +40,7 @@
   --accent-hover: #9c651f;
   --accent-soft: #f0e1c6;
   --accent-ink: #ffffff;
-  --viz-ring-color: rgba(184, 121, 47, 0.16);
+  --viz-ring-color: rgba(184, 121, 47, 0.24);
 
   /* Status */
   --danger: #b3402f;
@@ -131,7 +131,7 @@
   --accent-hover: #eda95e;
   --accent-soft: #382c1a;
   --accent-ink: #16151a;
-  --viz-ring-color: rgba(224, 159, 83, 0.14);
+  --viz-ring-color: rgba(224, 159, 83, 0.22);
 
   --danger: #e2695a;
   --danger-soft: #3a2420;

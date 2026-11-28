@@ -10,13 +10,13 @@
      ======================================================================== */
   var MOBILE_BREAKPOINT = 768;      // Viewport width (px) below which rings are disabled
   var MAX_DPR = 2;                  // Cap devicePixelRatio for performance
-  var INNER_RADIUS_FACTOR = 0.42;   // Inner ring radius as fraction of max(width, height)
+  var INNER_RADIUS_FACTOR = 0.40;   // Inner ring radius as fraction of max(width, height)
   var OUTER_RADIUS_FACTOR = 0.47;   // Outer ring radius as fraction of max(width, height)
   var INNER_BAR_COUNT = 120;        // Number of radial bars in the inner ring
   var OUTER_BAR_COUNT = 160;        // Number of radial bars in the outer ring
-  var BAR_WIDTH = 2;                // Radial bar thickness (CSS px)
-  var BAR_BASE_HEIGHT = 8;          // Resting bar length (CSS px)
-  var BAR_MAX_AMPLITUDE = 28;       // Maximum extra bar length when active (CSS px)
+  var BAR_WIDTH = 3.0;              // Radial bar thickness (CSS px)
+  var BAR_BASE_HEIGHT = 20;         // Resting bar length (CSS px)
+  var BAR_MAX_AMPLITUDE = 32;       // Maximum extra bar length when active (CSS px)
   var INNER_IDLE_SPEED = 0.045;     // Inner ring idle angular speed (rad/s, clockwise)
   var OUTER_IDLE_SPEED = -0.032;    // Outer ring idle angular speed (rad/s, counter-clockwise)
   var SCROLL_GAIN = 0.0022;         // Angular speed boost per px of scroll delta
