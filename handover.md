@@ -1,16 +1,26 @@
-# SynthDex UI Overhaul: Handover (updated Nov 27, 2026)
+# SynthDex UI Overhaul: Handover (updated Nov 28, 2026)
 
 **Project:** SynthDex (personal music metadata catalogue)
 **Stack:** Django 6.1.x, Supabase PostgreSQL, Bootstrap 5.3 (CDN) + modular custom CSS, vanilla JS. Windows, VS Code, PowerShell, `.venv`.
-**Branch:** `main` (local at `d3f10a0`; `origin/main` at `b9dd345`, user pushes).
+**Branch:** `main`. Local `main` was at `d5471ec` when this file was updated. The user pushes; confirm what is on the remote with `git log --oneline --decorate -5`.
 
 ## 0. Read this first
 
-Phases 1–6 and Polish Batches 1–2 are **done** and committed locally:
+You are continuing work on SynthDex in a new session. You have no memory of earlier work, so everything you need is in this file. **No phase is queued.** Don't start any work until the user gives you a prompt, and when a prompt conflicts with this file, the prompt wins.
+
+**Status.** The phased UI overhaul and Polish Round 2 (2A, 2B, 2C labels/covers/drag) are **done and committed locally**:
+- Phases 1-4, the Phase 3 amendment and the JOIN/SUBQUERY work (section 2 has the hashes)
 - Phase 4.5 (`94e6e50`), Phase 5 (`b9dd345`), Phase 6 (`194e0da`)
 - Polish Batch 1 (`12751ed`), Polish Batch 2 (`d3f10a0`)
+- Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`), and orbit label visibility fix (`d5471ec`)
 
-`manage.py check`, template compilation, filter sanity checks, and `makemigrations --check --dry-run` were run and passed after Batch 2. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
+Per the last report, `manage.py check`, template compilation, the filter sanity checks and `makemigrations --check --dry-run` passed after `d5471ec`. The unit tests (`apps/favorites/test_taste.py`, and any tests added with the JOIN/SUBQUERY work) are **written but have not been run against a test database**, because that is unsafe on live Supabase. Never claim they passed.
+
+**Not built / still pending:**
+1. Panning the whole orbit (Batch C4). Spec: dragging empty space in the sky panel, or the sun, pans the whole system so its origin can sit off-center (planets may clip); clamp so the sun never leaves the panel entirely; the Reset button resets both zoom and pan; mouse and pen only, so touch scrolling keeps working; ring-drag angles and the shared label must use the system's current on-screen center, so they stay correct after zoom and pan; keyboard behavior and reduced-motion rules stay intact.
+2. An animated "visualizer rings" background (subtle bar rings behind every page — deferred, last).
+
+After each piece of work: verify, commit, report (section 12), then **stop and wait**.
 
 ---
 
@@ -18,7 +28,7 @@ Phases 1–6 and Polish Batches 1–2 are **done** and committed locally:
 
 SynthDex is a **personal-use** app: a user searches a song once and gets listen links plus metadata (BPM, genre, album, artist, year). Profiles are never shown to other users. The UI overhaul aims for visual cohesion, light/dark parity and responsive layouts **without changing behavior**: database schema, URL names, view context variable names and endpoints all stay as they are.
 
-Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber accent, rounded cards, and a deep aubergine (`--deep`) used for the header, the track-details hero and (Phase 5) the home "sky" panel.
+Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber accent, rounded cards, and a deep surface (`--deep`, espresso brown in light mode, aubergine in dark mode) used for the header, the login/register brand panel, the track-details hero and the home "sky" panel.
 
 ---
 
@@ -40,6 +50,11 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 | `194e0da` | Phase 6 | Accessibility, responsive and dark mode polish |
 | `12751ed` | Polish Batch 1 | Polish header, login branding, home taste panel and orbit sizing |
 | `d3f10a0` | Polish Batch 2 | Add orbit zoom, ring dragging and larger favorites cap |
+| `2003981` | docs | Update handover for completed polish batches |
+| `4e37b54` | Polish Round 2A | Login name removal, warm light palette, whole-row clickable rows |
+| `b2ba81e` | Polish Round 2B | Favorites pagination, search/filter/sort, artist limit, 900px+ columns |
+| `d77a557` | Polish Round 2C | Orbit shared top-layer label, cover crop-zoom fill, ring drag fix |
+| `d5471ec` | Polish Round 2C fix | Fix orbit label visibility (delegated hover/focus, `left`/`top`, `lostpointercapture`) |
 
 **About `3fc7cce`:** it was requested while the user was looking at **stale cached CSS**, so it "fixed" problems that Phase 3 and Phase 4 had already fixed. It was reverted in `779fa09`. **Don't reapply it.** The search layout and cover-art handling are whatever existed at `6f83349`.
 
@@ -51,7 +66,7 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 - `static/css/common/tokens.css`: CSS variables for both themes (`--bg`, `--surface`, `--surface-raised`, `--ink`, `--ink-muted`, `--border`, `--accent`, `--accent-ink`, `--deep`, `--deep-surface`, `--deep-ink`, `--deep-border`, `--danger`, `--focus-ring`, spacing, radius, shadows).
 - `layout.css` (`.app-container` 1200px, `.grid-two-col` 65/35 collapsing at 991px, `.skip-link`), `components.css` (`.btn`, `.icon-btn`, `.pill`, `.card`, `.cover`, `.track-row`, `.empty-state`, `.toolbar`), `base.css` (aubergine header, dark-mode border, mobile nav, flash messages).
 - `static/js/common/theme.js`: theme toggle (localStorage for anonymous users, AJAX save to `user_settings` for logged-in users) and the mobile menu.
-- `templates/common/_icons.html`: inline SVG sprite, **20 symbols** (heart, heart-fill, search, external-link, sun, moon, pencil, refresh, history, user, settings, music-note, trash, chevron, check, x, menu, arrow-left, youtube, deezer).
+- `templates/common/_icons.html`: inline SVG sprite, originally **20 symbols** (heart, heart-fill, search, external-link, sun, moon, pencil, refresh, history, user, settings, music-note, trash, chevron, check, x, menu, arrow-left, youtube, deezer). The `synthdex-logo` symbol (`#i-synthdex-logo`) was added in Polish Batch 1, making **21**.
 
 ### Phase 2: forms
 - `forms.css` (44px controls, selects with `@supports (appearance: base-select)`, switches), reusable `templates/common/_field.html`, applied to profile, settings (3 forms), login, register and the track metadata edit form.
@@ -60,7 +75,7 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 - Search: one centered 860px column shared by title, search card, toolbar and results; 2-line title clamp; optimistic AJAX heart; double-submit prevention with a loading state.
 - History: consecutive identical searches grouped with `×N` (display only, in `apps/history/views.py`), `<dialog>` confirmation for "Clear history".
 - `config/settings.py`: `TIME_ZONE = 'Asia/Manila'`, `USE_TZ = True`.
-- Favorites: *originally* a card grid; it was replaced by the table in section 4 (the grid used `repeat(auto-fill, minmax(340px, 1fr))`, which squished text at some window widths).
+- Favorites: *originally* a card grid, then a table (section 4), now a `.track-row` list (section 7). The grid used `repeat(auto-fill, minmax(340px, 1fr))`, which squished text at some window widths, so don't bring it back.
 
 ### Phase 3 amendment: personal-use copy and taste summary
 - Copy now says the profile is private. Bio and favorite genre show on the profile header; the bio is the home subtitle (fallback text if empty).
@@ -69,7 +84,7 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 ### Phase 4: track details and results rail
 - `apps/catalogue/views.py`: rail context from `?q=<query>&type=<type>` (300-char cap, `type` validated against `SearchType.values`). Read-only lookup of `SearchCache` and `SearchCacheResult`, ignoring `expires_at`, no API calls, no writes.
 - `apps/catalogue/templatetags/catalogue_tags.py`: `format_bpm`, `source_display_name` (`youtube` to `YouTube`, etc.), `duration_display`.
-- `track_detail.html` / `track_detail.css`: 65/35 grid with a sticky, independently scrolling rail (`.is-current` highlight), single-column fallback without params, aubergine hero with prominent BPM and genre, balanced info grid, brand icons on Listen buttons, collapsible edit panel, mobile "Back to search results" button.
+- `track_detail.html` / `track_detail.css`: 65/35 grid with a sticky, independently scrolling rail (`.is-current` highlight), single-column fallback without params, aubergine hero with prominent BPM and genre, balanced info grid, brand icons on Listen buttons, collapsible edit panel. The back link is conditional since Polish Batch 1 (section 9).
 
 ---
 
@@ -78,10 +93,11 @@ Design language: Fraunces headings, Inter UI text, warm cream surfaces, amber ac
 This is a **graded deliverable**. Treat it as protected.
 
 - **Where:** `apps/favorites/selectors.py` (new), `apps/favorites/views.py`, `templates/favorites/favorites.html`, plus whatever tests were added with it. **Confirm the function and variable names below in the code before relying on them.** They come from the brief that requested the work.
-- **JOIN:** `get_favorites_with_details(user)`: `Favorite` filtered by user with `select_related('track', 'track__album')` (INNER JOIN on the track, LEFT OUTER JOIN on the album, because `Track.album` can be NULL), plus a prefetch of credits and artists, ordered newest first. Total: 3 queries.
+- **JOIN:** `get_favorites_with_details(user)`: `Favorite` filtered by user with `select_related('track', 'track__album')` (INNER JOIN on the track, LEFT OUTER JOIN on the album, because `Track.album` can be NULL), plus a prefetch of credits and artists, ordered newest first. Total: 3 queries for the selector on its own (the paginated favorites page runs more, see section 7).
 - **SUBQUERY:** `get_favorite_artists(user)`: the artists credited on any favorited track, written as **explicitly nested `Subquery(...)`** (inner: favorited track ids; middle: credited artist ids; outer: artists). One query. `IN` never repeats a row.
 - **`sql_of(queryset)`:** returns `str(queryset.query)` for display.
-- **Page now:** "Your Favorites" with a responsive list of `.track-row` items (Title, Artists, Album, BPM, Duration, Date added, heart), an "Artists in your favorites" row of pills, and a collapsed "SQL used (debug only)" block gated by `settings.SHOW_SQL_PANEL` (not `settings.DEBUG`; context vars `show_sql`, `favorites_sql`, `artists_sql`).
+- **Page now:** "Your Favorites" with a responsive list of `.track-row` items (Title, Artists, Album, BPM, Duration, Date added, heart), an "Artists in your favorites" row of pills (limited to 12), pagination and search/filter/sort (section 7), and a collapsed "SQL used (debug only)" block gated by `settings.SHOW_SQL_PANEL` (not `settings.DEBUG`; context vars `show_sql`, `favorites_sql`, `artists_sql`).
+- **Reuse:** the home orbit also calls `get_favorites_with_details(user)` (sliced), read-only.
 - **Rules:**
   - Don't edit `selectors.py`, don't turn the nested `Subquery` into a join or `distinct()`, and don't remove `sql_of`.
   - Changing `settings.DEBUG` is **not** an option: with `DEBUG = False`, `runserver` stops serving static files and Django requires `ALLOWED_HOSTS`. The panel is gated with `SHOW_SQL_PANEL` instead.
@@ -90,52 +106,88 @@ This is a **graded deliverable**. Treat it as protected.
 
 ## 5. File inventory (current)
 
+Paths marked "(confirm)" were reported by Antigravity but not checked against the repo here.
+
 ```
 apps/
   catalogue/   templatetags/catalogue_tags.py (format_bpm, source_display_name, duration_display); views.py (rail context)
-  favorites/   selectors.py (JOIN + SUBQUERY, protected); taste.py (get_taste_summary, format_bpm); views.py; test_taste.py (+ any tests from the DB activity)
+  favorites/   selectors.py (JOIN + SUBQUERY, protected); taste.py (get_taste_summary, format_bpm); views.py (pagination, search/filter/sort, artist limit); test_taste.py (+ any tests from the DB activity)
   history/     views.py (consecutive search grouping)
+  home/        views.py (orbit data via get_favorites_with_details(user)[:MAX_ORBIT_PLANETS], taste summary) (confirm path and where MAX_ORBIT_PLANETS lives)
   profile/     context_processors.py (profile_bio, profile_favorite_genre); views.py (taste summary)
   user_settings/ forms.py (pref_search_type optional in ThemeForm); views.py (JsonResponse for AJAX theme save)
-config/settings.py            (TIME_ZONE = 'Asia/Manila')
-static/css/common/            tokens.css, layout.css, components.css, base.css, forms.css
-static/css/{catalogue,favorites,history,profile,search}/   per-feature CSS (track_detail.css, favorites.css, history.css, profile.css, search.css)
+config/settings.py            (TIME_ZONE = 'Asia/Manila'; SHOW_SQL_PANEL, default off)
+static/css/common/            tokens.css (light-mode espresso deep block), layout.css, components.css (.row-clickable), base.css, forms.css
+static/css/{catalogue,favorites,history,home,profile,search}/   per-feature CSS (track_detail.css, favorites.css, history.css, home.css, profile.css, search.css)
 static/js/common/theme.js; static/js/search/search.js; static/js/user_settings/user_settings.js
-templates/common/             base.html, _field.html, _icons.html
+static/js/home/orbit.js       (orbit: pause/play, zoom, ring dragging, shared top-layer tooltip)
+templates/common/             base.html, _field.html, _icons.html, _taste_summary.html (shared by profile and home), _auth_brand.html (login/register brand panel) (confirm the two partial paths)
 templates/{catalogue,favorites,history,home,login,profile,register,search,user_settings}/   page templates
 ```
 
 ---
 
-## 6. Known issues and deviations (don't "fix" these unless a phase says to)
+## 6. Known issues and deviations (don't "fix" these unless asked)
 
 **Deviations from the original brief (intentional, needed for the header toggle):** `apps/user_settings/forms.py` (made `pref_search_type` optional in `ThemeForm`) and `apps/user_settings/views.py` (JSON response for AJAX theme saves). Leave them alone.
 
 **Remaining minor notes:**
-- `format_bpm` exists twice (`taste.py` and `catalogue_tags.py`). Keep or consolidate carefully if touched later.
+- `format_bpm` exists twice (`taste.py` and `catalogue_tags.py`). Keep or consolidate carefully if touched later. Check whether duration helpers are duplicated too.
 - Confirm the heart toggle still degrades to a working POST form without JavaScript.
 
 ---
 
-## 7. Phase 4.5: Favorites page restyle (done)
+## 7. Phase 4.5 & Polish Round 2B: Favorites page (done)
 
-Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` items using shared components (`.cover`, `.pill`, `.icon-btn`) and theme tokens in `favorites.css`, preserving original artist casing and `selectors.py` untouched (same 3-query count). Gated the collapsed SQL debug `<details>` panel behind `SHOW_SQL_PANEL` in `config/settings.py` (default off; set `SHOW_SQL_PANEL=1` in `.env` when needed, never `DEBUG`).
+Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` / `.favorite-item` items using shared components (`.cover`, `.pill`, `.icon-btn`, `.row-clickable`) and theme tokens in `favorites.css`. Original artist casing is preserved and `selectors.py` is untouched. Polish Round 2B (`b2ba81e`) added in `apps/favorites/views.py` by chaining onto `get_favorites_with_details(user)`:
+- **Pagination:** `FAVORITES_PER_PAGE = 10`, `"Showing X-Y of N"` counter, elided page navigation (`aria-label`, `aria-current="page"`), invalid pages clamped.
+- **Search, filter & sort (GET, no API calls):** `q` (300-char cap, case-insensitive contains), `type` (whitelisted `all`/`song`/`artist`/`album` via `SearchType`; `All` and `Artist` use `Exists` so multi-artist tracks appear once), `sort` (whitelisted `newest`, `oldest`, `title_asc`, `title_desc`, `bpm_asc`, `bpm_desc` with missing BPM always last), `Clear` link when active, and a separate `"No favorites match"` empty state.
+- **Artists limit:** `MAX_FAVORITE_ARTISTS = 12` evaluated once into a `list()` and sliced in Python with a muted `"+N more"` suffix. The heading is **intentionally still "Artists in your favorites"**, not "Top Artists": the nested subquery returns every credited artist and does not rank them.
+- **900px+ columns:** Fixed-width BPM/duration/date columns and ellipsis-truncated album (blank when missing; no `"— —"`). Below 900px unchanged.
+- **Query count:** 5 favorites-data queries (`COUNT(*)`, `LIMIT 10` favorites JOIN, 2 visible-page prefetches, 1 artists SUBQUERY) plus 3 base-template/context-processor queries (8 total on render, zero N+1).
+- **SQL debug panel:** `favorites_sql` and `artists_sql` are captured before filtering/pagination/slicing, so the collapsed `<details>` panel (gated behind `SHOW_SQL_PANEL`) still shows the **original** selector queries.
+
+**Rules still in force:**
+- Keep the view's context variable names (`favorites`, `favorite_artists`, `show_sql`, `favorites_sql`, `artists_sql`). Avoid N+1 queries and prefetch only the visible page.
+- Every color in `favorites.css` comes from tokens. Text stays at least 4.5:1 in both themes, including hover and focus-visible. Rows have no horizontal scroll at 360px.
+- The `<details>` panel stays collapsed and legible in dark mode.
+- **Don't open or edit `.env`.** To see the panel, the user adds `SHOW_SQL_PANEL=1` to `.env` themselves and restarts the server.
+- If tests from the DB activity needed the panel on, they use `SHOW_SQL_PANEL=True` (not `DEBUG=True`). Don't run them against live Supabase.
 
 ---
 
-## 8. Phase 5 & Polish: Home with orbit (done)
+## 8. Phase 5 and Polish Batch 2: Home with orbit (done)
 
-- **Layout:** Greeting and search card (with recent-search chips) on top. Below, two-column `stretch` grid: left is the full-height deep aubergine "sky" panel with the orbit; right is "Latest Favorites" and the shared `_taste_summary.html` partial (`get_taste_summary(user, declared_genre)`).
-- **Orbit:** Up to `MAX_ORBIT_PLANETS = 24` favorites across up to 5 concentric rings (newest on inner ring), reusing `get_favorites_with_details(user)[:MAX_ORBIT_PLANETS]` (no N+1, no `sql_of`). Inner rings fill the panel at default `1.0x` zoom; outer rings sit beyond the panel edge and appear when zooming out.
-- **Controls & Interaction (`static/js/home/orbit.js`):** No pause on hover; keyboard-accessible Pause/Play button (default playing); zoom (`0.6x–1.6x`) via `+`/`−`/`reset` buttons and `Ctrl/Cmd+wheel` only; pointer-based ring dragging with a 6px click threshold (resumes auto-rotation from the new angle on release; disabled under `prefers-reduced-motion`). Ring orbit speed uses the ring's average BPM; each cover spins on its own axis by track BPM while `.orbit-tooltip` labels stay upright. Covers use `loading="lazy"` and `decoding="async"`, and animations pause when the tab is hidden or the panel is offscreen.
+- **Layout:** greeting and search card (with recent-search chips) on top. Below, a two-column `stretch` grid: left is the full-height deep "sky" panel with the orbit; right is "Latest Favorites" and the shared `_taste_summary.html` partial (`get_taste_summary(user, declared_genre)`, the same data as the profile). The old "Recent searches" panel and the three quick-link cards are gone.
+- **Orbit:** up to `MAX_ORBIT_PLANETS = 24` favorites across up to 5 concentric rings (newest on the inner ring). Covers are circular. Inner rings fill the panel at the default `1.0x` zoom; outer rings sit beyond the panel edge and come into view when zooming out.
+- **Data:** reuse `get_favorites_with_details(user)[:MAX_ORBIT_PLANETS]` from `apps/favorites/selectors.py`. Read-only: **don't modify it** and **don't call `sql_of`** from the home view. It already joins the track and album and prefetches artists, so no N+1 queries. (`Favorite` has no `album` field, so `select_related('album')` would raise `FieldError`.)
+- **Speed & Cover Fill:** each ring's orbit speed follows the **average BPM of its tracks** (clamped, with a default when BPM is unknown). Each cover also **spins on its own axis** at a speed based on its own track BPM; `img.orbit-cover` is crop-zoomed inside its circular clip via `--orbit-cover-crop: 1.36` on `.orbit-sky-panel` so letterboxed YouTube thumbnails fill the circle.
+- **Interaction (`static/js/home/orbit.js`):**
+  - No pause on hover. A keyboard-accessible Pause/Play button (default playing).
+  - Zoom `0.6x-1.6x` with `+` / `-` / reset buttons and `Ctrl/Cmd+wheel` only (plain scroll is never hijacked).
+  - Pointer-based ring dragging: native link/image dragging is disabled (`draggable="false"`, `-webkit-user-drag: none`, `dragstart` prevented); dragging one planet rotates its whole ring around `getSystemCenter()` (live `stage.getBoundingClientRect()`). A 6px threshold keeps normal clicks working; auto-rotation resumes from the new angle on release.
+  - Each planet is a link to the track details page with `aria-label="{title} by {artist}"` (no native `title` attribute). One shared upright `#orbit-shared-tooltip` sits at the top layer of `#orbit-sky-panel` (`z-index: 40`), positioned via `left`/`top` on delegated `pointerover`/`pointermove`/`focusin` and updated during `tick()`, hidden on leave, blur, and drag (`d77a557`, `d5471ec`).
+  - **Not built / still pending:** panning the whole orbit (Batch C4).
+- **Fallbacks:** `prefers-reduced-motion` gives a static arrangement (dragging disabled). With 0 favorites, ghost dashed planets and a call to action. With 1 to 3, the inner ring fills first. Narrow-screen scaling was specified in Phase 5 and has not been re-verified against the 5-ring layout.
+- **Performance:** covers use `loading="lazy"` and `decoding="async"`; animation pauses when the tab is hidden or the panel is offscreen.
 
 ---
 
-## 9. Phase 6 & Polish Batches 1–2: Accessibility, branding & layout (done)
+## 9. Phase 6, Polish Batches 1-2 and Polish Round 2: accessibility, branding and layout (done except as noted)
 
-- **Header & Branding:** Removed the `Search` nav link from desktop and mobile nav (search URL and all other links still work); fixed desktop header symmetry by hiding `.header-actions--mobile` at `>= 992px` so `Logout` aligns with the right inset and `#header-theme-toggle` sits immediately left of `Logout`. Added the `#i-synthdex-logo` SVG symbol in `templates/common/_icons.html` beside `SynthDex` in the header and on `_auth_brand.html`.
-- **Auth & Details:** Fixed login/register left brand panel contrast in dark mode using `--deep` and `--deep-ink`. Updated the track-details back link to `Back to Results` when opened with search rail params and `Back to Home` (`home:home`) otherwise.
-- **Deferred:** The animated visualizer-rings background is deferred and not built.
+**Phase 6 (`194e0da`):** contrast audit (4.5:1 for text, 3:1 for UI icons), keyboard-only walkthrough, responsive checks at 1440, 1024, 768 and 390px in both themes, and removal of dead and duplicate CSS.
+
+**Polish Batch 1 (`12751ed`) and Batch 2 (`d3f10a0`):**
+- **Header and branding:** removed the `Search` nav link from desktop and mobile nav (the search URL and all other links to it still work). Fixed desktop header symmetry by hiding `.header-actions--mobile` at `>= 992px`, so `Logout` sits at the same inset from the right edge as the logo does from the left, and `#header-theme-toggle` sits immediately left of `Logout`. Page content containers stay narrower than the header **on purpose**. Added the `#i-synthdex-logo` SVG symbol in `templates/common/_icons.html`, shown beside "SynthDex" in the header and in `_auth_brand.html` (login and register).
+- **Auth and details:** fixed login/register left brand-panel contrast in dark mode using `--deep` and `--deep-ink`. The track-details back link reads `Back to Results` when opened with the search rail params and `Back to Home` (`home:home`) otherwise.
+- **Home:** taste summary replaced Recent searches; orbit changes are in section 8.
+
+**Polish Round 2A (`4e37b54`), 2B (`b2ba81e`), 2C (`d77a557`, `d5471ec`):**
+- **Warm light-mode palette:** replaced light-mode purple/aubergine deep tokens (`--deep`, `--deep-surface`, `--deep-ink-muted`, `--deep-border`, `--deep-overlay`, `--color-brand-line`, `--shadow-*`) with dark espresso brown in one clearly commented block in `static/css/common/tokens.css` (previous purple values kept in inline comments for one-block revert; dark mode unchanged; replaced hard-coded `rgba(26, 24, 32, 0.88)` in `home.css` with `var(--deep-overlay)`).
+- **Login/register:** removed the duplicate `SynthDex` wordmark from `templates/common/_auth_brand.html` (header already shows it); kept heading, subtext, and logo mark.
+- **Whole-row clickable:** added `.row-clickable` / `.row-clickable-link` / `.row-clickable-action` in `static/css/common/components.css` (one anchor per row, full-row hover & `:has(.row-clickable-link:focus-visible)` ring, action buttons elevated above). Applied to search results, favorites, home "Latest Favorites", profile "Your Favorites" & "Recent Searches", and history. (`track_detail.html` `.rail-item` was already a full-row anchor and left as-is.)
+- **Favorites & Orbit:** documented in sections 7 and 8.
+- **Not built / still pending:** panning the whole orbit (C4), and the animated visualizer-rings background (deferred, last).
 
 ---
 
@@ -175,7 +227,7 @@ Replaced the Favorites `<table>` with a responsive `<ul>` of `.track-row` items 
 
 ---
 
-## 12. Report format (after each phase, then stop)
+## 12. Report format (after each piece of work, then stop)
 
 1. Files created and changed.
 2. What changed visibly, in plain language.
